@@ -1,0 +1,42 @@
+@BASE_URL = http://localhost:3333
+
+### Get all pastries
+GET {{BASE_URL}}/pastries
+Content-Type: application/json
+
+### Get pastries by category
+GET {{BASE_URL}}/pastries?category=cake
+Content-Type: application/json
+
+### Get single pastry
+GET {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
+Content-Type: application/json
+
+### Create pastry
+POST {{BASE_URL}}/pastries
+Content-Type: application/json
+
+{
+    "name": "Éclair au chocolat",
+    "description": "Pâte à choux garnie de crème pâtissière au chocolat",
+    "price": 4.50,
+    "imageUrl": "https://example.com/eclair.jpg",
+    "category": "choux",
+    "ingredients": ["farine", "oeufs", "chocolat", "crème"]
+}
+
+### Update pastry
+PUT {{BASE_URL}}/pastries/20d718db-3b0b-468f-a5d8-72ba02d25907
+Content-Type: application/json
+
+{
+    "name": "Éclair au café",
+    "description": "Pâte à choux garnie de crème pâtissière au café",
+    "price": 4.50,
+    "imageUrl": "https://example.com/eclair-cafe.jpg",
+    "category": "choux",
+    "ingredients": ["farine", "oeufs", "café", "crème"]
+}
+
+### Delete pastry
+DELETE {{BASE_URL}}/pastries/123e4567-e89b-12d3-a456-426614174000 
