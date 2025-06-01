@@ -1,0 +1,9 @@
+@BASE_URL = http://localhost:3333
+
+# @name = base
+POST {{BASE_URL}}
+Content-Type: application/json
+
+{
+  "my_field": "my_value"
+}
