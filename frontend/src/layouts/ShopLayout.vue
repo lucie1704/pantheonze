@@ -137,6 +137,7 @@ const userMenuItems = [
     <main class="flex-1 py-4 px-3 md:px-4 max-w-screen-xl mx-auto w-full">
       <slot></slot>
     </main>
+    
     <!-- Footer -->
     <footer class="surface-section border-top-1 surface-border">
       <div class="w-full md:w-9 mx-auto py-4">
