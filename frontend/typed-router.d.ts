@@ -20,5 +20,21 @@ declare module 'vue-router/auto-routes' {
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
     '/about': RouteRecordInfo<'/about', '/about', Record<never, never>, Record<never, never>>,
+    '/account/': RouteRecordInfo<'/account/', '/account', Record<never, never>, Record<never, never>>,
+    '/account/orders': RouteRecordInfo<'/account/orders', '/account/orders', Record<never, never>, Record<never, never>>,
+    '/account/settings': RouteRecordInfo<'/account/settings', '/account/settings', Record<never, never>, Record<never, never>>,
+    '/cart': RouteRecordInfo<'/cart', '/cart', Record<never, never>, Record<never, never>>,
+    '/contact': RouteRecordInfo<'/contact', '/contact', Record<never, never>, Record<never, never>>,
+    '/legal/cgv': RouteRecordInfo<'/legal/cgv', '/legal/cgv', Record<never, never>, Record<never, never>>,
+    '/legal/mentions-legales': RouteRecordInfo<'/legal/mentions-legales', '/legal/mentions-legales', Record<never, never>, Record<never, never>>,
+    '/legal/politique-confidentialite': RouteRecordInfo<'/legal/politique-confidentialite', '/legal/politique-confidentialite', Record<never, never>, Record<never, never>>,
+    '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
+    '/order/collect': RouteRecordInfo<'/order/collect', '/order/collect', Record<never, never>, Record<never, never>>,
+    '/order/confirmation': RouteRecordInfo<'/order/confirmation', '/order/confirmation', Record<never, never>, Record<never, never>>,
+    '/order/informations': RouteRecordInfo<'/order/informations', '/order/informations', Record<never, never>, Record<never, never>>,
+    '/order/payment': RouteRecordInfo<'/order/payment', '/order/payment', Record<never, never>, Record<never, never>>,
+    '/order/summary': RouteRecordInfo<'/order/summary', '/order/summary', Record<never, never>, Record<never, never>>,
+    '/pastries/': RouteRecordInfo<'/pastries/', '/pastries', Record<never, never>, Record<never, never>>,
+    '/pastries/[id]': RouteRecordInfo<'/pastries/[id]', '/pastries/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
   }
 }
