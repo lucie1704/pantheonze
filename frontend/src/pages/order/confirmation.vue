@@ -74,7 +74,7 @@ const returnToHome = () => {
         <div class="col-12 md:col-6 mb-4">
           <div class="surface-ground p-4 border-round h-full">
             <h2 class="text-2xl font-bold mb-4">Informations de retrait</h2>
-            
+
             <div class="flex flex-column gap-3">
               <div>
                 <p class="font-bold mb-1">Date et heure</p>
@@ -97,7 +97,7 @@ const returnToHome = () => {
         <div class="col-12 md:col-6 mb-4">
           <div class="surface-ground p-4 border-round h-full">
             <h2 class="text-2xl font-bold mb-4">Instructions</h2>
-            
+
             <ul class="list-none p-0 m-0">
               <li class="flex align-items-center mb-3">
                 <i class="pi pi-id-card text-primary mr-2"></i>
@@ -153,4 +153,4 @@ const returnToHome = () => {
       </div>
     </div>
   </div>
-</template> 
+</template>

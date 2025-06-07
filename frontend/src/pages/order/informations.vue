@@ -11,7 +11,7 @@ const personalInfo = ref({
   email: '',
   phone: '',
   birthdate: null as Date | null,
-  dietaryPreferences: [] as string[]
+  dietaryPreferences: [] as string[],
 })
 
 // Formulaire adresse de facturation
@@ -20,7 +20,7 @@ const billingAddress = ref({
   complement: '',
   postalCode: '',
   city: '',
-  country: 'FR'
+  country: 'FR',
 })
 
 // Options
@@ -28,14 +28,14 @@ const dietaryOptions = [
   { label: 'Sans gluten', value: 'gluten-free' },
   { label: 'Végétarien', value: 'vegetarian' },
   { label: 'Vegan', value: 'vegan' },
-  { label: 'Sans lactose', value: 'lactose-free' }
+  { label: 'Sans lactose', value: 'lactose-free' },
 ]
 
 const countries = [
   { label: 'France', value: 'FR' },
   { label: 'Belgique', value: 'BE' },
   { label: 'Suisse', value: 'CH' },
-  { label: 'Luxembourg', value: 'LU' }
+  { label: 'Luxembourg', value: 'LU' },
 ]
 
 const loading = ref(false)
@@ -44,13 +44,16 @@ const handleSubmit = async () => {
   loading.value = true
   try {
     // Simulation d'une requête API
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
     // Sauvegarde des informations
-    localStorage.setItem('customerInfo', JSON.stringify({
-      personal: personalInfo.value,
-      billing: billingAddress.value
-    }))
+    localStorage.setItem(
+      'customerInfo',
+      JSON.stringify({
+        personal: personalInfo.value,
+        billing: billingAddress.value,
+      }),
+    )
 
     // Navigation vers l'étape suivante
     router.push('/commande/retrait')
@@ -67,9 +70,15 @@ const handleSubmit = async () => {
     <div class="surface-card p-4 border-round">
       <h1 class="text-4xl font-bold text-center mb-6">Vos Informations</h1>
 
-      <form @submit.prevent="handleSubmit" class="flex flex-column gap-4">
+      <form
+        @submit.prevent="handleSubmit"
+        class="flex flex-column gap-4"
+      >
         <!-- Informations personnelles -->
-        <Panel header="Informations personnelles" class="mb-3">
+        <Panel
+          header="Informations personnelles"
+          class="mb-3"
+        >
           <div class="grid">
             <div class="col-12 md:col-6">
               <div class="flex flex-column gap-2">
@@ -133,13 +142,21 @@ const handleSubmit = async () => {
               <div class="flex flex-column gap-2">
                 <label>Préférences alimentaires</label>
                 <div class="flex flex-wrap gap-3">
-                  <div v-for="option in dietaryOptions" :key="option.value" class="flex align-items-center">
+                  <div
+                    v-for="option in dietaryOptions"
+                    :key="option.value"
+                    class="flex align-items-center"
+                  >
                     <Checkbox
                       v-model="personalInfo.dietaryPreferences"
                       :value="option.value"
                       :inputId="option.value"
                     />
-                    <label :for="option.value" class="ml-2">{{ option.label }}</label>
+                    <label
+                      :for="option.value"
+                      class="ml-2"
+                      >{{ option.label }}</label
+                    >
                   </div>
                 </div>
               </div>
@@ -148,7 +165,10 @@ const handleSubmit = async () => {
         </Panel>
 
         <!-- Adresse de facturation -->
-        <Panel header="Adresse de facturation" class="mb-3">
+        <Panel
+          header="Adresse de facturation"
+          class="mb-3"
+        >
           <div class="grid">
             <div class="col-12">
               <div class="flex flex-column gap-2">
@@ -229,4 +249,4 @@ const handleSubmit = async () => {
       </form>
     </div>
   </div>
-</template> 
+</template>

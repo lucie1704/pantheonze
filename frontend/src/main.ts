@@ -26,45 +26,45 @@ import { router } from './router'
 import { definePreset } from '@primevue/themes'
 
 const PastryTheme = definePreset(Aura, {
-    semantic: {
+  semantic: {
+    primary: {
+      50: '#faf8f6',
+      100: '#f4efe9',
+      200: '#e8ddd2',
+      300: '#d4c4b0',
+      400: '#bda388',
+      500: '#8B4513',
+      600: '#7a3c11',
+      700: '#6B3410',
+      800: '#5a2d0e',
+      900: '#4b250c',
+      950: '#3d1e0a',
+    },
+    colorScheme: {
+      light: {
         primary: {
-            50: '#faf8f6',
-            100: '#f4efe9',
-            200: '#e8ddd2',
-            300: '#d4c4b0',
-            400: '#bda388',
-            500: '#8B4513',
-            600: '#7a3c11',
-            700: '#6B3410',
-            800: '#5a2d0e',
-            900: '#4b250c',
-            950: '#3d1e0a'
+          color: '#8B4513',
+          contrastColor: '#ffffff',
+          hoverColor: '#A0522D',
+          activeColor: '#6B3410',
         },
-        colorScheme: {
-            light: {
-                primary: {
-                    color: '#8B4513',
-                    contrastColor: '#ffffff',
-                    hoverColor: '#A0522D',
-                    activeColor: '#6B3410'
-                },
-                surface: {
-                    0: '#ffffff',
-                    50: '#f9f7f5',
-                    100: '#f4efe9',
-                    200: '#e4e1de',
-                    300: '#d4c4b0',
-                    400: '#bda388',
-                    500: '#8B4513',
-                    600: '#7a3c11',
-                    700: '#6B3410',
-                    800: '#5a2d0e',
-                    900: '#4b3832',
-                    950: '#3d1e0a'
-                }
-            }
-        }
-    }
+        surface: {
+          0: '#ffffff',
+          50: '#f9f7f5',
+          100: '#f4efe9',
+          200: '#e4e1de',
+          300: '#d4c4b0',
+          400: '#bda388',
+          500: '#8B4513',
+          600: '#7a3c11',
+          700: '#6B3410',
+          800: '#5a2d0e',
+          900: '#4b3832',
+          950: '#3d1e0a',
+        },
+      },
+    },
+  },
 })
 
 const app = createApp(App)
@@ -72,13 +72,13 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(PrimeVue, {
-    theme: {
-        preset: PastryTheme,
-        options: {
-            darkModeSelector: false,
-            cssLayer: false
-        }
-    }
+  theme: {
+    preset: PastryTheme,
+    options: {
+      darkModeSelector: false,
+      cssLayer: false,
+    },
+  },
 })
 app.use(ToastService)
 

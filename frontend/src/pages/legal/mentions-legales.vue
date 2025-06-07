@@ -2,7 +2,7 @@
   <div class="surface-ground">
     <div class="surface-section border-round-xl m-4 p-4">
       <h1 class="text-4xl font-bold mb-4 text-primary">Mentions Légales</h1>
-      
+
       <div class="mb-4">
         <h2 class="text-2xl font-bold mb-2">Éditeur du site</h2>
         <p>PanthéOnze SARL</p>
@@ -30,4 +30,4 @@
       </div>
     </div>
   </div>
-</template> 
+</template>

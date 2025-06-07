@@ -4,33 +4,33 @@ const seasonalProducts = [
     name: 'Galette des Rois',
     price: '22.00',
     image: '/galette.jpg',
-    description: 'Parfaite pour célébrer l\'Épiphanie'
+    description: "Parfaite pour célébrer l'Épiphanie",
   },
   {
     name: 'Bûche de Noël',
     price: '28.00',
     image: '/buche.jpg',
-    description: 'Notre spécialité des fêtes'
+    description: 'Notre spécialité des fêtes',
   },
   {
     name: 'Tarte aux Fraises',
     price: '24.00',
     image: '/tarte-fraises.jpg',
-    description: 'Fraises fraîches de saison'
-  }
+    description: 'Fraises fraîches de saison',
+  },
 ]
 
 const categories = [
   { name: 'Gâteaux', icon: 'pi pi-star', count: '25' },
   { name: 'Macarons', icon: 'pi pi-circle-fill', count: '15' },
   { name: 'Viennoiseries', icon: 'pi pi-moon', count: '20' },
-  { name: 'Tartes', icon: 'pi pi-heart', count: '18' }
+  { name: 'Tartes', icon: 'pi pi-heart', count: '18' },
 ]
 
 const trending = [
   { name: 'Éclair Chocolat', price: '4.50', tag: 'Nouveau' },
   { name: 'Croissant Amandes', price: '3.80', tag: 'Populaire' },
-  { name: 'Paris-Brest', price: '5.20', tag: 'Classique' }
+  { name: 'Paris-Brest', price: '5.20', tag: 'Classique' },
 ]
 
 const testimonials = [
@@ -38,31 +38,46 @@ const testimonials = [
     name: 'Marie L.',
     comment: 'Les meilleurs macarons de Paris !',
     rating: 5,
-    date: '15/03/2024'
+    date: '15/03/2024',
   },
   {
     name: 'Pierre D.',
     comment: 'Service impeccable et pâtisseries divines.',
     rating: 5,
-    date: '12/03/2024'
+    date: '12/03/2024',
   },
   {
     name: 'Sophie M.',
     comment: 'Un vrai délice, je recommande vivement.',
     rating: 5,
-    date: '10/03/2024'
-  }
+    date: '10/03/2024',
+  },
 ]
 
 const dietaryOptions = [
-  { label: 'Sans Gluten', icon: 'pi pi-check-circle', description: 'Délices adaptés' },
-  { label: 'Vegan', icon: 'pi pi-heart-fill', description: 'Sans produits animaux' },
-  { label: 'Sans Sucre', icon: 'pi pi-star', description: 'Alternatives saines' }
+  {
+    label: 'Sans Gluten',
+    icon: 'pi pi-check-circle',
+    description: 'Délices adaptés',
+  },
+  {
+    label: 'Vegan',
+    icon: 'pi pi-heart-fill',
+    description: 'Sans produits animaux',
+  },
+  {
+    label: 'Sans Sucre',
+    icon: 'pi pi-star',
+    description: 'Alternatives saines',
+  },
 ]
 </script>
 
 <template>
-  <Button label="Click" severity="secondary"/>
+  <Button
+    label="Click"
+    severity="secondary"
+  />
   <!-- <div class="surface-ground">
     <div class="relative overflow-hidden mb-8">
       <div class="bg-primary-800 text-white">

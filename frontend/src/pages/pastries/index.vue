@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
+import { useToast } from 'primevue/usetoast'
+import { ProductCard } from '@/components'
+
+const toast = useToast()
 
 // Types
 interface Filter {
@@ -24,15 +28,21 @@ const filters = ref<Filter>({
   priceRange: [0, 100],
   season: '',
   region: '',
-  availability: true
+  availability: true,
 })
 
 // Options de filtres
 const filterOptions = {
-  categories: ['Gâteaux', 'Tartes', 'Macarons', 'Viennoiseries', 'Pièces montées'],
+  categories: [
+    'Gâteaux',
+    'Tartes',
+    'Macarons',
+    'Viennoiseries',
+    'Pièces montées',
+  ],
   diets: ['Végétarien', 'Vegan', 'Sans gluten', 'Sans lactose'],
   seasons: ['Printemps', 'Été', 'Automne', 'Hiver'],
-  regions: ['Paris', 'Lyon', 'Bordeaux', 'Marseille']
+  regions: ['Paris', 'Lyon', 'Bordeaux', 'Marseille'],
 }
 
 // Options de tri
@@ -41,30 +51,79 @@ const sortOptions = [
   { value: 'price-asc', label: 'Prix croissant' },
   { value: 'price-desc', label: 'Prix décroissant' },
   { value: 'newest', label: 'Nouveautés' },
-  { value: 'rating', label: 'Meilleures notes' }
+  { value: 'rating', label: 'Meilleures notes' },
 ]
+
+const products = ref([
+  {
+    id: 1,
+    name: 'Éclair au Chocolat',
+    price: 4.5,
+    tag: 'Populaire',
+  },
+  {
+    id: 2,
+    name: 'Paris-Brest',
+    price: 5.0,
+  },
+  {
+    id: 3,
+    name: 'Mille-feuille',
+    price: 4.8,
+    tag: 'Nouveau',
+  },
+  {
+    id: 4,
+    name: 'Tarte aux Fraises',
+    price: 6.5,
+  },
+])
+
+const handleAddToCart = ({
+  productId,
+  quantity,
+}: {
+  productId: number
+  quantity: number
+}) => {
+  const product = products.value.find((p) => p.id === productId)
+  if (product) {
+    toast.add({
+      severity: 'success',
+      summary: 'Produit ajouté',
+      detail: `${quantity} × ${product.name} ajouté(s) au panier`,
+      life: 3000,
+    })
+  }
+}
 </script>
 
 <template>
-  <div class="max-w-screen-xl mx-auto p-4">
+  <div>
     <!-- En-tête avec recherche et contrôles -->
-    <div class="flex flex-column md:flex-row justify-content-between align-items-center mb-4">
+    <div
+      class="flex flex-column md:flex-row justify-content-between align-items-center mb-4"
+    >
       <h1 class="text-4xl font-bold mb-3 md:mb-0">Nos Pâtisseries</h1>
-      
+
       <div class="flex gap-3 align-items-center">
         <span class="p-input-icon-left flex-grow-1">
           <i class="pi pi-search" />
-          <InputText v-model="searchQuery" placeholder="Rechercher..." class="w-full" />
+          <InputText
+            v-model="searchQuery"
+            placeholder="Rechercher..."
+            class="w-full"
+          />
         </span>
-        
+
         <div class="flex gap-2">
-          <Button 
-            icon="pi pi-th-large" 
+          <Button
+            icon="pi pi-th-large"
             :severity="viewMode === 'grid' ? 'primary' : 'secondary'"
             @click="viewMode = 'grid'"
           />
-          <Button 
-            icon="pi pi-list" 
+          <Button
+            icon="pi pi-list"
             :severity="viewMode === 'list' ? 'primary' : 'secondary'"
             @click="viewMode = 'list'"
           />
@@ -76,18 +135,29 @@ const sortOptions = [
     <div class="grid">
       <!-- Sidebar filtres -->
       <div class="col-12 md:col-3">
-        <Panel header="Filtres" class="mb-3">
+        <Panel
+          header="Filtres"
+          class="mb-3"
+        >
           <!-- Catégories -->
           <div class="mb-4">
             <h3 class="text-xl mb-2">Catégories</h3>
             <div class="flex flex-column gap-2">
-              <div v-for="category in filterOptions.categories" :key="category" class="flex align-items-center">
-                <Checkbox 
-                  v-model="filters.categories" 
-                  :value="category" 
+              <div
+                v-for="category in filterOptions.categories"
+                :key="category"
+                class="flex align-items-center"
+              >
+                <Checkbox
+                  v-model="filters.categories"
+                  :value="category"
                   :inputId="category"
                 />
-                <label :for="category" class="ml-2">{{ category }}</label>
+                <label
+                  :for="category"
+                  class="ml-2"
+                  >{{ category }}</label
+                >
               </div>
             </div>
           </div>
@@ -96,13 +166,21 @@ const sortOptions = [
           <div class="mb-4">
             <h3 class="text-xl mb-2">Régimes alimentaires</h3>
             <div class="flex flex-column gap-2">
-              <div v-for="diet in filterOptions.diets" :key="diet" class="flex align-items-center">
-                <Checkbox 
-                  v-model="filters.diets" 
-                  :value="diet" 
+              <div
+                v-for="diet in filterOptions.diets"
+                :key="diet"
+                class="flex align-items-center"
+              >
+                <Checkbox
+                  v-model="filters.diets"
+                  :value="diet"
                   :inputId="diet"
                 />
-                <label :for="diet" class="ml-2">{{ diet }}</label>
+                <label
+                  :for="diet"
+                  class="ml-2"
+                  >{{ diet }}</label
+                >
               </div>
             </div>
           </div>
@@ -110,7 +188,11 @@ const sortOptions = [
           <!-- Prix -->
           <div class="mb-4">
             <h3 class="text-xl mb-2">Prix</h3>
-            <Slider v-model="filters.priceRange" range class="mt-3" />
+            <Slider
+              v-model="filters.priceRange"
+              range
+              class="mt-3"
+            />
             <div class="flex justify-content-between mt-2">
               <span>{{ filters.priceRange[0] }}€</span>
               <span>{{ filters.priceRange[1] }}€</span>
@@ -147,7 +229,11 @@ const sortOptions = [
                 inputId="availability"
                 binary
               />
-              <label for="availability" class="ml-2">En stock uniquement</label>
+              <label
+                for="availability"
+                class="ml-2"
+                >En stock uniquement</label
+              >
             </div>
           </div>
         </Panel>
@@ -172,14 +258,23 @@ const sortOptions = [
         </div>
 
         <!-- Grille/Liste des produits -->
-        <div :class="{'grid': viewMode === 'grid'}">
+        <div :class="{ grid: viewMode === 'grid' }">
           <!-- Placeholder pour les produits -->
-          <div v-for="i in 12" :key="i" :class="{'col-12 md:col-4': viewMode === 'grid'}">
-            <div class="surface-card p-4 border-round mb-4">
+          <div
+            v-for="product in products"
+            :key="product.id"
+            :class="{ 'col-12 md:col-4': viewMode === 'grid' }"
+          >
+            <ProductCard
+              :product="product"
+              @add-to-cart="handleAddToCart"
+              class="h-full"
+            />
+            <!-- <div class="surface-card p-4 border-round mb-4">
               <div class="w-full h-15rem bg-primary-100 border-round mb-3"></div>
               <div class="animate-pulse bg-primary-100 w-8 h-2rem mb-2"></div>
               <div class="animate-pulse bg-primary-50 w-4 h-1rem"></div>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -193,4 +288,4 @@ const sortOptions = [
       </div>
     </div>
   </div>
-</template> 
+</template>

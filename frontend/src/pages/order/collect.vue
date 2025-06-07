@@ -18,12 +18,14 @@ const timeSlots = computed(() => {
   const day = selectedDate.value.getDay()
 
   // Horaires selon le jour
-  if (day === 0) { // Dimanche
+  if (day === 0) {
+    // Dimanche
     for (let hour = 8; hour <= 12; hour++) {
       slots.push(`${hour}:00`)
       if (hour < 12) slots.push(`${hour}:30`)
     }
-  } else { // Lundi-Samedi
+  } else {
+    // Lundi-Samedi
     for (let hour = 7; hour <= 19; hour++) {
       slots.push(`${hour}:00`)
       slots.push(`${hour}:30`)
@@ -42,8 +44,8 @@ const storeInfo = {
   phone: '01 23 45 67 89',
   coordinates: {
     lat: 48.8566,
-    lng: 2.3522
-  }
+    lng: 2.3522,
+  },
 }
 
 // Configuration du calendrier
@@ -57,15 +59,16 @@ maxDate.setDate(today.getDate() + 14) // Jusqu'à 2 semaines à l'avance
 // Jours de fermeture (exemple)
 const invalidDates = [
   new Date(2024, 2, 25), // 25 mars 2024
-  new Date(2024, 3, 1)   // 1er avril 2024
+  new Date(2024, 3, 1), // 1er avril 2024
 ]
 
 const isDateValid = (date: Date) => {
   // Vérifie si la date n'est pas dans les jours de fermeture
-  return !invalidDates.some(invalid =>
-    invalid.getDate() === date.getDate() &&
-    invalid.getMonth() === date.getMonth() &&
-    invalid.getYear() === date.getYear()
+  return !invalidDates.some(
+    (invalid) =>
+      invalid.getDate() === date.getDate() &&
+      invalid.getMonth() === date.getMonth() &&
+      invalid.getYear() === date.getYear(),
   )
 }
 
@@ -75,14 +78,17 @@ const handleSubmit = async () => {
   loading.value = true
   try {
     // Simulation d'une requête API
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
     // Sauvegarde des informations de retrait
-    localStorage.setItem('pickupInfo', JSON.stringify({
-      date: selectedDate.value,
-      timeSlot: selectedTimeSlot.value,
-      specialInstructions: specialInstructions.value
-    }))
+    localStorage.setItem(
+      'pickupInfo',
+      JSON.stringify({
+        date: selectedDate.value,
+        timeSlot: selectedTimeSlot.value,
+        specialInstructions: specialInstructions.value,
+      }),
+    )
 
     // Navigation vers l'étape suivante
     router.push('/commande/recap')
@@ -97,13 +103,21 @@ const handleSubmit = async () => {
 <template>
   <div class="max-w-screen-lg mx-auto p-4">
     <div class="surface-card p-4 border-round">
-      <h1 class="text-4xl font-bold text-center mb-6">Choisir votre créneau de retrait</h1>
+      <h1 class="text-4xl font-bold text-center mb-6">
+        Choisir votre créneau de retrait
+      </h1>
 
-      <form @submit.prevent="handleSubmit" class="flex flex-column gap-4">
+      <form
+        @submit.prevent="handleSubmit"
+        class="flex flex-column gap-4"
+      >
         <div class="grid">
           <!-- Sélection de la date -->
           <div class="col-12 md:col-6">
-            <Panel header="Date de retrait" class="h-full">
+            <Panel
+              header="Date de retrait"
+              class="h-full"
+            >
               <Calendar
                 v-model="selectedDate"
                 :minDate="minDate"
@@ -124,14 +138,24 @@ const handleSubmit = async () => {
 
           <!-- Sélection du créneau -->
           <div class="col-12 md:col-6">
-            <Panel header="Créneau horaire" class="h-full">
-              <div v-if="selectedDate" class="grid">
-                <div v-for="slot in timeSlots" :key="slot" class="col-6">
+            <Panel
+              header="Créneau horaire"
+              class="h-full"
+            >
+              <div
+                v-if="selectedDate"
+                class="grid"
+              >
+                <div
+                  v-for="slot in timeSlots"
+                  :key="slot"
+                  class="col-6"
+                >
                   <div
                     class="p-3 border-round cursor-pointer text-center mb-2"
                     :class="{
                       'surface-hover': selectedTimeSlot !== slot,
-                      'bg-primary text-white': selectedTimeSlot === slot
+                      'bg-primary text-white': selectedTimeSlot === slot,
                     }"
                     @click="selectedTimeSlot = slot"
                   >
@@ -139,7 +163,10 @@ const handleSubmit = async () => {
                   </div>
                 </div>
               </div>
-              <div v-else class="text-500 text-center p-4">
+              <div
+                v-else
+                class="text-500 text-center p-4"
+              >
                 Veuillez d'abord sélectionner une date
               </div>
             </Panel>
@@ -164,7 +191,9 @@ const handleSubmit = async () => {
                 <div class="col-12 md:col-6">
                   <h3 class="text-xl mb-3">{{ storeInfo.name }}</h3>
                   <p class="mb-2">{{ storeInfo.address }}</p>
-                  <p class="mb-2">{{ storeInfo.postalCode }} {{ storeInfo.city }}</p>
+                  <p class="mb-2">
+                    {{ storeInfo.postalCode }} {{ storeInfo.city }}
+                  </p>
                   <p class="mb-3">
                     <i class="pi pi-phone mr-2"></i>
                     {{ storeInfo.phone }}
@@ -180,7 +209,9 @@ const handleSubmit = async () => {
 
                 <div class="col-12 md:col-6">
                   <!-- Placeholder pour la carte -->
-                  <div class="w-full h-15rem bg-primary-50 border-round flex align-items-center justify-content-center">
+                  <div
+                    class="w-full h-15rem bg-primary-50 border-round flex align-items-center justify-content-center"
+                  >
                     <i class="pi pi-map-marker text-4xl text-primary"></i>
                   </div>
                 </div>
@@ -209,4 +240,4 @@ const handleSubmit = async () => {
       </form>
     </div>
   </div>
-</template> 
+</template>

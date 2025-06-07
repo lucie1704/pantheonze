@@ -3,7 +3,9 @@
 
 /* Essential styles that can't be handled by PrimeFlex */
 :root {
-  --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-family:
+    'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
 }
 
 body {
@@ -15,7 +17,12 @@ body {
 }
 
 /* Typography scale */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-family);
   font-weight: 600;
   line-height: 1.2;
@@ -40,4 +47,4 @@ h4 {
 p {
   font-size: 1rem;
   line-height: 1.6;
-} 
+}
