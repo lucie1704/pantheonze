@@ -161,13 +161,7 @@ const userMenuItems = [
 
     <!-- Main Content -->
     <main class="w-full md:w-9 flex-1 mx-auto">
-      <slot></slot>feiuhfizhi test
-      <div
-        class="flex flex-column gap-2"
-        key="test"
-      >
-        zuhzierurhfezyfg
-      </div>
+      <slot></slot>
     </main>
 
     <!-- Footer -->
