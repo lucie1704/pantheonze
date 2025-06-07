@@ -2,8 +2,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import Card from 'primevue/card'
-import TabView from 'primevue/tabview'
-import TabPanel from 'primevue/tabpanel'
+
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
@@ -179,15 +178,28 @@ const handleForgotPassword = () => {
       </template>
 
       <template #content>
-        <TabView
-          v-model:activeIndex="activeTab"
-          class="w-full"
-        >
-          <TabPanel
-            header="Connexion"
-            :value="0"
-            class="w-6"
+        <!-- Onglets personnalisés -->
+        <div class="flex gap-2 mb-4">
+          <Button
+            @click="activeTab = 0"
+            :text="activeTab !== 0"
+            class="flex-1"
           >
+            Connexion
+          </Button>
+          <Button
+            @click="activeTab = 1"
+            :text="activeTab !== 1"
+            class="flex-1"
+          >
+            Inscription
+          </Button>
+        </div>
+
+        <!-- Contenu des onglets -->
+        <div class="mt-4">
+          <!-- Formulaire de connexion -->
+          <div v-if="activeTab === 0">
             <form
               @submit.prevent="handleLogin"
               class="flex flex-column gap-3"
@@ -204,8 +216,9 @@ const handleForgotPassword = () => {
                 <small
                   class="p-error"
                   v-if="loginForm.errors.email"
-                  >{{ loginForm.errors.email }}</small
                 >
+                  {{ loginForm.errors.email }}
+                </small>
               </div>
 
               <div class="flex flex-column gap-2">
@@ -214,36 +227,31 @@ const handleForgotPassword = () => {
                   id="login-password"
                   v-model="loginForm.password"
                   :feedback="false"
-                  :class="{ 'p-invalid': loginForm.errors.password }"
                   :toggleMask="true"
+                  :class="{ 'p-invalid': loginForm.errors.password }"
                   placeholder="Votre mot de passe"
+                  inputClass="w-full"
                 />
                 <small
                   class="p-error"
                   v-if="loginForm.errors.password"
-                  >{{ loginForm.errors.password }}</small
                 >
+                  {{ loginForm.errors.password }}
+                </small>
               </div>
 
-              <div class="flex align-items-center justify-content-between">
-                <div class="flex align-items-center">
-                  <Checkbox
-                    v-model="loginForm.rememberMe"
-                    :binary="true"
-                    id="rememberMe"
-                  />
-                  <label
-                    for="rememberMe"
-                    class="ml-2"
-                    >Se souvenir de moi</label
-                  >
-                </div>
-                <Button
-                  label="Mot de passe oublié ?"
-                  link
-                  class="p-0"
-                  @click="handleForgotPassword"
+              <div class="flex align-items-center">
+                <Checkbox
+                  v-model="loginForm.rememberMe"
+                  :binary="true"
+                  id="rememberMe"
                 />
+                <label
+                  for="rememberMe"
+                  class="ml-2"
+                >
+                  Se souvenir de moi
+                </label>
               </div>
 
               <Button
@@ -253,14 +261,16 @@ const handleForgotPassword = () => {
                 :loading="loading"
                 class="mt-2"
               />
+              <Button
+                label="Mot de passe oublié ?"
+                link
+                @click="handleForgotPassword"
+              />
             </form>
-          </TabPanel>
+          </div>
 
-          <TabPanel
-            header="Inscription"
-            :value="1"
-            class="w-6"
-          >
+          <!-- Formulaire d'inscription -->
+          <div v-if="activeTab === 1">
             <form
               @submit.prevent="handleRegister"
               class="flex flex-column gap-3"
@@ -278,8 +288,9 @@ const handleForgotPassword = () => {
                     <small
                       class="p-error"
                       v-if="registerForm.errors.firstName"
-                      >{{ registerForm.errors.firstName }}</small
                     >
+                      {{ registerForm.errors.firstName }}
+                    </small>
                   </div>
                 </div>
 
@@ -295,8 +306,9 @@ const handleForgotPassword = () => {
                     <small
                       class="p-error"
                       v-if="registerForm.errors.lastName"
-                      >{{ registerForm.errors.lastName }}</small
                     >
+                      {{ registerForm.errors.lastName }}
+                    </small>
                   </div>
                 </div>
               </div>
@@ -313,8 +325,9 @@ const handleForgotPassword = () => {
                 <small
                   class="p-error"
                   v-if="registerForm.errors.email"
-                  >{{ registerForm.errors.email }}</small
                 >
+                  {{ registerForm.errors.email }}
+                </small>
               </div>
 
               <div class="flex flex-column gap-2">
@@ -322,14 +335,17 @@ const handleForgotPassword = () => {
                 <Password
                   id="register-password"
                   v-model="registerForm.password"
+                  :toggleMask="true"
                   :class="{ 'p-invalid': registerForm.errors.password }"
                   placeholder="Minimum 8 caractères"
+                  inputClass="w-full"
                 />
                 <small
                   class="p-error"
                   v-if="registerForm.errors.password"
-                  >{{ registerForm.errors.password }}</small
                 >
+                  {{ registerForm.errors.password }}
+                </small>
               </div>
 
               <div class="flex flex-column gap-2">
@@ -338,15 +354,17 @@ const handleForgotPassword = () => {
                   id="confirm-password"
                   v-model="registerForm.confirmPassword"
                   :feedback="false"
-                  :class="{ 'p-invalid': registerForm.errors.confirmPassword }"
                   :toggleMask="true"
+                  :class="{ 'p-invalid': registerForm.errors.confirmPassword }"
                   placeholder="Confirmez votre mot de passe"
+                  inputClass="w-full"
                 />
                 <small
                   class="p-error"
                   v-if="registerForm.errors.confirmPassword"
-                  >{{ registerForm.errors.confirmPassword }}</small
                 >
+                  {{ registerForm.errors.confirmPassword }}
+                </small>
               </div>
 
               <div class="flex align-items-center gap-2">
@@ -372,8 +390,8 @@ const handleForgotPassword = () => {
                 class="mt-2"
               />
             </form>
-          </TabPanel>
-        </TabView>
+          </div>
+        </div>
       </template>
     </Card>
   </div>
