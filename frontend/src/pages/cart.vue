@@ -31,10 +31,7 @@ const promoDiscount = ref(0)
 
 // Calculs
 const subtotal = computed(() => {
-  return cartItems.value.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  )
+  return cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0)
 })
 
 const preparationFees = computed(() => {
@@ -86,9 +83,7 @@ const proceedToCheckout = () => {
       <div class="col-12 lg:col-8">
         <div class="surface-card p-4 border-round mb-4">
           <!-- En-tête -->
-          <div
-            class="flex justify-content-between border-bottom-1 surface-border pb-3 mb-3"
-          >
+          <div class="flex justify-content-between border-bottom-1 surface-border pb-3 mb-3">
             <span class="font-bold">Produit</span>
             <div class="flex gap-4">
               <span class="font-bold">Quantité</span>
@@ -194,9 +189,7 @@ const proceedToCheckout = () => {
             <span>-{{ promoDiscount.toFixed(2) }}€</span>
           </div>
 
-          <div
-            class="flex justify-content-between font-bold text-xl border-top-1 surface-border pt-3"
-          >
+          <div class="flex justify-content-between font-bold text-xl border-top-1 surface-border pt-3">
             <span>Total</span>
             <span>{{ total.toFixed(2) }}€</span>
           </div>

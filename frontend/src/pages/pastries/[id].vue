@@ -30,8 +30,7 @@ const images = [
 const product = {
   name: 'Paris-Brest Traditionnel',
   price: 24.9,
-  description:
-    "Notre Paris-Brest traditionnel, garni d'une délicieuse crème pralinée et parsemé d'amandes effilées.",
+  description: "Notre Paris-Brest traditionnel, garni d'une délicieuse crème pralinée et parsemé d'amandes effilées.",
   ingredients: [
     { name: 'Farine', allergen: false },
     { name: 'Œufs', allergen: true },
@@ -186,9 +185,7 @@ const addToCart = () => {
             :severity="product.availability ? 'success' : 'danger'"
             :value="product.availability ? 'En stock' : 'Indisponible'"
           />
-          <small class="block mt-2"
-            >Délai de préparation : {{ product.preparation }}</small
-          >
+          <small class="block mt-2">Délai de préparation : {{ product.preparation }}</small>
         </div>
       </div>
     </div>

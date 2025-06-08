@@ -103,9 +103,7 @@ const handleSubmit = async () => {
 <template>
   <div class="max-w-screen-lg mx-auto p-4">
     <div class="surface-card p-4 border-round">
-      <h1 class="text-4xl font-bold text-center mb-6">
-        Choisir votre créneau de retrait
-      </h1>
+      <h1 class="text-4xl font-bold text-center mb-6">Choisir votre créneau de retrait</h1>
 
       <form
         @submit.prevent="handleSubmit"
@@ -191,9 +189,7 @@ const handleSubmit = async () => {
                 <div class="col-12 md:col-6">
                   <h3 class="text-xl mb-3">{{ storeInfo.name }}</h3>
                   <p class="mb-2">{{ storeInfo.address }}</p>
-                  <p class="mb-2">
-                    {{ storeInfo.postalCode }} {{ storeInfo.city }}
-                  </p>
+                  <p class="mb-2">{{ storeInfo.postalCode }} {{ storeInfo.city }}</p>
                   <p class="mb-3">
                     <i class="pi pi-phone mr-2"></i>
                     {{ storeInfo.phone }}
@@ -209,9 +205,7 @@ const handleSubmit = async () => {
 
                 <div class="col-12 md:col-6">
                   <!-- Placeholder pour la carte -->
-                  <div
-                    class="w-full h-15rem bg-primary-50 border-round flex align-items-center justify-content-center"
-                  >
+                  <div class="w-full h-15rem bg-primary-50 border-round flex align-items-center justify-content-center">
                     <i class="pi pi-map-marker text-4xl text-primary"></i>
                   </div>
                 </div>

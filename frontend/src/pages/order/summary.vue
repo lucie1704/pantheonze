@@ -23,10 +23,7 @@ onMounted(() => {
 
 // Calculs
 const subtotal = computed(() => {
-  return cart.value.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  )
+  return cart.value.reduce((total, item) => total + item.price * item.quantity, 0)
 })
 
 const preparationFees = computed(() => {
@@ -56,9 +53,7 @@ const handleSubmit = async () => {
 <template>
   <div class="max-w-screen-lg mx-auto p-4">
     <div class="surface-card p-4 border-round">
-      <h1 class="text-4xl font-bold text-center mb-6">
-        Récapitulatif de votre commande
-      </h1>
+      <h1 class="text-4xl font-bold text-center mb-6">Récapitulatif de votre commande</h1>
 
       <div class="grid">
         <!-- Détails de la commande -->
@@ -90,9 +85,7 @@ const handleSubmit = async () => {
               </div>
               <div class="text-right">
                 <div class="mb-2">{{ item.quantity }}x</div>
-                <div class="font-bold">
-                  {{ (item.price * item.quantity).toFixed(2) }}€
-                </div>
+                <div class="font-bold">{{ (item.price * item.quantity).toFixed(2) }}€</div>
               </div>
             </div>
           </Panel>
@@ -172,9 +165,7 @@ const handleSubmit = async () => {
               <span>{{ preparationFees.toFixed(2) }}€</span>
             </div>
 
-            <div
-              class="flex justify-content-between font-bold text-xl border-top-1 surface-border pt-3"
-            >
+            <div class="flex justify-content-between font-bold text-xl border-top-1 surface-border pt-3">
               <span>Total</span>
               <span>{{ total.toFixed(2) }}€</span>
             </div>
@@ -215,9 +206,7 @@ const handleSubmit = async () => {
       </div>
 
       <!-- Boutons de navigation -->
-      <div
-        class="flex justify-content-between mt-4 pt-4 border-top-1 surface-border"
-      >
+      <div class="flex justify-content-between mt-4 pt-4 border-top-1 surface-border">
         <Button
           label="Retour"
           icon="pi pi-arrow-left"

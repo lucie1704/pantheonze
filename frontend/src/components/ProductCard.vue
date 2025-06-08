@@ -38,7 +38,9 @@ const incrementQuantity = () => {
 </script>
 
 <template>
-  <div class="surface-card border-round-xl overflow-hidden flex flex-column min-h-25rem h-full min-w-16rem flex-shrink-0">
+  <div
+    class="surface-card border-round-xl overflow-hidden flex flex-column min-h-25rem h-full min-w-16rem flex-shrink-0"
+  >
     <!-- Image ou Fallback -->
     <div class="p-3 pb-0">
       <div
@@ -78,10 +80,12 @@ const incrementQuantity = () => {
       <!-- Quantité, Prix et Bouton -->
       <div class="mt-3">
         <div class="mb-2 text-right">
-          <span class="text-primary font-medium text-xl">{{ product.price }}€</span>
+          <span class="text-primary font-medium text-xl">{{ product.price.toFixed(2).replace('.', ',') }}€</span>
         </div>
         <div class="flex gap-2">
-          <div class="quantity-control flex align-items-center justify-content-between border-1 surface-border border-round flex-1">
+          <div
+            class="quantity-control flex align-items-center justify-content-between border-1 surface-border border-round flex-1"
+          >
             <Button
               icon="pi pi-minus"
               text

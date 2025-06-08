@@ -29,10 +29,7 @@ onMounted(() => {
   const cartData = localStorage.getItem('cart')
   if (cartData) {
     cart.value = JSON.parse(cartData)
-    total.value = cart.value.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0,
-    )
+    total.value = cart.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
   }
 
   // Initialisation de Stripe (à implémenter)
@@ -161,9 +158,7 @@ const handlePayment = async () => {
             class="surface-ground p-4 border-round text-center"
           >
             <i class="pi pi-paypal text-4xl mb-3"></i>
-            <p>
-              Vous allez être redirigé vers PayPal pour finaliser votre paiement
-            </p>
+            <p>Vous allez être redirigé vers PayPal pour finaliser votre paiement</p>
           </div>
         </div>
 
@@ -188,9 +183,7 @@ const handlePayment = async () => {
             </div>
 
             <!-- Total -->
-            <div
-              class="flex justify-content-between font-bold text-xl border-top-1 surface-border pt-3"
-            >
+            <div class="flex justify-content-between font-bold text-xl border-top-1 surface-border pt-3">
               <span>Total</span>
               <span>{{ total.toFixed(2) }}€</span>
             </div>
@@ -205,9 +198,7 @@ const handlePayment = async () => {
             />
 
             <!-- Sécurité -->
-            <div
-              class="flex align-items-center justify-content-center gap-2 mt-4"
-            >
+            <div class="flex align-items-center justify-content-center gap-2 mt-4">
               <i class="pi pi-lock text-green-500"></i>
               <i class="pi pi-verified text-green-500"></i>
               <span class="text-500 text-sm">Paiement sécurisé</span>
@@ -217,9 +208,7 @@ const handlePayment = async () => {
       </div>
 
       <!-- Boutons de navigation -->
-      <div
-        class="flex justify-content-between mt-4 pt-4 border-top-1 surface-border"
-      >
+      <div class="flex justify-content-between mt-4 pt-4 border-top-1 surface-border">
         <Button
           label="Retour"
           icon="pi pi-arrow-left"

@@ -7,15 +7,13 @@
         <div class="col-12 md:col-6 mb-4">
           <div class="text-lg line-height-3">
             <p class="mb-4">
-              Fondée en 2020, PanthéOnze est née de la passion pour la
-              pâtisserie française traditionnelle et moderne. Notre équipe de
-              pâtissiers passionnés crée chaque jour des délices qui ravissent
-              les papilles de nos clients.
+              Fondée en 2020, PanthéOnze est née de la passion pour la pâtisserie française traditionnelle et moderne.
+              Notre équipe de pâtissiers passionnés crée chaque jour des délices qui ravissent les papilles de nos
+              clients.
             </p>
             <p class="mb-4">
-              Situés au cœur de Paris, nous mettons un point d'honneur à
-              sélectionner les meilleurs ingrédients et à travailler avec des
-              producteurs locaux pour vous offrir des pâtisseries d'exception.
+              Situés au cœur de Paris, nous mettons un point d'honneur à sélectionner les meilleurs ingrédients et à
+              travailler avec des producteurs locaux pour vous offrir des pâtisseries d'exception.
             </p>
           </div>
 

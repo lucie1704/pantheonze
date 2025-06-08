@@ -11,20 +11,14 @@
               <div class="flex align-items-center justify-content-between">
                 <div>
                   <h3 class="text-xl m-0 mb-1">Notifications par email</h3>
-                  <p class="text-500 m-0">
-                    Recevoir des emails pour les mises à jour de commande
-                  </p>
+                  <p class="text-500 m-0">Recevoir des emails pour les mises à jour de commande</p>
                 </div>
                 <InputSwitch v-model="settings.emailNotifications" />
               </div>
               <div class="flex align-items-center justify-content-between">
                 <div>
-                  <h3 class="text-xl m-0 mb-1">
-                    Notifications promotionnelles
-                  </h3>
-                  <p class="text-500 m-0">
-                    Recevoir des offres spéciales et promotions
-                  </p>
+                  <h3 class="text-xl m-0 mb-1">Notifications promotionnelles</h3>
+                  <p class="text-500 m-0">Recevoir des offres spéciales et promotions</p>
                 </div>
                 <InputSwitch v-model="settings.promoNotifications" />
               </div>

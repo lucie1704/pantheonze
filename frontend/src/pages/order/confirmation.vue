@@ -51,9 +51,7 @@ const returnToHome = () => {
       <div class="mb-6">
         <i class="pi pi-check-circle text-6xl text-green-500 mb-4"></i>
         <h1 class="text-4xl font-bold mb-3">Commande confirmée !</h1>
-        <p class="text-xl text-700">
-          Merci pour votre commande n°{{ orderNumber }}
-        </p>
+        <p class="text-xl text-700">Merci pour votre commande n°{{ orderNumber }}</p>
       </div>
 
       <!-- Email de confirmation -->
@@ -62,9 +60,7 @@ const returnToHome = () => {
           <i class="pi pi-envelope text-xl"></i>
           <div class="text-left">
             <p class="font-bold mb-1">Email de confirmation envoyé</p>
-            <p class="text-600 m-0">
-              Un récapitulatif a été envoyé à {{ customerInfo?.personal.email }}
-            </p>
+            <p class="text-600 m-0">Un récapitulatif a été envoyé à {{ customerInfo?.personal.email }}</p>
           </div>
         </div>
       </div>

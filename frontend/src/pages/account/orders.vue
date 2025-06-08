@@ -33,21 +33,15 @@
               >
                 <div class="flex justify-content-between align-items-center">
                   <div>
-                    <span class="font-bold text-xl block mb-2"
-                      >Commande #{{ order.id }}</span
-                    >
+                    <span class="font-bold text-xl block mb-2">Commande #{{ order.id }}</span>
                     <span class="text-500 block">{{ order.date }}</span>
                   </div>
                   <div class="text-right">
-                    <span class="font-bold text-xl block mb-2"
-                      >{{ order.total }}€</span
-                    >
+                    <span class="font-bold text-xl block mb-2">{{ order.total }}€</span>
                     <span
                       :class="[
                         'border-round-xl px-3 py-1',
-                        order.status === 'Livré'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-orange-100 text-orange-700',
+                        order.status === 'Livré' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700',
                       ]"
                     >
                       {{ order.status }}
