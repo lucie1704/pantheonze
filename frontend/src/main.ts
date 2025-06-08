@@ -15,7 +15,6 @@ import Button from 'primevue/button'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Dialog from 'primevue/dialog'
-import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
@@ -24,7 +23,6 @@ import Tooltip from 'primevue/tooltip'
 import App from './App.vue'
 import { router } from './router'
 import { definePreset } from '@primevue/themes'
-
 const PastryTheme = definePreset(Aura, {
   semantic: {
     primary: {
@@ -87,7 +85,6 @@ app.component('Button', Button)
 app.component('Card', Card)
 app.component('InputText', InputText)
 app.component('Dialog', Dialog)
-app.component('TabView', TabView)
 app.component('TabPanel', TabPanel)
 app.component('Password', Password)
 app.component('Checkbox', Checkbox)

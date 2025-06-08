@@ -48,3 +48,11 @@ p {
   font-size: 1rem;
   line-height: 1.6;
 }
+
+/* PrimeVue Input Placeholder Customization */
+.p-inputtext::placeholder,
+.p-password input::placeholder,
+.p-inputmask::placeholder,
+.p-textarea::placeholder {
+  opacity: 0.5 !important;
+}
