@@ -389,7 +389,7 @@ const handleForgotPassword = () => {
 </template>
 
 <style scoped>
-/* Styles pour que les onglets aient la même largeur */
+/* Styles pour que les onglets Connexion et Inscription aient la même largeur */
 :global(.p-tabs .p-tablist) {
   display: flex !important;
 }
