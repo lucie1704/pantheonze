@@ -3,7 +3,7 @@ import ShopLayout from './layouts/ShopLayout.vue'
 </script>
 
 <template>
-  <Toast />
+  <Toast position="bottom-right" />
   <ShopLayout>
     <router-view />
   </ShopLayout>

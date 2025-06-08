@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import InputNumber from 'primevue/inputnumber'
 import Tag from 'primevue/tag'
+import Button from 'primevue/button'
 
 const props = defineProps<{
   product: {
@@ -9,14 +9,7 @@ const props = defineProps<{
     name: string
     price: number
     image?: string
-    tag?: Array<
-      | 'Nouveau'
-      | 'Populaire'
-      | 'Vegan'
-      | 'Végétarien'
-      | 'Sans gluten'
-      | 'Sans lactose'
-    >
+    tag?: Array<'Nouveau' | 'Populaire' | 'Vegan' | 'Végétarien' | 'Sans gluten' | 'Sans lactose'>
   }
 }>()
 
@@ -32,10 +25,20 @@ const addToCart = () => {
     quantity: quantity.value,
   })
 }
+
+const decrementQuantity = () => {
+  if (quantity.value > 1) {
+    quantity.value--
+  }
+}
+
+const incrementQuantity = () => {
+  quantity.value++
+}
 </script>
 
 <template>
-  <div class="surface-card border-round-xl overflow-hidden">
+  <div class="surface-card border-round-xl overflow-hidden flex flex-column min-h-25rem h-full min-w-16rem flex-shrink-0">
     <!-- Image ou Fallback -->
     <div class="p-3 pb-0">
       <div
@@ -57,7 +60,7 @@ const addToCart = () => {
           class="absolute top-0 right-0 m-2"
         >
           <Tag
-            :value="product.tag"
+            :value="product.tag[0]"
             severity="warning"
           />
         </div>
@@ -65,43 +68,86 @@ const addToCart = () => {
     </div>
 
     <!-- Contenu -->
-    <div class="p-3">
-      <!-- Nom et Prix -->
-      <div class="flex justify-content-between align-items-center mb-3">
-        <h3 class="text-900 font-medium text-xl m-0">{{ product.name }}</h3>
-        <span class="text-primary font-medium text-xl"
-          >{{ product.price }}€</span
-        >
-      </div>
+    <div class="p-3 flex flex-column flex-1">
+      <!-- Nom -->
+      <h3 class="text-900 font-medium text-xl m-0 line-height-3">{{ product.name }}</h3>
 
-      <!-- Quantité et Bouton -->
-      <div>
-        <div>
-          <InputNumber
-            v-model="quantity"
-            :min="1"
-            showButtons
-            buttonLayout="horizontal"
-            :step="1"
-            class="w-full"
-            size="small"
-            decrementButtonClass="p-button-text p-button-sm"
-            incrementButtonClass="p-button-text p-button-sm"
-            incrementButtonIcon="pi pi-plus"
-            decrementButtonIcon="pi pi-minus"
-          />
+      <!-- Espace flexible -->
+      <div class="flex-1"></div>
+
+      <!-- Quantité, Prix et Bouton -->
+      <div class="mt-3">
+        <div class="mb-2 text-right">
+          <span class="text-primary font-medium text-xl">{{ product.price }}€</span>
         </div>
-        <div>
+        <div class="flex gap-2">
+          <div class="quantity-control flex align-items-center justify-content-between border-1 surface-border border-round flex-1">
+            <Button
+              icon="pi pi-minus"
+              text
+              @click="decrementQuantity"
+              :disabled="quantity <= 1"
+              class="quantity-button flex-none"
+            />
+            <input
+              type="number"
+              v-model="quantity"
+              min="1"
+              class="quantity-input flex-none"
+            />
+            <Button
+              icon="pi pi-plus"
+              text
+              @click="incrementQuantity"
+              class="quantity-button flex-none"
+            />
+          </div>
           <Button
-            class="w-full"
+            class="flex-1"
             severity="primary"
             @click="addToCart"
+            v-tooltip="'Ajouter au panier'"
           >
-            <i class="pi pi-shopping-cart mr-2"></i>
-            Ajouter
+            <i class="pi pi-shopping-cart"></i>
           </Button>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 8rem;
+}
+
+.quantity-button {
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  flex: none;
+}
+
+.quantity-input {
+  width: 2rem;
+  border: none;
+  text-align: center;
+  background: transparent;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  -moz-appearance: textfield;
+  flex: none;
+}
+
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.quantity-input:focus {
+  outline: none;
+}
+</style>

@@ -5,6 +5,8 @@ import { ProductCard } from '@/components'
 
 const toast = useToast()
 
+type ProductTag = 'Nouveau' | 'Populaire' | 'Vegan' | 'Végétarien' | 'Sans gluten' | 'Sans lactose'
+
 // Types
 interface Filter {
   categories: string[]
@@ -59,23 +61,23 @@ const products = ref([
     id: 1,
     name: 'Éclair au Chocolat',
     price: 4.5,
-    tag: 'Populaire',
+    tag: ['Populaire' as ProductTag]
   },
   {
     id: 2,
     name: 'Paris-Brest',
-    price: 5.0,
+    price: 5.0
   },
   {
     id: 3,
     name: 'Mille-feuille',
     price: 4.8,
-    tag: 'Nouveau',
+    tag: ['Nouveau' as ProductTag]
   },
   {
     id: 4,
     name: 'Tarte aux Fraises',
-    price: 6.5,
+    price: 6.5
   },
 ])
 
@@ -257,24 +259,18 @@ const handleAddToCart = ({
           />
         </div>
 
-        <!-- Grille/Liste des produits -->
-        <div :class="{ grid: viewMode === 'grid' }">
-          <!-- Placeholder pour les produits -->
+        <!-- Grille des produits -->
+        <div class="grid">
           <div
             v-for="product in products"
             :key="product.id"
-            :class="{ 'col-12 md:col-4': viewMode === 'grid' }"
+            class="col-12 md:col-6 xl:col-4"
           >
             <ProductCard
               :product="product"
               @add-to-cart="handleAddToCart"
               class="h-full"
             />
-            <!-- <div class="surface-card p-4 border-round mb-4">
-              <div class="w-full h-15rem bg-primary-100 border-round mb-3"></div>
-              <div class="animate-pulse bg-primary-100 w-8 h-2rem mb-2"></div>
-              <div class="animate-pulse bg-primary-50 w-4 h-1rem"></div>
-            </div> -->
           </div>
         </div>
 
