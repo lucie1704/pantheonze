@@ -4,6 +4,7 @@ import { useToast } from 'primevue/usetoast'
 import { ProductCard } from '@/components'
 import Sidebar from 'primevue/sidebar'
 import FiltersPanel from '@/components/FiltersPanel.vue'
+import Paginator from 'primevue/paginator'
 
 const toast = useToast()
 const showFilters = ref(false)
@@ -15,8 +16,8 @@ interface Filter {
   categories: string[]
   diets: string[]
   priceRange: [number, number]
-  season: string
-  region: string
+  season: string[]
+  region: string[]
   availability: boolean
 }
 
@@ -30,8 +31,8 @@ const filters = ref<Filter>({
   categories: [],
   diets: [],
   priceRange: [0, 100],
-  season: '',
-  region: '',
+  season: [],
+  region: [],
   availability: true,
 })
 
@@ -58,27 +59,37 @@ const products = ref([
     name: 'Éclair au Chocolat',
     price: 4.5,
     tag: ['Populaire' as ProductTag],
+    inStock: true,
   },
   {
     id: 2,
     name: 'Paris-Brest',
     price: 5.0,
+    inStock: true,
   },
   {
     id: 3,
     name: 'Mille-feuille',
     price: 4.8,
     tag: ['Nouveau' as ProductTag],
+    inStock: false,
   },
   {
     id: 4,
     name: 'Tarte aux Fraises',
     price: 6.5,
+    inStock: true,
   },
 ])
 
 const filteredProducts = computed(() => {
   return products.value.filter((product) => product.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+})
+
+const paginatedProducts = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
+  return filteredProducts.value.slice(start, end)
 })
 
 const resultsCount = computed(() => {
@@ -99,7 +110,7 @@ const handleAddToCart = ({ productId, quantity }: { productId: number; quantity:
 </script>
 
 <template>
-  <div class="grid">
+  <div class="grid py-3">
     <!-- Sidebar filtres (version mobile) -->
     <Sidebar
       v-model:visible="showFilters"
@@ -124,7 +135,10 @@ const handleAddToCart = ({ productId, quantity }: { productId: number; quantity:
     <!-- Sidebar filtres (version desktop) -->
     <div class="hidden lg:block col-3">
       <div class="surface-card border-round-xl p-4">
-        <h2 class="text-xl font-bold mb-4">Filtres</h2>
+        <div class="flex align-items-center gap-2 mb-2">
+          <i class="pi pi-filter text-primary-500"></i>
+          <h2 class="text-xl font-bold m-0 text-primary-500">Filtres</h2>
+        </div>
         <FiltersPanel
           v-model:filters="filters"
           :options="filterOptions"
@@ -135,8 +149,8 @@ const handleAddToCart = ({ productId, quantity }: { productId: number; quantity:
     <!-- Liste des produits -->
     <div class="col-12 lg:col-9">
       <!-- Barre de recherche et contrôles -->
-      <div class="flex flex-column md:flex-row justify-content-between align-items-center mb-4">
-        <div class="flex align-items-center w-full">
+      <div class="flex flex-column gap-3 mb-4">
+        <div class="flex align-items-center gap-3">
           <Button
             icon="pi pi-filter"
             label="Filtres"
@@ -159,30 +173,23 @@ const handleAddToCart = ({ productId, quantity }: { productId: number; quantity:
           </div>
         </div>
 
-        <div class="flex gap-2 w-full md:w-auto">
+        <div class="flex justify-content-between align-items-center">
+          <span class="text-500">{{ resultsCount }} résultats trouvés</span>
           <Dropdown
             v-model="sortBy"
             :options="sortOptions"
             optionLabel="label"
             optionValue="value"
             placeholder="Trier par"
-            class="w-full md:w-auto"
-          />
-          <Dropdown
-            v-model="itemsPerPage"
-            :options="[12, 24, 36, 48]"
-            placeholder="Par page"
-            class="w-full md:w-auto"
+            class="w-full md:w-12rem"
           />
         </div>
       </div>
 
-      <div class="text-500 mb-4">{{ resultsCount }} résultats trouvés</div>
-
       <!-- Grille des produits -->
       <div class="grid">
         <div
-          v-for="product in filteredProducts"
+          v-for="product in paginatedProducts"
           :key="product.id"
           class="col-12 md:col-6 xl:col-4"
         >
@@ -195,12 +202,16 @@ const handleAddToCart = ({ productId, quantity }: { productId: number; quantity:
       </div>
 
       <!-- Pagination -->
-      <Paginator
-        v-model:first="currentPage"
-        :rows="itemsPerPage"
-        :totalRecords="resultsCount"
-        class="mt-4"
-      />
+      <div class="flex justify-content-center mt-4">
+        <Paginator
+          v-model:first="currentPage"
+          :rows="itemsPerPage"
+          :totalRecords="resultsCount"
+          :rowsPerPageOptions="[12, 24, 36]"
+          template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+          class="w-full md:w-auto"
+        />
+      </div>
     </div>
   </div>
 </template>

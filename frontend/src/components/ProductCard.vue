@@ -10,6 +10,7 @@ const props = defineProps<{
     price: number
     image?: string
     tag?: Array<'Nouveau' | 'Populaire' | 'Vegan' | 'Végétarien' | 'Sans gluten' | 'Sans lactose'>
+    inStock?: boolean
   }
 }>()
 
@@ -82,7 +83,10 @@ const incrementQuantity = () => {
         <div class="mb-2 text-right">
           <span class="text-primary font-medium text-xl">{{ product.price.toFixed(2).replace('.', ',') }}€</span>
         </div>
-        <div class="flex gap-2">
+        <div
+          v-if="product.inStock !== false"
+          class="flex gap-2"
+        >
           <div
             class="quantity-control flex align-items-center justify-content-between border-1 surface-border border-round flex-1"
           >
@@ -114,6 +118,16 @@ const incrementQuantity = () => {
           >
             <i class="pi pi-shopping-cart"></i>
           </Button>
+        </div>
+        <div
+          v-else
+          class="text-center"
+        >
+          <Tag
+            severity="secondary"
+            value="Rupture de stock"
+            class="w-full justify-content-center py-2"
+          />
         </div>
       </div>
     </div>
