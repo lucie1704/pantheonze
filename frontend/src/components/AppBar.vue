@@ -70,36 +70,36 @@ const closeMobileMenu = () => {
 
 <template>
   <div class="surface-section border-bottom-1 surface-border">
-    <div class="w-full px-3 md:w-9 mx-auto">
+    <div class="w-full lg:w-9 mx-auto">
       <div
-        class="flex align-items-center justify-content-between py-3"
+        class="flex align-items-center lg:justify-content-between py-3 px-2"
         style="height: 80px"
       >
         <Button
           text
           plain
-          class="md:hidden w-3rem h-3rem p-0 hover:surface-200"
+          class="block lg:hidden w-3rem h-3rem p-0 hover:surface-200"
           @click="mobileMenu = true"
         >
           <i class="pi pi-bars text-900 text-xl"></i>
         </Button>
 
         <!-- Logo (centré sur mobile, à gauche sur desktop) -->
-        <div class="flex align-items-center md:flex-grow-0">
+        <div class="flex align-items-center flex-grow-1 lg:flex-grow-0">
           <RouterLink
             to="/"
-            class="no-underline"
+            class="no-underline flex align-items-center"
           >
             <img
               src="/Logo.svg"
-              alt="PanthéOnze"
-              style="height: 60px"
+              alt="PanthéOnze Logo"
+              class="h-2rem sm:h-3rem md:h-4rem"
             />
           </RouterLink>
         </div>
 
         <!-- Menu principal (caché sur mobile) -->
-        <div class="hidden md:flex flex-grow-1 justify-content-center">
+        <div class="hidden lg:flex flex-grow-1 justify-content-center">
           <ul class="list-none p-0 m-0 flex">
             <li
               v-for="(item, index) in menuItems"
@@ -109,6 +109,7 @@ const closeMobileMenu = () => {
               <RouterLink
                 :to="item.to"
                 class="no-underline text-900 font-medium hover:text-primary transition-colors transition-duration-150 px-3"
+                :class="{ 'text-primary': $route.path === item.to }"
               >
                 {{ item.label }}
               </RouterLink>
@@ -184,7 +185,8 @@ const closeMobileMenu = () => {
           >
             <RouterLink
               :to="item.to"
-              class="no-underline text-900 font-medium hover:text-primary transition-colors transition-duration-150 flex align-items-center gap-3 p-3 hover:surface-100 border-round"
+              class="no-underline text-900 font-medium hover:text-primary transition-colors transition-duration-150 flex align-items-center gap-3 p-3 hover:surface-100 relative"
+              :class="{ 'border-left-3 border-primary': $route.path.startsWith(item.to) }"
               @click="closeMobileMenu"
             >
               <span>{{ item.label }}</span>

@@ -107,6 +107,33 @@ const handleAddToCart = ({ productId, quantity }: { productId: number; quantity:
     })
   }
 }
+
+const clearSearch = () => {
+  searchQuery.value = ''
+}
+
+const clearFilters = () => {
+  filters.value = {
+    categories: [],
+    diets: [],
+    priceRange: [0, 100],
+    season: [],
+    region: [],
+    availability: true,
+  }
+}
+
+const hasActiveFilters = computed(() => {
+  return (
+    filters.value.categories.length > 0 ||
+    filters.value.diets.length > 0 ||
+    filters.value.season.length > 0 ||
+    filters.value.region.length > 0 ||
+    filters.value.priceRange[0] > 0 ||
+    filters.value.priceRange[1] < 100 ||
+    !filters.value.availability
+  )
+})
 </script>
 
 <template>
@@ -128,6 +155,7 @@ const handleAddToCart = ({ productId, quantity }: { productId: number; quantity:
         <FiltersPanel
           v-model:filters="filters"
           :options="filterOptions"
+          @reset-filters="clearFilters"
         />
       </div>
     </Sidebar>
@@ -142,6 +170,7 @@ const handleAddToCart = ({ productId, quantity }: { productId: number; quantity:
         <FiltersPanel
           v-model:filters="filters"
           :options="filterOptions"
+          @reset-filters="clearFilters"
         />
       </div>
     </div>
@@ -153,36 +182,61 @@ const handleAddToCart = ({ productId, quantity }: { productId: number; quantity:
         <div class="flex align-items-center gap-3">
           <Button
             icon="pi pi-filter"
-            label="Filtres"
-            severity="secondary"
-            class="lg:hidden"
+            severity="primary"
+            class="lg:hidden w-2"
             @click="showFilters = true"
           />
           <div class="flex align-items-center w-full flex-grow-1">
             <InputText
               v-model="searchQuery"
-              placeholder="Rechercher une pâtisserie..."
+              icon="pi pi-search"
+              placeholder="Rechercher..."
               class="w-full rounded-xl shadow-sm"
             />
             <Button
-              icon="pi pi-search"
-              class="text-primary-900"
+              v-if="searchQuery"
+              icon="pi pi-times"
+              class="text-500 bg-transparent"
               text
+              plain
+              style="margin-left: -3rem"
+              @click="clearSearch"
+            />
+            <Button
+              v-else
+              icon="pi pi-search"
+              class="text-500 bg-transparent"
+              text
+              plain
               style="margin-left: -3rem"
             />
           </div>
         </div>
 
-        <div class="flex justify-content-between align-items-center">
-          <span class="text-500">{{ resultsCount }} résultats trouvés</span>
-          <Dropdown
-            v-model="sortBy"
-            :options="sortOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Trier par"
-            class="w-full md:w-12rem"
-          />
+        <div class="flex flex-column lg:flex-row justify-content-between align-items-start lg:align-items-center gap-3">
+          <div
+            v-if="searchQuery"
+            class="flex flex-column gap-2"
+          >
+            <span class="text-500">"{{ searchQuery }}" ({{ resultsCount }})</span>
+          </div>
+          <div class="flex-grow-1 lg:flex-grow-0"></div>
+          <div class="flex flex-column lg:flex-row align-items-start lg:align-items-center gap-2 w-full lg:w-auto">
+            <label
+              for="sort-select"
+              class="text-900"
+              >Résultats triés par</label
+            >
+            <Dropdown
+              id="sort-select"
+              v-model="sortBy"
+              :options="sortOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Trier par"
+              class="w-full lg:w-10rem"
+            />
+          </div>
         </div>
       </div>
 

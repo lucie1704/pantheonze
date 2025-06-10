@@ -7,7 +7,7 @@ import Footer from '../components/Footer.vue'
   <div class="min-h-screen flex flex-column surface-ground">
     <AppBar />
 
-    <main class="w-full px-3 md:w-9 flex-1 mx-auto">
+    <main class="w-full px-3 lg:w-9 flex-1 mx-auto">
       <slot></slot>
     </main>
 

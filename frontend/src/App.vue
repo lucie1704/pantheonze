@@ -8,3 +8,9 @@ import ShopLayout from './layouts/ShopLayout.vue'
     <router-view />
   </ShopLayout>
 </template>
+
+<style>
+body {
+  overflow-x: hidden;
+}
+</style>

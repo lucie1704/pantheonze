@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
+import Button from 'primevue/button'
+import Slider from 'primevue/slider'
 
 interface FilterOptions {
   categories: string[]
@@ -24,12 +26,22 @@ interface Props {
 const props = defineProps<Props>()
 defineEmits<{
   (e: 'update:filters', filters: Props['filters']): void
+  (e: 'reset-filters'): void
 }>()
 
 const activeIndexes = [0, 1]
 </script>
 
 <template>
+  <Button
+    label="Réinitialiser"
+    icon="pi pi-times"
+    outlined
+    plain
+    class="w-full justify-content-center lg:mt-3"
+    @click="$emit('reset-filters')"
+  />
+
   <Accordion
     :multiple="true"
     v-model:activeIndex="activeIndexes"
@@ -85,9 +97,12 @@ const activeIndexes = [0, 1]
       <Slider
         v-model="props.filters.priceRange"
         range
-        class="mt-3"
+        class="w-full mt-3"
+        :min="0"
+        :max="100"
+        :step="1"
       />
-      <div class="flex justify-content-between mt-2 text-900">
+      <div class="flex justify-content-between mt-2 text-500">
         <span>{{ props.filters.priceRange[0] }}€</span>
         <span>{{ props.filters.priceRange[1] }}€</span>
       </div>

@@ -1,11 +1,11 @@
 <template>
   <footer class="surface-section border-top-1 surface-border">
-    <div class="w-full px-3 md:w-9 mx-auto py-4">
+    <div class="w-full px-3 lg:w-9 md:w-11 mx-auto py-4">
       <div
-        class="flex flex-column lg:flex-row lg:justify-content-between align-items-center lg:align-items-start gap-4"
+        class="flex flex-column md:flex-row md:justify-content-between align-items-center md:align-items-start gap-4"
       >
         <!-- Contact -->
-        <div class="w-fit-content text-center lg:text-left mb-4 lg:mb-0">
+        <div class="w-fit-content text-center md:text-left mb-4 md:mb-0">
           <h3 class="text-xl font-bold mb-3 text-primary">Contact</h3>
           <ul class="list-none p-0 m-0">
             <li class="mb-2 flex align-items-center gap-2">
@@ -24,7 +24,7 @@
         </div>
 
         <!-- Horaires -->
-        <div class="w-fit-content text-center lg:text-left mb-4 lg:mb-0">
+        <div class="w-fit-content text-center md:text-left mb-4 md:mb-0">
           <h3 class="text-xl font-bold mb-3 text-primary">Horaires</h3>
           <ul class="list-none p-0 m-0">
             <li class="mb-2 flex align-items-center">
@@ -52,7 +52,7 @@
         </div>
 
         <!-- Liens légaux -->
-        <div class="w-fit-content text-center lg:text-left">
+        <div class="w-fit-content text-center md:text-left">
           <h3 class="text-xl font-bold mb-3 text-primary">Informations</h3>
           <ul class="list-none p-0 m-0">
             <li class="mb-2">
