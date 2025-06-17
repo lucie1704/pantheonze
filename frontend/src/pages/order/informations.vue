@@ -140,25 +140,27 @@ const handleSubmit = async () => {
 
             <div class="col-12">
               <div class="flex flex-column gap-2">
-                <label>Préférences alimentaires</label>
-                <div class="flex flex-wrap gap-3">
-                  <div
-                    v-for="option in dietaryOptions"
-                    :key="option.value"
-                    class="flex align-items-center"
-                  >
-                    <Checkbox
-                      v-model="personalInfo.dietaryPreferences"
-                      :value="option.value"
-                      :inputId="option.value"
-                    />
-                    <label
-                      :for="option.value"
-                      class="ml-2"
-                      >{{ option.label }}</label
+                <fieldset class="border-none p-0">
+                  <legend class="mb-2">Préférences alimentaires</legend>
+                  <div class="flex flex-wrap gap-3">
+                    <div
+                      v-for="option in dietaryOptions"
+                      :key="option.value"
+                      class="flex align-items-center"
                     >
+                      <Checkbox
+                        v-model="personalInfo.dietaryPreferences"
+                        :value="option.value"
+                        :inputId="option.value"
+                      />
+                      <label
+                        :for="option.value"
+                        class="ml-2"
+                        >{{ option.label }}</label
+                      >
+                    </div>
                   </div>
-                </div>
+                </fieldset>
               </div>
             </div>
           </div>
