@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { ProductCard } from '@/components'
 import Sidebar from 'primevue/sidebar'
 import FiltersPanel from '@/components/FiltersPanel.vue'
 import Paginator from 'primevue/paginator'
+import { pastryService } from '@/services/pastry.service'
+import type { Pastry } from '@/types/pastry'
+import ProgressSpinner from 'primevue/progressspinner'
+import Message from 'primevue/message'
 
 const toast = useToast()
 const showFilters = ref(false)
-
-type ProductTag = 'Nouveau' | 'Populaire' | 'Vegan' | 'Végétarien' | 'Sans gluten' | 'Sans lactose'
+const loading = ref(false)
+const error = ref<string | null>(null)
 
 // Types
 interface Filter {
@@ -53,34 +57,7 @@ const sortOptions = [
   { value: 'rating', label: 'Meilleures notes' },
 ]
 
-const products = ref([
-  {
-    id: 1,
-    name: 'Éclair au Chocolat',
-    price: 4.5,
-    tag: ['Populaire' as ProductTag],
-    inStock: true,
-  },
-  {
-    id: 2,
-    name: 'Paris-Brest',
-    price: 5.0,
-    inStock: true,
-  },
-  {
-    id: 3,
-    name: 'Mille-feuille',
-    price: 4.8,
-    tag: ['Nouveau' as ProductTag],
-    inStock: false,
-  },
-  {
-    id: 4,
-    name: 'Tarte aux Fraises',
-    price: 6.5,
-    inStock: true,
-  },
-])
+const products = ref<Pastry[]>([])
 
 const filteredProducts = computed(() => {
   return products.value.filter((product) => product.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
@@ -96,13 +73,13 @@ const resultsCount = computed(() => {
   return filteredProducts.value.length
 })
 
-const handleAddToCart = ({ productId, quantity }: { productId: number; quantity: number }) => {
-  const product = products.value.find((p) => p.id === productId)
-  if (product) {
+const handleAddToCart = ({ pastryId, quantity }: { pastryId: string; quantity: number }) => {
+  const pastry = products.value.find((pastry) => pastry.id === pastryId)
+  if (pastry) {
     toast.add({
       severity: 'success',
       summary: 'Produit ajouté',
-      detail: `${quantity} × ${product.name} ajouté(s) au panier`,
+      detail: `${quantity} × ${pastry.name} ajouté(s) au panier`,
       life: 3000,
     })
   }
@@ -123,16 +100,26 @@ const clearFilters = () => {
   }
 }
 
-const hasActiveFilters = computed(() => {
-  return (
-    filters.value.categories.length > 0 ||
-    filters.value.diets.length > 0 ||
-    filters.value.season.length > 0 ||
-    filters.value.region.length > 0 ||
-    filters.value.priceRange[0] > 0 ||
-    filters.value.priceRange[1] < 100 ||
-    !filters.value.availability
-  )
+const fetchPastries = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    products.value = await pastryService.getAllPastries()
+  } catch (err) {
+    error.value = 'Erreur lors du chargement des pâtisseries'
+    toast.add({
+      severity: 'error',
+      summary: 'Erreur',
+      detail: error.value,
+      life: 3000,
+    })
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchPastries()
 })
 </script>
 
@@ -240,6 +227,23 @@ const hasActiveFilters = computed(() => {
         </div>
       </div>
 
+      <div
+        v-if="loading"
+        class="flex justify-content-center"
+      >
+        <ProgressSpinner />
+      </div>
+
+      <div
+        v-else-if="error"
+        class="flex justify-content-center"
+      >
+        <Message
+          severity="error"
+          :text="error"
+        />
+      </div>
+
       <!-- Grille des produits -->
       <div class="grid">
         <div
@@ -248,7 +252,7 @@ const hasActiveFilters = computed(() => {
           class="col-12 md:col-6 xl:col-4"
         >
           <ProductCard
-            :product="product"
+            :pastry="product"
             @add-to-cart="handleAddToCart"
             class="h-full"
           />

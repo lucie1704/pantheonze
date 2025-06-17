@@ -18,7 +18,7 @@ if (!JWT_SECRET) {
 }
 
 const routes = await RouteLoader();
-app.use("/", routes);
+app.use("/api", routes);
 
 // Middleware
 app.use(cors())
@@ -28,7 +28,7 @@ const pastryRouter = Router();
 app.use('/api/pastries', pastryRoutes(pastryRouter))
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/', (req, res) => {
   res.status(200).json({ status: 'ok' })
 })
 
