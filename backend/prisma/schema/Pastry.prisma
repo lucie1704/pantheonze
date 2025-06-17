@@ -1,0 +1,39 @@
+model Pastry {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  description     String
+  price           Float
+  images          String[]
+  category        String
+  subCategory     String?
+  tags            String[]
+  ingredients     String[]
+  nutrition       PastryNutrition?
+  inStock         Boolean   @default(true)
+  stockCount      Int?
+  originalPrice   Float?
+  isOnSale        Boolean   @default(false)
+  saleEndDate     DateTime?
+  reviews         Review[]
+  averageRating   Float?    @default(0)
+  totalReviews    Int       @default(0)
+  totalOrdered    Int       @default(0)
+  availableDays   String[]
+  preparationTime Int?
+  slug            String    @unique
+  searchKeywords  String[]
+  isActive        Boolean   @default(true)
+  featuredUntil   DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  cartItems       CartItem[]
+  orderItems      OrderItem[]
+
+  @@index([category, subCategory])
+  @@index([tags])
+  @@index([price])
+  @@index([averageRating])
+  @@index([isActive, inStock])
+  @@fulltext([name, description, searchKeywords])
+}

@@ -1,0 +1,17 @@
+model User {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  email       String     @unique
+  password    String
+  name        String
+  phone       String?
+  addresses   String[]
+  cart        Cart?      @relation("UserCart")
+  preferences Json? // { favoriteCategories: [], dietaryRestrictions: [], etc. }
+  isActive    Boolean   @default(true)
+  lastLogin   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  orders      Order[]
+
+  @@index([name])
+}

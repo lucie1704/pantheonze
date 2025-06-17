@@ -1,0 +1,11 @@
+model DailyStats {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  date          DateTime @unique @db.Date
+  totalOrders   Int      @default(0)
+  totalRevenue  Float    @default(0)
+  newCustomers  Int      @default(0)
+  topPastries   Json?
+  categoryStats Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

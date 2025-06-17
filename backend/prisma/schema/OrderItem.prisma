@@ -1,0 +1,10 @@
+model OrderItem {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  order       Order    @relation(fields: [orderId], references: [id])
+  orderId     String   @db.ObjectId
+  pastry      Pastry   @relation(fields: [pastryId], references: [id])
+  pastryId    String   @db.ObjectId
+  quantity    Int
+  price       Float
+  name        String
+}

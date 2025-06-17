@@ -1,0 +1,21 @@
+model Promotion {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String?
+  type          PromoType
+  discountValue Float
+  minimumOrder  Float?
+  maxUses       Int?
+  usedCount     Int       @default(0)
+  pastryIds     String[]  @db.ObjectId
+  categories    String[]
+  validFrom     DateTime
+  validUntil    DateTime
+  code          String?   @unique
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([validFrom, validUntil])
+  @@index([isActive])
+}

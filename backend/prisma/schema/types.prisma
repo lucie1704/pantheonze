@@ -1,0 +1,42 @@
+type CartItemData {
+  pastryId    String @db.ObjectId
+  pastryName  String
+  price       Float
+  quantity    Int
+  imageUrl    String?
+  addedAt     DateTime @default(now())
+}
+
+type DeliveryInfo {
+  address     String
+  phone       String?
+  deliveryDate DateTime?
+  timeSlot    String?
+  instructions String?
+}
+
+type OrderItemData {
+  pastryId     String @db.ObjectId
+  pastryName   String
+  price        Float
+  quantity     Int
+  imageUrl     String?
+  customNotes  String?
+}
+
+type PastryNutrition {
+  calories    Int?
+  protein     Float?
+  carbs       Float?
+  fat         Float?
+  allergens   String[]
+}
+
+type Review {
+  userId      String @db.ObjectId
+  userName    String
+  rating      Int // 1-5
+  comment     String?
+  createdAt   DateTime @default(now())
+  verified    Boolean @default(false)
+}

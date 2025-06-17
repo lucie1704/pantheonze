@@ -1,0 +1,10 @@
+model CartItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  cartId    String   @db.ObjectId
+  pastry    Pastry   @relation(fields: [pastryId], references: [id])
+  pastryId  String   @db.ObjectId
+  quantity  Int
+  price     Float
+  addedAt   DateTime @default(now())
+}

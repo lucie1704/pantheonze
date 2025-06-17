@@ -1,0 +1,31 @@
+model Order {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String       @db.ObjectId
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items         OrderItem[]
+  subtotal      Float
+  taxAmount     Float        @default(0)
+  deliveryFee   Float        @default(0)
+  discount      Float        @default(0)
+  total         Float
+  status        OrderStatus  @default(PENDING)
+  delivery      DeliveryInfo?
+  customerName  String
+  customerEmail String
+  customerPhone String?
+  paymentMethod String?
+  paymentStatus PaymentStatus @default(PENDING)
+  paymentId     String?
+  notes         String?
+  estimatedReady DateTime?
+  readyAt       DateTime?
+  deliveredAt   DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([createdAt])
+  @@index([customerEmail])
+}
