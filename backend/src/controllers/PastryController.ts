@@ -55,7 +55,7 @@ export class PastryController {
     static updatePastry = async (req: Request, res: Response) => {
         try {
             const { id } = req.params;
-            const { name, description, price, imageUrl, category, ingredients } = req.body;
+            const { name, description, price, images, category, ingredients } = req.body;
             
             const pastry = await prismaClient.pastry.update({
                 where: { id },
@@ -63,7 +63,7 @@ export class PastryController {
                     name,
                     description,
                     price: Number(price),
-                    imageUrl,
+                    images: Array.isArray(images) ? images : [],
                     category,
                     ingredients: Array.isArray(ingredients) ? ingredients : []
                 }
