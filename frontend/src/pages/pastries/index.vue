@@ -2,13 +2,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { ProductCard } from '@/components'
-import Sidebar from 'primevue/sidebar'
+import Drawer from 'primevue/drawer'
 import FiltersPanel from '@/components/FiltersPanel.vue'
 import Paginator from 'primevue/paginator'
 import { pastryService } from '@/services/pastry.service'
 import type { Pastry } from '@/types/pastry'
 import ProgressSpinner from 'primevue/progressspinner'
 import Message from 'primevue/message'
+import Select from 'primevue/select'
 
 const toast = useToast()
 const showFilters = ref(false)
@@ -125,8 +126,8 @@ onMounted(() => {
 
 <template>
   <div class="grid py-3">
-    <!-- Sidebar filtres (version mobile) -->
-    <Sidebar
+    <!-- Drawer filtres (version mobile) -->
+    <Drawer
       v-model:visible="showFilters"
       position="left"
       class="lg:hidden"
@@ -145,7 +146,7 @@ onMounted(() => {
           @reset-filters="clearFilters"
         />
       </div>
-    </Sidebar>
+    </Drawer>
 
     <!-- Sidebar filtres (version desktop) -->
     <div class="hidden lg:block col-3">
@@ -214,7 +215,7 @@ onMounted(() => {
               class="text-900"
               >Résultats triés par</label
             >
-            <Dropdown
+            <Select
               id="sort-select"
               v-model="sortBy"
               :options="sortOptions"

@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 async function main() {
   // Clean existing data
   console.log('🧹 Nettoyage de la base de données...')
-  
+
   // Supprimer dans l'ordre pour respecter les relations
   await prisma.cartItem.deleteMany()
   await prisma.orderItem.deleteMany()

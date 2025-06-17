@@ -17,11 +17,16 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET MUST BE DEFINED IN YOUR .ENV FILE");
 }
 
+// Middleware CORS
+app.use(cors({
+  origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}))
+
 const routes = await RouteLoader();
 app.use("/api", routes);
-
-// Middleware
-app.use(cors())
 
 // Routes
 const pastryRouter = Router();

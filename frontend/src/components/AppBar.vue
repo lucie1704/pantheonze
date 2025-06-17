@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import TieredMenu from 'primevue/tieredmenu'
 import Button from 'primevue/button'
-import Sidebar from 'primevue/sidebar'
+import Drawer from 'primevue/drawer'
 import { useRouter } from 'vue-router'
 
 const isLoggedIn = ref(true)
@@ -169,8 +169,8 @@ const closeMobileMenu = () => {
       </div>
     </div>
 
-    <!-- Menu mobile (Sidebar) -->
-    <Sidebar
+    <!-- Menu mobile (Drawer) -->
+    <Drawer
       v-model:visible="mobileMenu"
       position="left"
       class="w-20rem"
@@ -207,6 +207,6 @@ const closeMobileMenu = () => {
           />
         </div>
       </div>
-    </Sidebar>
+    </Drawer>
   </div>
 </template>

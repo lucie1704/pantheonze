@@ -19,7 +19,7 @@ import TabPanel from 'primevue/tabpanel'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Tooltip from 'primevue/tooltip'
-import Dropdown from 'primevue/dropdown'
+import Select from 'primevue/select'
 
 import App from './App.vue'
 import { router } from './router'
@@ -90,7 +90,7 @@ app.component('TabPanel', TabPanel)
 app.component('Password', Password)
 app.component('Checkbox', Checkbox)
 app.component('Toast', Toast)
-app.component('Dropdown', Dropdown)
+app.component('Select', Select)
 
 // Register directives
 app.directive('tooltip', Tooltip)

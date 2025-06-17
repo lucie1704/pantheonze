@@ -216,7 +216,7 @@ const handleSubmit = async () => {
             <div class="col-12">
               <div class="flex flex-column gap-2">
                 <label for="country">Pays *</label>
-                <Dropdown
+                <Select
                   id="country"
                   v-model="billingAddress.country"
                   :options="countries"
