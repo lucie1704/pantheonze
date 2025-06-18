@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Select from 'primevue/select'
+import { ref, computed } from 'vue'
 import Accordion from 'primevue/accordion'
+import AccordionPanel from 'primevue/accordionpanel'
+import AccordionHeader from 'primevue/accordionheader'
+import AccordionContent from 'primevue/accordioncontent'
 import Slider from 'primevue/slider'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
@@ -28,13 +30,31 @@ const emit = defineEmits<{
   (e: 'reset-filters'): void
 }>()
 
-const activeIndex = ref([0])
+// Génère dynamiquement les valeurs pour ouvrir tous les panneaux
+const defaultOpenPanels = computed(() => {
+  // Nombre de panneaux dans l'accordion (3 actuellement)
+  const panelCount = 3
+  return Array.from({ length: panelCount }, (_, i) => i.toString())
+})
 
 const updateFilters = (key: keyof typeof props.filters, value: any) => {
   emit('update:filters', {
     ...props.filters,
     [key]: value,
   })
+}
+
+const toggleFilter = (key: keyof typeof props.filters, value: string) => {
+  const currentArray = [...(props.filters[key] as string[])]
+  const index = currentArray.indexOf(value)
+
+  if (index > -1) {
+    currentArray.splice(index, 1)
+  } else {
+    currentArray.push(value)
+  }
+
+  updateFilters(key, currentArray)
 }
 
 const resetFilters = () => {
@@ -45,54 +65,65 @@ const resetFilters = () => {
 <template>
   <div class="flex flex-column gap-4">
     <Accordion
-      v-model:activeIndex="activeIndex"
+      :value="defaultOpenPanels"
       multiple
     >
       <!-- Catégories -->
-      <div class="accordion-item">
-        <div class="accordion-header">
-          <span>Catégories</span>
-          <i class="pi pi-chevron-down"></i>
-        </div>
-        <div class="accordion-content">
+      <AccordionPanel value="0">
+        <AccordionHeader>Catégories</AccordionHeader>
+        <AccordionContent>
           <div class="flex flex-column gap-2">
-            <Select
-              v-model="filters.categories"
-              :options="options.categories"
-              multiple
-              placeholder="Sélectionner des catégories"
-              class="w-full"
-            />
+            <div
+              v-for="category in options.categories"
+              :key="category"
+              class="flex align-items-center"
+            >
+              <Checkbox
+                :modelValue="filters.categories.includes(category)"
+                @update:modelValue="() => toggleFilter('categories', category)"
+                :inputId="`category-${category}`"
+              />
+              <label
+                :for="`category-${category}`"
+                class="ml-2 cursor-pointer"
+              >
+                {{ category }}
+              </label>
+            </div>
           </div>
-        </div>
-      </div>
+        </AccordionContent>
+      </AccordionPanel>
 
       <!-- Régimes alimentaires -->
-      <div class="accordion-item">
-        <div class="accordion-header">
-          <span>Régimes alimentaires</span>
-          <i class="pi pi-chevron-down"></i>
-        </div>
-        <div class="accordion-content">
+      <AccordionPanel value="1">
+        <AccordionHeader>Régimes alimentaires</AccordionHeader>
+        <AccordionContent>
           <div class="flex flex-column gap-2">
-            <Select
-              v-model="filters.diets"
-              :options="options.diets"
-              multiple
-              placeholder="Sélectionner des régimes"
-              class="w-full"
-            />
+            <div
+              v-for="diet in options.diets"
+              :key="diet"
+              class="flex align-items-center"
+            >
+              <Checkbox
+                :modelValue="filters.diets.includes(diet)"
+                @update:modelValue="() => toggleFilter('diets', diet)"
+                :inputId="`diet-${diet}`"
+              />
+              <label
+                :for="`diet-${diet}`"
+                class="ml-2 cursor-pointer"
+              >
+                {{ diet }}
+              </label>
+            </div>
           </div>
-        </div>
-      </div>
+        </AccordionContent>
+      </AccordionPanel>
 
       <!-- Prix -->
-      <div class="accordion-item">
-        <div class="accordion-header">
-          <span>Prix</span>
-          <i class="pi pi-chevron-down"></i>
-        </div>
-        <div class="accordion-content">
+      <AccordionPanel value="2">
+        <AccordionHeader>Prix</AccordionHeader>
+        <AccordionContent>
           <div class="flex flex-column gap-2">
             <Slider
               v-model="filters.priceRange"
@@ -106,46 +137,8 @@ const resetFilters = () => {
               <span>{{ filters.priceRange[1] }}€</span>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Saison -->
-      <div class="accordion-item">
-        <div class="accordion-header">
-          <span>Saison</span>
-          <i class="pi pi-chevron-down"></i>
-        </div>
-        <div class="accordion-content">
-          <div class="flex flex-column gap-2">
-            <Select
-              v-model="filters.season"
-              :options="options.seasons"
-              multiple
-              placeholder="Sélectionner des saisons"
-              class="w-full"
-            />
-          </div>
-        </div>
-      </div>
-
-      <!-- Région -->
-      <div class="accordion-item">
-        <div class="accordion-header">
-          <span>Région</span>
-          <i class="pi pi-chevron-down"></i>
-        </div>
-        <div class="accordion-content">
-          <div class="flex flex-column gap-2">
-            <Select
-              v-model="filters.region"
-              :options="options.regions"
-              multiple
-              placeholder="Sélectionner des régions"
-              class="w-full"
-            />
-          </div>
-        </div>
-      </div>
+        </AccordionContent>
+      </AccordionPanel>
     </Accordion>
 
     <!-- Disponibilité -->

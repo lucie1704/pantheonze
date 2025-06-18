@@ -147,7 +147,7 @@ onMounted(() => {
     </Drawer>
 
     <!-- Sidebar filtres (version desktop) -->
-    <div class="hidden lg:block col-3">
+    <div class="hidden lg:block col-4 xl:col-3">
       <div class="surface-card border-round-xl p-4">
         <div class="flex align-items-center gap-2 mb-2">
           <i class="pi pi-filter text-primary-500"></i>
@@ -162,7 +162,7 @@ onMounted(() => {
     </div>
 
     <!-- Liste des produits -->
-    <div class="col-12 lg:col-9">
+    <div class="col-12 lg:col-8 xl:col-9">
       <!-- Barre de recherche et contrôles -->
       <div class="flex flex-column gap-3 mb-4">
         <div class="flex align-items-center gap-3">
