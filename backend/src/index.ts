@@ -47,5 +47,5 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 })
 
 app.listen(INTERNAL_PORT, () => {
-  console.log(`[MY-SERVICE]: MY-SERVICE is running at http://localhost:${EXPOSED_PORT}`);
+  console.log(`[PanthéOnze]: PanthéOnze is running at http://localhost:${EXPOSED_PORT}`);
 });

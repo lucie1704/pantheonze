@@ -45,7 +45,7 @@ const incrementQuantity = () => {
         <img
           :src="pastry.images[0] || '/no-image.svg'"
           :alt="pastry.name"
-          class="w-full h-full object-cover"
+          class="w-full h-full product-image"
         />
         <div
           v-if="pastry.tags.length > 0"
@@ -157,5 +157,11 @@ const incrementQuantity = () => {
 
 .quantity-input:focus {
   outline: none;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>

@@ -65,9 +65,7 @@ const filteredProducts = computed(() => {
 })
 
 const paginatedProducts = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value
-  const end = start + itemsPerPage.value
-  return filteredProducts.value.slice(start, end)
+  return filteredProducts.value
 })
 
 const resultsCount = computed(() => {
