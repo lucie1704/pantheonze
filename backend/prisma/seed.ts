@@ -4,6 +4,11 @@ import { hash } from 'bcrypt'
 
 const prisma = new PrismaClient()
 
+const PASTRIES_IMAGES = {
+  parisBrest: 'https://images.unsplash.com/photo-1623334044303-241021148842?w=800&h=600&fit=crop',
+  eclair: 'https://images.unsplash.com/photo-1623334044303-241021148842?w=800&h=600&fit=crop',
+}
+
 async function main() {
   // Clean existing data
   console.log('🧹 Nettoyage de la base de données...')
@@ -43,14 +48,14 @@ async function main() {
     }
   })
 
-  // Créer des pâtisseries
+  // Créer des pâtisseries avec images Unsplash
   const pastries = await Promise.all([
     prisma.pastry.create({
       data: {
         name: 'Paris-Brest',
         description: 'Délicieux Paris-Brest garni de crème pralinée',
         price: 24.90,
-        images: ['/paris-brest.jpg'],
+        images: [PASTRIES_IMAGES.parisBrest],
         category: 'Gâteaux',
         subCategory: 'Classiques',
         tags: ['Populaire', 'Traditionnel'],
@@ -66,7 +71,7 @@ async function main() {
         availableDays: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
         preparationTime: 20,
         slug: 'paris-brest',
-        searchKeywords: ['paris brest', 'praliné', 'pâtisserie française']
+        searchKeywords: ['paris brest', 'praliné', 'pâtisserie française'],
       }
     }),
     prisma.pastry.create({
@@ -74,7 +79,7 @@ async function main() {
         name: 'Éclair au Chocolat',
         description: 'Éclair garni de crème pâtissière au chocolat noir',
         price: 4.50,
-        images: ['/eclair-chocolat.jpg'],
+        images: [PASTRIES_IMAGES.eclair],
         category: 'Éclairs',
         tags: ['Classique', 'Chocolat'],
         ingredients: ['Pâte à choux', 'Crème pâtissière au chocolat', 'Glaçage chocolat'],
@@ -89,7 +94,7 @@ async function main() {
         availableDays: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
         preparationTime: 15,
         slug: 'eclair-chocolat',
-        searchKeywords: ['éclair', 'chocolat', 'pâtisserie française']
+        searchKeywords: ['éclair', 'chocolat', 'pâtisserie française'],
       }
     }),
     prisma.pastry.create({
@@ -97,7 +102,7 @@ async function main() {
         name: 'Macaron Framboise',
         description: 'Macaron à la framboise fraîche',
         price: 2.20,
-        images: ['/macaron-framboise.jpg'],
+        images: [],
         category: 'Macarons',
         tags: ['Fruit rouge', 'Sans gluten'],
         ingredients: ['Poudre d\'amande', 'Blanc d\'œuf', 'Framboise'],
@@ -112,7 +117,7 @@ async function main() {
         availableDays: ['Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
         preparationTime: 10,
         slug: 'macaron-framboise',
-        searchKeywords: ['macaron', 'framboise', 'sans gluten']
+        searchKeywords: ['macaron', 'framboise', 'sans gluten'],
       }
     })
   ])
@@ -192,7 +197,7 @@ async function main() {
     }
   })
 
-  console.log('Base de données initialisée avec succès !')
+  console.log('✅ Base de données initialisée avec succès !')
 }
 
 main()

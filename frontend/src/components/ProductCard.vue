@@ -43,14 +43,9 @@ const incrementQuantity = () => {
         style="aspect-ratio: 1"
       >
         <img
-          v-if="pastry.images[0]"
-          :src="pastry.images[0]"
+          :src="pastry.images[0] || '/no-image.svg'"
           :alt="pastry.name"
           class="w-full h-full object-cover"
-        />
-        <div
-          v-else
-          class="w-full h-full bg-primary-100"
         />
         <div
           v-if="pastry.tags.length > 0"
