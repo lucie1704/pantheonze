@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import { ProductCard } from '@/components'
 import Drawer from 'primevue/drawer'
@@ -11,6 +12,8 @@ import Message from 'primevue/message'
 import Select from 'primevue/select'
 import type { Filter } from '@/types'
 
+const route = useRoute()
+const router = useRouter()
 const toast = useToast()
 const showFilters = ref(false)
 const loading = ref(false)
@@ -37,6 +40,62 @@ const sortOptions = [
 
 const products = ref<Pastry[]>([])
 
+// Fonction pour mettre à jour l'URL avec les paramètres de recherche
+const updateURL = () => {
+  const query: Record<string, string> = {}
+
+  if (searchQuery.value) {
+    query.query = searchQuery.value
+  }
+  if (filters.value.categories.length) {
+    query.categories = filters.value.categories.join(',')
+  }
+  if (filters.value.diets.length) {
+    query.diets = filters.value.diets.join(',')
+  }
+  if (filters.value.priceRange[0] !== 0) {
+    query.minPrice = filters.value.priceRange[0].toString()
+  }
+  if (filters.value.priceRange[1] !== 40) {
+    query.maxPrice = filters.value.priceRange[1].toString()
+  }
+  if (filters.value.availability) {
+    query.availability = 'true'
+  }
+  if (sortBy.value) {
+    query.sortBy = sortBy.value
+  }
+
+  router.replace({ query })
+}
+
+// Fonction pour charger les paramètres depuis l'URL
+const loadFromURL = () => {
+  const query = route.query
+
+  if (query.query) {
+    searchQuery.value = query.query as string
+  }
+  if (query.categories) {
+    filters.value.categories = (query.categories as string).split(',')
+  }
+  if (query.diets) {
+    filters.value.diets = (query.diets as string).split(',')
+  }
+  if (query.minPrice) {
+    filters.value.priceRange[0] = parseInt(query.minPrice as string)
+  }
+  if (query.maxPrice) {
+    filters.value.priceRange[1] = parseInt(query.maxPrice as string)
+  }
+  if (query.availability) {
+    filters.value.availability = query.availability === 'true'
+  }
+  if (query.sortBy) {
+    sortBy.value = query.sortBy as string
+  }
+}
+
 const handleAddToCart = ({ pastryId, quantity }: { pastryId: string; quantity: number }) => {
   const pastry = products.value.find((pastry) => pastry.id === pastryId)
   if (pastry) {
@@ -51,6 +110,7 @@ const handleAddToCart = ({ pastryId, quantity }: { pastryId: string; quantity: n
 
 const clearSearch = () => {
   searchQuery.value = ''
+  updateURL()
 }
 
 const clearFilters = async () => {
@@ -60,6 +120,9 @@ const clearFilters = async () => {
     priceRange: [0, 40],
     availability: false,
   }
+  searchQuery.value = ''
+  sortBy.value = undefined
+  updateURL()
   await fetchPastries()
 }
 
@@ -83,11 +146,11 @@ const fetchPastries = async () => {
       params.append('diets', filters.value.diets.join(','))
       hasFilters = true
     }
-    if (filters.value.priceRange[0]) {
+    if (filters.value.priceRange[0] !== 0) {
       params.append('minPrice', filters.value.priceRange[0].toString())
       hasFilters = true
     }
-    if (filters.value.priceRange[1]) {
+    if (filters.value.priceRange[1] !== 40) {
       params.append('maxPrice', filters.value.priceRange[1].toString())
       hasFilters = true
     }
@@ -114,9 +177,38 @@ const fetchPastries = async () => {
   }
 }
 
-onMounted(() => {
+// Watchers pour mettre à jour l'URL quand les filtres changent
+watch(searchQuery, () => {
+  updateURL()
   fetchPastries()
 })
+
+watch(
+  filters,
+  () => {
+    updateURL()
+    fetchPastries()
+  },
+  { deep: true },
+)
+
+watch(sortBy, () => {
+  updateURL()
+  fetchPastries()
+})
+
+onMounted(() => {
+  loadFromURL()
+  fetchPastries()
+})
+
+watch(
+  () => route.query,
+  () => {
+    loadFromURL()
+    fetchPastries()
+  },
+)
 </script>
 
 <template>
@@ -138,7 +230,6 @@ onMounted(() => {
         <FiltersPanel
           v-model:filters="filters"
           @reset-filters="clearFilters"
-          @update:filters="fetchPastries"
         />
       </div>
     </Drawer>
@@ -153,7 +244,6 @@ onMounted(() => {
         <FiltersPanel
           v-model:filters="filters"
           @reset-filters="clearFilters"
-          @update:filters="fetchPastries"
         />
       </div>
     </div>
@@ -175,7 +265,6 @@ onMounted(() => {
               icon="pi pi-search"
               placeholder="Rechercher..."
               class="w-full rounded-xl shadow-sm"
-              @input="fetchPastries"
             />
             <Button
               v-if="searchQuery"

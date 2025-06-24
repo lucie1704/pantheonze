@@ -39,7 +39,7 @@ const resetFilters = () => {
 <template>
   <div class="flex flex-column gap-4">
     <Accordion
-      :value="['0', '1', '2']"
+      :value="['2']"
       multiple
     >
       <!-- Catégories -->

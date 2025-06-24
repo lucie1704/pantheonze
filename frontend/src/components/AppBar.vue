@@ -13,15 +13,15 @@ const router = useRouter()
 const menuItems = [
   {
     label: 'Pâtisseries',
-    to: '/pastries',
+    to: '/pastries?categories=Pâtisseries',
   },
   {
     label: 'Viennoiseries',
-    to: '/pastries',
+    to: '/pastries?categories=Viennoiseries',
   },
   {
     label: 'Gâteaux',
-    to: '/pastries',
+    to: '/pastries?categories=Gâteaux',
   },
   {
     label: 'À propos',
