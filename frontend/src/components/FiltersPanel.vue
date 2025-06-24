@@ -9,17 +9,13 @@ import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import axios from 'axios'
 import { API_URL } from '@/constants/api.ts'
+import type { Filter } from '@/types'
 
 const props = defineProps<{
-  filters: {
-    categories: string[]
-    diets: string[]
-    priceRange: [number, number]
-    availability: boolean
-  }
+  filters: Filter
 }>()
 const emit = defineEmits<{
-  (e: 'update:filters', value: typeof props.filters): void
+  (e: 'update:filters', value: Filter): void
   (e: 'reset-filters'): void
 }>()
 
@@ -61,6 +57,7 @@ const resetFilters = () => {
                 :inputId="`category-${category}`"
                 name="category"
                 :value="category"
+                @change="emit('update:filters', filters)"
               />
               <label
                 :for="`category-${category}`"
@@ -88,6 +85,7 @@ const resetFilters = () => {
                 :inputId="`diet-${diet}`"
                 name="diet"
                 :value="diet"
+                @change="emit('update:filters', filters)"
               />
               <label
                 :for="`diet-${diet}`"
@@ -112,6 +110,7 @@ const resetFilters = () => {
               :max="40"
               :step="1"
               class="w-full"
+              @change="emit('update:filters', filters)"
             />
             <div class="flex justify-content-between text-sm">
               <span>{{ filters.priceRange[0] }}€</span>
@@ -128,6 +127,7 @@ const resetFilters = () => {
         v-model="filters.availability"
         :binary="true"
         inputId="availability"
+        @change="emit('update:filters', filters)"
       />
       <label
         for="availability"

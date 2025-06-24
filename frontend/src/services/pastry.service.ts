@@ -3,7 +3,7 @@ import type { Pastry } from '@/types/pastry'
 import { API_URL } from '@/constants/api.ts'
 
 export const pastryService = {
-  getAllPastries: async (params?: Record<string, string>): Promise<Pastry[]> => {
+  getAllPastries: async (params?: URLSearchParams): Promise<Pastry[]> => {
     try {
       const response = await axios.get<Pastry[]>(`${API_URL}/pastries`, {
         params,

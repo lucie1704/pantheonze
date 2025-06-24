@@ -37,18 +37,6 @@ const sortOptions = [
 
 const products = ref<Pastry[]>([])
 
-const filteredProducts = computed(() => {
-  return products.value.filter((product) => product.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
-})
-
-const paginatedProducts = computed(() => {
-  return filteredProducts.value
-})
-
-const resultsCount = computed(() => {
-  return filteredProducts.value.length
-})
-
 const handleAddToCart = ({ pastryId, quantity }: { pastryId: string; quantity: number }) => {
   const pastry = products.value.find((pastry) => pastry.id === pastryId)
   if (pastry) {
@@ -77,6 +65,7 @@ const clearFilters = () => {
 const fetchPastries = async () => {
   loading.value = true
   error.value = null
+
   try {
     const params = new URLSearchParams()
     let hasFilters = false
@@ -110,7 +99,6 @@ const fetchPastries = async () => {
       hasFilters = true
     }
 
-    // Appel API : sans params si aucun filtre
     products.value = hasFilters ? await pastryService.getAllPastries(params) : await pastryService.getAllPastries()
   } catch (err) {
     error.value = 'Erreur lors du chargement des pâtisseries'
@@ -149,6 +137,7 @@ onMounted(() => {
         <FiltersPanel
           v-model:filters="filters"
           @reset-filters="clearFilters"
+          @update:filters="fetchPastries"
         />
       </div>
     </Drawer>
@@ -163,6 +152,7 @@ onMounted(() => {
         <FiltersPanel
           v-model:filters="filters"
           @reset-filters="clearFilters"
+          @update:filters="fetchPastries"
         />
       </div>
     </div>
@@ -206,11 +196,18 @@ onMounted(() => {
         </div>
 
         <div class="flex flex-column lg:flex-row justify-content-between align-items-start lg:align-items-center gap-3">
-          <div
-            v-if="searchQuery"
-            class="flex flex-column gap-2"
-          >
-            <span class="text-500">"{{ searchQuery }}" ({{ resultsCount }})</span>
+          <div class="flex flex-column gap-2">
+            <span
+              v-if="searchQuery"
+              class="text-500"
+              ><strong>"{{ searchQuery }}"</strong> {{ products.length }} résultats</span
+            >
+
+            <span
+              v-else
+              class="text-500"
+              >{{ products.length }} résultats</span
+            >
           </div>
           <div class="flex-grow-1 lg:flex-grow-0"></div>
           <div class="flex flex-column lg:flex-row align-items-start lg:align-items-center gap-2 w-full lg:w-auto">
@@ -252,7 +249,7 @@ onMounted(() => {
       <!-- Grille des produits -->
       <div class="grid">
         <div
-          v-for="product in paginatedProducts"
+          v-for="product in products"
           :key="product.id"
           class="col-12 md:col-6 xl:col-4"
         >
@@ -263,18 +260,6 @@ onMounted(() => {
           />
         </div>
       </div>
-
-      <!-- Pagination -->
-      <!--      <div class="flex justify-content-center mt-4">
-        <Paginator
-          v-model:first="currentPage"
-          :rows="itemsPerPage"
-          :totalRecords="resultsCount"
-          :rowsPerPageOptions="[12, 24, 36]"
-          template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-          class="w-full md:w-auto"
-        />
-      </div>-->
     </div>
   </div>
 </template>
