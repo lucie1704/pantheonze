@@ -73,7 +73,7 @@ const incrementQuantity = () => {
           <span class="text-primary font-medium text-xl">{{ pastry.price.toFixed(2).replace('.', ',') }}€</span>
         </div>
         <div
-          v-if="pastry.inStock"
+          v-if="pastry.stockCount > 0"
           class="flex gap-2"
         >
           <div
