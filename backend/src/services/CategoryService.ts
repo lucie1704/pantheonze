@@ -1,6 +1,9 @@
 import { prismaClient } from "@/services";
 
 class CategoryService {
+  public cache: Map<string | number, string | number>;
+  private isInitialized: boolean;
+
   constructor() {
     this.cache = new Map();
     this.isInitialized = false;
@@ -12,19 +15,14 @@ class CategoryService {
     const categories = await prismaClient.category.findMany();
     categories.forEach(cat => {
       this.cache.set(cat.name, cat.id);
-      this.cache.set(cat.id, cat.name); // Reverse lookup aussi
     });
 
     this.isInitialized = true;
     console.log(`Cache initialized with ${categories.length} categories`);
   }
 
-  getCategoryIdByName(name) {
+  getCategoryIdByName(name: string) {
     return this.cache.get(name);
-  }
-
-  getCategoryNameById(id) {
-    return this.cache.get(id);
   }
 
   async refresh() {
@@ -33,13 +31,12 @@ class CategoryService {
     await this.init();
   }
 
-  // Méthodes pour maintenir le cache
-  addToCache(category) {
+  addToCache(category: { id: string | number; name: string }) {
     this.cache.set(category.name, category.id);
     this.cache.set(category.id, category.name);
   }
 
-  removeFromCache(category) {
+  removeFromCache(category: { id: string | number; name: string }) {
     this.cache.delete(category.name);
     this.cache.delete(category.id);
   }

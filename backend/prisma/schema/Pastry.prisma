@@ -6,6 +6,8 @@ model Pastry {
   images          String[]
   categoryId      String    @db.ObjectId
   category        Category  @relation(fields: [categoryId], references: [id])
+  dietId          String?   @db.ObjectId
+  diet            Diet?     @relation(fields: [dietId], references: [id])
   tags            String[]
   ingredients     String[]
   nutrition       PastryNutrition?
@@ -31,6 +33,7 @@ model Pastry {
   orderItems      OrderItem[]
 
   @@index([categoryId])
+  @@index([dietId])
   @@index([tags])
   @@index([price])
   @@index([averageRating])

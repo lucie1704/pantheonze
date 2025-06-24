@@ -42,6 +42,7 @@ async function main() {
   await prisma.promotion.deleteMany()
   await prisma.pastry.deleteMany()
   await prisma.category.deleteMany()
+  await prisma.diet.deleteMany()
   await prisma.user.deleteMany()
 
   console.log('✅ Base de données nettoyée')
@@ -86,6 +87,21 @@ async function main() {
   }
 
   console.log('✅ Catégories créées')
+
+  const dietsData = [
+    { name: 'Végétarien' },
+    { name: 'Vegan' },
+    { name: 'Sans Gluten' },
+    { name: 'Sans Lactose' },
+    { name: 'Sans Sucre' },
+  ]
+  const diets: { [key: string]: string } = {}
+  for (const diet of dietsData) {
+    const created = await prisma.diet.create({ data: diet })
+    diets[diet.name] = created.id
+  }
+
+  console.log('✅ Diets créés')
 
   // Créer toutes les pâtisseries
   const pastries = await Promise.all([

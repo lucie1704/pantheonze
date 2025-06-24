@@ -1,7 +1,6 @@
 import axios from 'axios'
 import type { Pastry } from '@/types/pastry'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3333/api'
+import { API_URL } from '@/constants/api.ts'
 
 export const pastryService = {
   getAllPastries: async (params?: Record<string, string>): Promise<Pastry[]> => {

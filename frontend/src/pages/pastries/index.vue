@@ -9,42 +9,22 @@ import type { Pastry } from '@/types/pastry'
 import ProgressSpinner from 'primevue/progressspinner'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
+import type { Filter } from '@/types'
 
 const toast = useToast()
 const showFilters = ref(false)
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-// Types
-interface Filter {
-  categories: string[]
-  diets: string[]
-  priceRange: [number, number]
-  season: string[]
-  region: string[]
-  availability: boolean
-}
-
-// État
 const searchQuery = ref('')
 const sortBy = ref()
 
 const filters = ref<Filter>({
   categories: [],
   diets: [],
-  priceRange: [0, 100],
-  season: [],
-  region: [],
-  availability: true,
+  priceRange: [0, 40],
+  availability: false,
 })
-
-// Options de filtres
-const filterOptions = {
-  categories: ['Gâteaux', 'Tartes', 'Viennoiseries'],
-  diets: ['Végétarien', 'Vegan', 'Sans gluten', 'Sans lactose'],
-  seasons: ['Printemps', 'Été', 'Automne', 'Hiver'],
-  regions: ['Paris', 'Lyon', 'Bordeaux', 'Marseille'],
-}
 
 // Options de tri
 const sortOptions = [
@@ -89,10 +69,8 @@ const clearFilters = () => {
   filters.value = {
     categories: [],
     diets: [],
-    priceRange: [0, 100],
-    season: [],
-    region: [],
-    availability: true,
+    priceRange: [0, 40],
+    availability: false,
   }
 }
 
@@ -170,7 +148,6 @@ onMounted(() => {
       <div class="p-3">
         <FiltersPanel
           v-model:filters="filters"
-          :options="filterOptions"
           @reset-filters="clearFilters"
         />
       </div>
@@ -185,7 +162,6 @@ onMounted(() => {
         </div>
         <FiltersPanel
           v-model:filters="filters"
-          :options="filterOptions"
           @reset-filters="clearFilters"
         />
       </div>

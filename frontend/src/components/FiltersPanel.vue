@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { onMounted, ref, toRefs } from 'vue'
 import Accordion from 'primevue/accordion'
 import AccordionPanel from 'primevue/accordionpanel'
 import AccordionHeader from 'primevue/accordionheader'
@@ -7,57 +7,33 @@ import AccordionContent from 'primevue/accordioncontent'
 import Slider from 'primevue/slider'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
+import axios from 'axios'
+import { API_URL } from '@/constants/api.ts'
 
 const props = defineProps<{
   filters: {
     categories: string[]
     diets: string[]
     priceRange: [number, number]
-    season: string[]
-    region: string[]
     availability: boolean
   }
-  options: {
-    categories: string[]
-    diets: string[]
-    seasons: string[]
-    regions: string[]
-  }
 }>()
-
 const emit = defineEmits<{
   (e: 'update:filters', value: typeof props.filters): void
   (e: 'reset-filters'): void
 }>()
 
-const selectedCategories = ref<string[]>(props.filters.categories)
+const { filters } = toRefs(props)
+const categories = ref<string[]>([])
+const diets = ref<string[]>([])
 
-// Génère dynamiquement les valeurs pour ouvrir tous les panneaux
-const defaultOpenPanels = computed(() => {
-  // Nombre de panneaux dans l'accordion (3 actuellement)
-  const panelCount = 3
-  return Array.from({ length: panelCount }, (_, i) => i.toString())
+onMounted(async () => {
+  const categoriesResponse = await axios.get(`${API_URL}/categories`)
+  categories.value = categoriesResponse.data.map((category: { name: string }) => category.name)
+
+  const dietsResponse = await axios.get(`${API_URL}/diets`)
+  diets.value = dietsResponse.data.map((diet: { name: string }) => diet.name)
 })
-
-const updateFilters = (key: keyof typeof props.filters, value: any) => {
-  emit('update:filters', {
-    ...props.filters,
-    [key]: value,
-  })
-}
-
-const toggleFilter = (key: keyof typeof props.filters, value: string) => {
-  const currentArray = [...(props.filters[key] as string[])]
-  const index = currentArray.indexOf(value)
-
-  if (index > -1) {
-    currentArray.splice(index, 1)
-  } else {
-    currentArray.push(value)
-  }
-
-  updateFilters(key, currentArray)
-}
 
 const resetFilters = () => {
   emit('reset-filters')
@@ -67,7 +43,7 @@ const resetFilters = () => {
 <template>
   <div class="flex flex-column gap-4">
     <Accordion
-      :value="defaultOpenPanels"
+      :value="['0', '1', '2']"
       multiple
     >
       <!-- Catégories -->
@@ -76,12 +52,12 @@ const resetFilters = () => {
         <AccordionContent>
           <div class="flex flex-column gap-2">
             <div
-              v-for="category of options.categories"
+              v-for="category of categories"
               :key="category"
               class="flex align-items-center"
             >
               <Checkbox
-                v-model="selectedCategories"
+                v-model="filters.categories"
                 :inputId="`category-${category}`"
                 name="category"
                 :value="category"
@@ -89,8 +65,9 @@ const resetFilters = () => {
               <label
                 :for="`category-${category}`"
                 class="pl-2 cursor-pointer"
-                >{{ category }}</label
               >
+                {{ category }}
+              </label>
             </div>
           </div>
         </AccordionContent>
@@ -102,14 +79,15 @@ const resetFilters = () => {
         <AccordionContent>
           <div class="flex flex-column gap-2">
             <div
-              v-for="diet in options.diets"
+              v-for="diet in diets"
               :key="diet"
               class="flex align-items-center"
             >
               <Checkbox
-                :modelValue="filters.diets.includes(diet)"
-                @update:modelValue="() => toggleFilter('diets', diet)"
+                v-model="filters.diets"
                 :inputId="`diet-${diet}`"
+                name="diet"
+                :value="diet"
               />
               <label
                 :for="`diet-${diet}`"
@@ -131,7 +109,8 @@ const resetFilters = () => {
               v-model="filters.priceRange"
               range
               :min="0"
-              :max="100"
+              :max="40"
+              :step="1"
               class="w-full"
             />
             <div class="flex justify-content-between text-sm">

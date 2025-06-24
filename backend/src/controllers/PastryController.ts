@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prismaClient, categoryService } from "@/services";
+import { prismaClient, categoryService, dietService } from "@/services";
 import { ValidatedRequest } from "@/middlewares";
 import { CreatePastryContractType } from "@/contracts/pastry";
 
@@ -19,10 +19,10 @@ export class PastryController {
         }
     };
 
-    // Get all pastries with optional category filter
+    // Get all pastries with optional category and diet filters
     static getAllPastries = async (req: Request, res: Response) => {
       try {
-        const { query, categories, minPrice, maxPrice, sortBy, order } = req.query;
+        const { query, categories, diets, minPrice, maxPrice, sortBy, order } = req.query;
 
         const where: any = {};
         if (query) {
@@ -37,6 +37,17 @@ export class PastryController {
 
           if (categoryIds.length !== 0) {
             where.categoryId = { in: categoryIds };
+          }
+        }
+        if (diets) {
+          const dietNames = String(diets).split(",");
+
+          const dietIds = dietNames
+            .map(name => dietService.getDietIdByName(name.trim()))
+            .filter(id => id !== undefined);
+
+          if (dietIds.length !== 0) {
+            where.dietId = { in: dietIds };
           }
         }
         if (minPrice || maxPrice) {
