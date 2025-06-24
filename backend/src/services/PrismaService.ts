@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/prisma";
 import { withAccelerate } from "@prisma/extension-accelerate";
 
 class PrismaService {

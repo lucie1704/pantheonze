@@ -35,7 +35,6 @@ export class PastryController {
             .map(name => categoryService.getCategoryIdByName(name.trim()))
             .filter(id => id !== undefined);
 
-          console.log('categoryIds', categoryIds);
           if (categoryIds.length !== 0) {
             where.categoryId = { in: categoryIds };
           }
