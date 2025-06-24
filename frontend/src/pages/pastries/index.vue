@@ -71,7 +71,7 @@ const fetchPastries = async () => {
     let hasFilters = false
 
     if (searchQuery.value) {
-      params.append('q', searchQuery.value)
+      params.append('query', searchQuery.value)
       hasFilters = true
     }
     if (filters.value.categories.length) {
@@ -174,6 +174,7 @@ onMounted(() => {
               icon="pi pi-search"
               placeholder="Rechercher..."
               class="w-full rounded-xl shadow-sm"
+              @input="fetchPastries"
             />
             <Button
               v-if="searchQuery"

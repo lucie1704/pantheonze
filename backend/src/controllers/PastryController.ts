@@ -26,7 +26,7 @@ export class PastryController {
 
         const where: any = {};
         if (query) {
-          where.query = { contains: String(query), mode: "insensitive" };
+          where.name = { contains: String(query), mode: "insensitive" };
         }
         if (categories) {
           const categoryNames = String(categories).split(",");
