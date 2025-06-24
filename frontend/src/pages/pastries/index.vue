@@ -82,12 +82,12 @@ const fetchPastries = async () => {
       params.append('diets', filters.value.diets.join(','))
       hasFilters = true
     }
-    if (filters.value.priceRange[0] !== 0) {
-      params.append('priceMin', filters.value.priceRange[0].toString())
+    if (filters.value.priceRange[0]) {
+      params.append('minPrice', filters.value.priceRange[0].toString())
       hasFilters = true
     }
-    if (filters.value.priceRange[1] !== 100) {
-      params.append('priceMax', filters.value.priceRange[1].toString())
+    if (filters.value.priceRange[1]) {
+      params.append('maxPrice', filters.value.priceRange[1].toString())
       hasFilters = true
     }
     if (filters.value.availability !== true) {
@@ -214,8 +214,9 @@ onMounted(() => {
             <label
               for="sort-select"
               class="text-900"
-              >Résultats triés par</label
             >
+              Résultats triés par
+            </label>
             <Select
               id="sort-select"
               v-model="sortBy"
