@@ -53,13 +53,14 @@ const clearSearch = () => {
   searchQuery.value = ''
 }
 
-const clearFilters = () => {
+const clearFilters = async () => {
   filters.value = {
     categories: [],
     diets: [],
     priceRange: [0, 40],
     availability: false,
   }
+  await fetchPastries()
 }
 
 const fetchPastries = async () => {
@@ -90,8 +91,8 @@ const fetchPastries = async () => {
       params.append('maxPrice', filters.value.priceRange[1].toString())
       hasFilters = true
     }
-    if (filters.value.availability !== true) {
-      params.append('availability', filters.value.availability ? 'true' : 'false')
+    if (filters.value.availability) {
+      params.append('availability', 'true')
       hasFilters = true
     }
     if (sortBy.value) {

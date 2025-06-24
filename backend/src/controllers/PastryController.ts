@@ -22,7 +22,7 @@ export class PastryController {
     // Get all pastries with optional category and diet filters
     static getAllPastries = async (req: Request, res: Response) => {
       try {
-        const { query, categories, diets, minPrice, maxPrice, sortBy, order } = req.query;
+        const { query, categories, diets, minPrice, maxPrice, availability, order, sortBy } = req.query;
 
         const where: any = {};
         if (query) {
@@ -54,6 +54,9 @@ export class PastryController {
           where.price = {};
           if (minPrice) where.price.gte = Number(minPrice);
           if (maxPrice) where.price.lte = Number(maxPrice);
+        }
+        if (availability) {
+          where.stockCount = { gt: 0 };
         }
 
         const orderBy = sortBy

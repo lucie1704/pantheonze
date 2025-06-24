@@ -671,7 +671,7 @@ async function main() {
           fat: 16,
           allergens: ['gluten', 'œufs', 'lait']
         },
-        stockCount: 18,
+        stockCount: 0,
         slug: 'tarte-fraises',
       }
     }),
