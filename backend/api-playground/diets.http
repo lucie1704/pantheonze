@@ -1,0 +1,11 @@
+### Get all diets
+GET http://localhost:3000/api/diets
+
+### Get pastries filtered by diet
+GET http://localhost:3000/api/pastries?diets=Végétarien
+
+### Get pastries filtered by multiple diets
+GET http://localhost:3000/api/pastries?diets=Végétarien,Sans Gluten
+
+### Get pastries filtered by diet and category
+GET http://localhost:3000/api/pastries?diets=Vegan&categories=Petits gâteaux 

@@ -13,19 +13,12 @@ model Pastry {
   nutrition       PastryNutrition?
   inStock         Boolean   @default(true)
   stockCount      Int?
-  originalPrice   Float?
   isOnSale        Boolean   @default(false)
-  saleEndDate     DateTime?
   reviews         Review[]
   averageRating   Float?    @default(0)
   totalReviews    Int       @default(0)
   totalOrdered    Int       @default(0)
-  availableDays   String[]
-  preparationTime Int?
   slug            String    @unique
-  searchKeywords  String[]
-  isActive        Boolean   @default(true)
-  featuredUntil   DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -37,6 +30,6 @@ model Pastry {
   @@index([tags])
   @@index([price])
   @@index([averageRating])
-  @@index([isActive, inStock])
-  @@fulltext([name, description, searchKeywords])
+  @@index([inStock])
+  @@fulltext([name, description])
 }

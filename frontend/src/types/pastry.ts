@@ -5,7 +5,7 @@ export interface Pastry {
   price: number;
   images: string[];
   category: string;
-  subCategory: string;
+  diet?: string;
   tags: string[];
   ingredients: string[];
   nutrition: {
@@ -16,16 +16,10 @@ export interface Pastry {
   };
   inStock: boolean;
   stockCount: number;
-  originalPrice?: number;
   isOnSale: boolean;
-  saleEndDate?: Date;
   averageRating: number;
   totalReviews: number;
-  availableDays: string[];
-  preparationTime: number;
   slug: string;
-  isActive: boolean;
-  featuredUntil?: Date;
   createdAt: Date;
   updatedAt: Date;
 }

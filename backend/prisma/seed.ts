@@ -113,6 +113,7 @@ async function main() {
         price: 6.90,
         images: [PASTRIES_IMAGES.brioche1, PASTRIES_IMAGES.brioche2],
         category: { connect: { id: categories['Viennoiseries'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Farine', 'Beurre', 'Œufs', 'Lait', 'Levure'],
         nutrition: {
@@ -123,10 +124,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 15,
-        availableDays: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-        preparationTime: 25,
         slug: 'brioche-artisanale',
-        searchKeywords: ['brioche', 'viennoiserie', 'petit déjeuner'],
       }
     }),
 
@@ -138,6 +136,7 @@ async function main() {
         price: 1.50,
         images: [PASTRIES_IMAGES.chouquette],
         category: { connect: { id: categories['Viennoiseries'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: ['Populaire'],
         ingredients: ['Pâte à choux', 'Sucre perlé', 'Œufs', 'Beurre'],
         nutrition: {
@@ -148,10 +147,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 100,
-        availableDays: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-        preparationTime: 5,
         slug: 'chouquettes',
-        searchKeywords: ['chouquette', 'petit four', 'sucre perlé'],
       }
     }),
 
@@ -163,6 +159,7 @@ async function main() {
         price: 1.80,
         images: [PASTRIES_IMAGES.croissant],
         category: { connect: { id: categories['Viennoiseries'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: ['Populaire'],
         ingredients: ['Pâte feuilletée', 'Beurre français', 'Farine', 'Levure'],
         nutrition: {
@@ -173,10 +170,7 @@ async function main() {
           allergens: ['gluten', 'lait']
         },
         stockCount: 50,
-        availableDays: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-        preparationTime: 10,
         slug: 'croissant-beurre',
-        searchKeywords: ['croissant', 'beurre', 'viennoiserie française'],
       }
     }),
 
@@ -188,6 +182,7 @@ async function main() {
         price: 4.50,
         images: [PASTRIES_IMAGES.eclairAuChocolat],
         category: { connect: { id: categories['Pâtisseries'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: ['Populaire'],
         ingredients: ['Pâte à choux', 'Crème pâtissière au chocolat', 'Glaçage chocolat'],
         nutrition: {
@@ -198,10 +193,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 25,
-        availableDays: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-        preparationTime: 15,
         slug: 'eclair-chocolat',
-        searchKeywords: ['éclair', 'chocolat', 'pâtisserie française'],
       }
     }),
 
@@ -213,6 +205,7 @@ async function main() {
         price: 2.80,
         images: [PASTRIES_IMAGES.financier],
         category: { connect: { id: categories['Petits gâteaux'] } },
+        diet: { connect: { id: diets['Sans Gluten'] } },
         tags: [],
         ingredients: ['Poudre d\'amandes', 'Beurre noisette', 'Blancs d\'œufs', 'Sucre glace'],
         nutrition: {
@@ -223,10 +216,7 @@ async function main() {
           allergens: ['fruits à coque', 'œufs', 'lait']
         },
         stockCount: 30,
-        availableDays: ['Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-        preparationTime: 12,
         slug: 'financier-amandes',
-        searchKeywords: ['financier', 'amandes', 'beurre noisette'],
       }
     }),
 
@@ -238,6 +228,7 @@ async function main() {
         price: 18.50,
         images: [PASTRIES_IMAGES.flanPatissier],
         category: { connect: { id: categories['Pâtisseries'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: ['Populaire'],
         ingredients: ['Lait', 'Œufs', 'Vanille bourbon', 'Pâte brisée', 'Sucre'],
         nutrition: {
@@ -248,10 +239,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 8,
-        availableDays: ['Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-        preparationTime: 30,
         slug: 'flan-patissier',
-        searchKeywords: ['flan', 'vanille', 'traditionnel parisien'],
       }
     }),
 
@@ -263,6 +251,7 @@ async function main() {
         price: 32.90,
         images: [PASTRIES_IMAGES.foretNoire],
         category: { connect: { id: categories['Gâteaux'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: ['Nouveau'],
         ingredients: ['Génoise chocolat', 'Cerises griottes', 'Chantilly', 'Kirsch'],
         nutrition: {
@@ -273,10 +262,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 6,
-        availableDays: ['Vendredi', 'Samedi', 'Dimanche'],
-        preparationTime: 45,
         slug: 'foret-noire',
-        searchKeywords: ['forêt noire', 'chocolat', 'cerises'],
       }
     }),
 
@@ -288,6 +274,7 @@ async function main() {
         price: 28.90,
         images: [PASTRIES_IMAGES.fraisier],
         category: { connect: { id: categories['Gâteaux'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Fraises fraîches', 'Crème mousseline', 'Génoise', 'Pâte d\'amande'],
         nutrition: {
@@ -298,10 +285,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait', 'fruits à coque']
         },
         stockCount: 5,
-        availableDays: ['Vendredi', 'Samedi', 'Dimanche'],
-        preparationTime: 40,
         slug: 'fraisier',
-        searchKeywords: ['fraisier', 'fraises', 'crème mousseline'],
       }
     }),
 
@@ -323,10 +307,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 24,
-        availableDays: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-        preparationTime: 8,
         slug: 'madeleines-commercy',
-        searchKeywords: ['madeleine', 'citron', 'commercy'],
       }
     }),
 
@@ -348,10 +329,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 12,
-        availableDays: ['Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-        preparationTime: 20,
         slug: 'mille-feuille-vanille',
-        searchKeywords: ['mille-feuille', 'feuilletage', 'vanille'],
       }
     }),
 
@@ -373,10 +351,7 @@ async function main() {
           allergens: ['œufs', 'lait']
         },
         stockCount: 8,
-        availableDays: ['Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-        preparationTime: 25,
         slug: 'mont-blanc-marrons',
-        searchKeywords: ['mont-blanc', 'marrons', 'meringue'],
       }
     }),
 
@@ -398,10 +373,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 20,
-        availableDays: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-        preparationTime: 12,
         slug: 'muffin-myrtilles',
-        searchKeywords: ['muffin', 'myrtilles', 'streusel'],
       }
     }),
 
@@ -413,6 +385,7 @@ async function main() {
         price: 8.90,
         images: [PASTRIES_IMAGES.opera],
         category: { connect: { id: categories['Gâteaux'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Biscuit joconde', 'Ganache chocolat', 'Crème café', 'Glaçage'],
         nutrition: {
@@ -423,10 +396,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait', 'fruits à coque']
         },
         stockCount: 6,
-        availableDays: ['Vendredi', 'Samedi', 'Dimanche'],
-        preparationTime: 35,
         slug: 'opera',
-        searchKeywords: ['opéra', 'café', 'chocolat'],
       }
     }),
 
@@ -438,6 +408,7 @@ async function main() {
         price: 2.10,
         images: [PASTRIES_IMAGES.painAuChocolat],
         category: { connect: { id: categories['Viennoiseries'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: ['Populaire'],
         ingredients: ['Pâte feuilletée', 'Chocolat noir 70%', 'Beurre'],
         nutrition: {
@@ -448,10 +419,7 @@ async function main() {
           allergens: ['gluten', 'lait']
         },
         stockCount: 40,
-        availableDays: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-        preparationTime: 10,
         slug: 'pain-chocolat',
-        searchKeywords: ['pain au chocolat', 'chocolatine', 'viennoiserie'],
       }
     }),
 
@@ -463,6 +431,7 @@ async function main() {
         price: 2.30,
         images: [PASTRIES_IMAGES.painAuRaisin],
         category: { connect: { id: categories['Viennoiseries'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Pâte feuilletée', 'Crème pâtissière', 'Raisins secs', 'Rhum'],
         nutrition: {
@@ -473,10 +442,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 25,
-        availableDays: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-        preparationTime: 12,
         slug: 'pain-raisins',
-        searchKeywords: ['pain aux raisins', 'escargot', 'crème pâtissière'],
       }
     }),
 
@@ -488,6 +454,7 @@ async function main() {
         price: 2.80,
         images: [PASTRIES_IMAGES.painSuisse],
         category: { connect: { id: categories['Viennoiseries'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Pâte feuilletée', 'Crème pâtissière vanille', 'Pépites chocolat'],
         nutrition: {
@@ -498,10 +465,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 15,
-        availableDays: ['Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-        preparationTime: 15,
         slug: 'pain-suisse',
-        searchKeywords: ['pain suisse', 'crème vanille', 'pépites'],
       }
     }),
 
@@ -513,6 +477,7 @@ async function main() {
         price: 24.90,
         images: [PASTRIES_IMAGES.parisBrest],
         category: { connect: { id: categories['Gâteaux'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Pâte à choux', 'Crème pralinée', 'Amandes effilées', 'Praliné maison'],
         nutrition: {
@@ -523,10 +488,7 @@ async function main() {
           allergens: ['fruits à coque', 'gluten', 'œufs', 'lait']
         },
         stockCount: 10,
-        availableDays: ['Vendredi', 'Samedi', 'Dimanche'],
-        preparationTime: 35,
         slug: 'paris-brest',
-        searchKeywords: ['paris brest', 'praliné', 'couronne'],
       }
     }),
 
@@ -538,6 +500,7 @@ async function main() {
         price: 6.50,
         images: [PASTRIES_IMAGES.religieuse],
         category: { connect: { id: categories['Pâtisseries'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Pâte à choux', 'Crème pâtissière chocolat', 'Glaçage chocolat'],
         nutrition: {
@@ -548,10 +511,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 12,
-        availableDays: ['Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-        preparationTime: 20,
         slug: 'religieuse-chocolat',
-        searchKeywords: ['religieuse', 'chocolat', 'choux'],
       }
     }),
 
@@ -563,6 +523,7 @@ async function main() {
         price: 3.50,
         images: [PASTRIES_IMAGES.sable],
         category: { connect: { id: categories['Petits gâteaux'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Farine', 'Beurre demi-sel', 'Sucre', 'Œufs'],
         nutrition: {
@@ -573,10 +534,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 25,
-        availableDays: ['Lundi', 'Mardi', 'Mercredi'],
-        preparationTime: 15,
         slug: 'sable-breton',
-        searchKeywords: ['sablé', 'breton', 'biscuit'],
       }
     }),
 
@@ -588,6 +546,7 @@ async function main() {
         price: 7.20,
         images: [PASTRIES_IMAGES.saintHonore],
         category: { connect: { id: categories['Gâteaux'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Pâte feuilletée', 'Pâte à choux', 'Crème Chantilly', 'Caramel'],
         nutrition: {
@@ -598,10 +557,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 10,
-        availableDays: ['Samedi', 'Dimanche'],
-        preparationTime: 30,
         slug: 'saint-honore',
-        searchKeywords: ['saint-honoré', 'chantilly', 'choux'],
       }
     }),
 
@@ -613,6 +569,7 @@ async function main() {
         price: 5.80,
         images: [PASTRIES_IMAGES.tarteAuChocolat],
         category: { connect: { id: categories['Tartes'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Pâte sablée', 'Chocolat noir', 'Crème', 'Beurre'],
         nutrition: {
@@ -623,10 +580,7 @@ async function main() {
           allergens: ['gluten', 'lait']
         },
         stockCount: 14,
-        availableDays: ['Mercredi', 'Jeudi', 'Vendredi'],
-        preparationTime: 25,
         slug: 'tarte-chocolat',
-        searchKeywords: ['tarte', 'chocolat', 'ganache'],
       }
     }),
 
@@ -638,6 +592,7 @@ async function main() {
         price: 5.50,
         images: [PASTRIES_IMAGES.tarteAuCitron],
         category: { connect: { id: categories['Tartes'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Pâte sablée', 'Citron', 'Œufs', 'Sucre', 'Beurre'],
         nutrition: {
@@ -648,10 +603,30 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 16,
-        availableDays: ['Mardi', 'Jeudi', 'Samedi'],
-        preparationTime: 25,
         slug: 'tarte-citron',
-        searchKeywords: ['tarte', 'citron', 'acidulé'],
+      }
+    }),
+
+    // Tarte sans lactose
+    prisma.pastry.create({
+      data: {
+        name: 'Tarte au Citron Sans Lactose',
+        description: 'Tarte au citron traditionnelle sans produits laitiers',
+        price: 5.80,
+        images: [PASTRIES_IMAGES.tarteAuCitron],
+        category: { connect: { id: categories['Tartes'] } },
+        diet: { connect: { id: diets['Sans Lactose'] } },
+        tags: ['Spécial'],
+        ingredients: ['Pâte sablée', 'Citron', 'Œufs', 'Sucre', 'Margarine végétale'],
+        nutrition: {
+          calories: 260,
+          protein: 3.5,
+          carbs: 32,
+          fat: 11,
+          allergens: ['gluten', 'œufs']
+        },
+        stockCount: 12,
+        slug: 'tarte-citron-sans-lactose',
       }
     }),
 
@@ -663,6 +638,7 @@ async function main() {
         price: 5.40,
         images: [PASTRIES_IMAGES.tarteAuxAbricots],
         category: { connect: { id: categories['Tartes'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Pâte sablée', 'Abricots', 'Poudre d\'amande', 'Sucre'],
         nutrition: {
@@ -673,10 +649,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'fruits à coque']
         },
         stockCount: 12,
-        availableDays: ['Vendredi', 'Samedi'],
-        preparationTime: 20,
         slug: 'tarte-abricots',
-        searchKeywords: ['tarte', 'abricots', 'amande'],
       }
     }),
 
@@ -688,6 +661,7 @@ async function main() {
         price: 5.90,
         images: [PASTRIES_IMAGES.tarteAuxFraises],
         category: { connect: { id: categories['Tartes'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Pâte sablée', 'Fraises', 'Crème pâtissière', 'Gélatine'],
         nutrition: {
@@ -698,10 +672,7 @@ async function main() {
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 18,
-        availableDays: ['Vendredi', 'Samedi', 'Dimanche'],
-        preparationTime: 20,
         slug: 'tarte-fraises',
-        searchKeywords: ['tarte', 'fraises', 'crème'],
       }
     }),
 
@@ -713,6 +684,7 @@ async function main() {
         price: 6.10,
         images: [PASTRIES_IMAGES.tarteAuxMyrtilles],
         category: { connect: { id: categories['Tartes'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Pâte sablée', 'Myrtilles', 'Sucre', 'Maïzena'],
         nutrition: {
@@ -723,10 +695,7 @@ async function main() {
           allergens: ['gluten']
         },
         stockCount: 15,
-        availableDays: ['Samedi', 'Dimanche'],
-        preparationTime: 22,
         slug: 'tarte-myrtilles',
-        searchKeywords: ['tarte', 'myrtilles', 'fruits rouges'],
       }
     }),
 
@@ -738,6 +707,7 @@ async function main() {
         price: 5.30,
         images: [PASTRIES_IMAGES.tarteAuxPommes],
         category: { connect: { id: categories['Tartes'] } },
+        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
         ingredients: ['Pâte feuilletée', 'Pommes', 'Compote', 'Sucre'],
         nutrition: {
@@ -748,10 +718,7 @@ async function main() {
           allergens: ['gluten', 'lait']
         },
         stockCount: 20,
-        availableDays: ['Lundi', 'Mercredi', 'Vendredi'],
-        preparationTime: 18,
         slug: 'tarte-pommes',
-        searchKeywords: ['tarte', 'pommes', 'compote'],
       }
     }),
 
