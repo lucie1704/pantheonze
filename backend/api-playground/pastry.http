@@ -1,4 +1,4 @@
-@BASE_URL = http://localhost:3333
+@BASE_URL = http://localhost:3333/api
 
 ### Get all pastries
 GET {{BASE_URL}}/pastries
@@ -39,4 +39,4 @@ Content-Type: application/json
 }
 
 ### Delete pastry
-DELETE {{BASE_URL}}/pastries/123e4567-e89b-12d3-a456-426614174000 
+DELETE {{BASE_URL}}/pastries/123e4567-e89b-12d3-a456-426614174000

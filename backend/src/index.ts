@@ -2,6 +2,7 @@ import express, { Express, Router } from "express";
 import dotenv from "dotenv";
 import cors from 'cors'
 import pastryRoutes from './routes/pastry.routes'
+import { categoryService } from "@/services/CategoryService";
 
 import RouteLoader from "./RouteLoader.ts";
 
@@ -31,6 +32,9 @@ app.use("/api", routes);
 // Routes
 const pastryRouter = Router();
 app.use('/api/pastries', pastryRoutes(pastryRouter))
+
+// Start cache
+await categoryService.init();
 
 // Health check
 app.get('/', (req, res) => {

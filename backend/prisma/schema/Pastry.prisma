@@ -4,8 +4,8 @@ model Pastry {
   description     String
   price           Float
   images          String[]
-  category        String
-  subCategory     String?
+  categoryId      String    @db.ObjectId
+  category        Category  @relation(fields: [categoryId], references: [id])
   tags            String[]
   ingredients     String[]
   nutrition       PastryNutrition?
@@ -30,7 +30,7 @@ model Pastry {
   cartItems       CartItem[]
   orderItems      OrderItem[]
 
-  @@index([category, subCategory])
+  @@index([categoryId])
   @@index([tags])
   @@index([price])
   @@index([averageRating])

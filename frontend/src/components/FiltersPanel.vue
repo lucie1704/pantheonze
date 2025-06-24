@@ -30,6 +30,8 @@ const emit = defineEmits<{
   (e: 'reset-filters'): void
 }>()
 
+const selectedCategories = ref<string[]>(props.filters.categories)
+
 // Génère dynamiquement les valeurs pour ouvrir tous les panneaux
 const defaultOpenPanels = computed(() => {
   // Nombre de panneaux dans l'accordion (3 actuellement)
@@ -74,21 +76,21 @@ const resetFilters = () => {
         <AccordionContent>
           <div class="flex flex-column gap-2">
             <div
-              v-for="category in options.categories"
+              v-for="category of options.categories"
               :key="category"
               class="flex align-items-center"
             >
               <Checkbox
-                :modelValue="filters.categories.includes(category)"
-                @update:modelValue="() => toggleFilter('categories', category)"
+                v-model="selectedCategories"
                 :inputId="`category-${category}`"
+                name="category"
+                :value="category"
               />
               <label
                 :for="`category-${category}`"
-                class="ml-2 cursor-pointer"
+                class="pl-2 cursor-pointer"
+                >{{ category }}</label
               >
-                {{ category }}
-              </label>
             </div>
           </div>
         </AccordionContent>

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prismaClient } from "@/services";
+import { prismaClient, categoryService } from "@/services";
 import { ValidatedRequest } from "@/middlewares";
 import { CreatePastryContractType } from "@/contracts/pastry";
 
@@ -21,12 +21,41 @@ export class PastryController {
 
     // Get all pastries with optional category filter
     static getAllPastries = async (req: Request, res: Response) => {
-        try {
-            const { category } = req.query;
-            const pastries = await prismaClient.pastry.findMany({
-                where: category ? { category: String(category) } : undefined
-            });
-            res.json(pastries);
+      try {
+        const { query, categories, minPrice, maxPrice, sortBy, order } = req.query;
+
+        const where: any = {};
+        if (query) {
+          where.query = { contains: String(query), mode: "insensitive" };
+        }
+        if (categories) {
+          const categoryNames = String(categories).split(",");
+
+          const categoryIds = categoryNames
+            .map(name => categoryService.getCategoryIdByName(name.trim()))
+            .filter(id => id !== undefined);
+
+          console.log('categoryIds', categoryIds);
+          if (categoryIds.length !== 0) {
+            where.categoryId = { in: categoryIds };
+          }
+        }
+        if (minPrice || maxPrice) {
+          where.price = {};
+          if (minPrice) where.price.gte = Number(minPrice);
+          if (maxPrice) where.price.lte = Number(maxPrice);
+        }
+
+        const orderBy = sortBy
+          ? { [String(sortBy)]: order === "desc" ? "desc" : "asc" }
+          : undefined;
+
+        const pastries = await prismaClient.pastry.findMany({
+          where,
+          orderBy,
+        });
+
+        res.json(pastries);
         } catch (error) {
             res.status(500).json({ error: "Failed to fetch pastries" });
         }
@@ -39,12 +68,12 @@ export class PastryController {
             const pastry = await prismaClient.pastry.findUnique({
                 where: { id }
             });
-            
+
             if (!pastry) {
                 res.status(404).json({ error: "Pastry not found" });
                 return;
             }
-            
+
             res.json(pastry);
         } catch (error) {
             res.status(500).json({ error: "Failed to fetch pastry" });
@@ -53,10 +82,10 @@ export class PastryController {
 
     // Update a pastry
     static updatePastry = async (req: Request, res: Response) => {
-        try {
+       /* try {
             const { id } = req.params;
             const { name, description, price, images, category, ingredients } = req.body;
-            
+
             const pastry = await prismaClient.pastry.update({
                 where: { id },
                 data: {
@@ -68,11 +97,11 @@ export class PastryController {
                     ingredients: Array.isArray(ingredients) ? ingredients : []
                 }
             });
-            
+
             res.status(200).send();
         } catch (error) {
             res.status(500).json({ error: "Failed to update pastry" });
-        }
+        }*/
     };
 
     // Delete a pastry
@@ -82,7 +111,7 @@ export class PastryController {
             await prismaClient.pastry.delete({
                 where: { id }
             });
-            
+
             res.status(204).send();
         } catch (error) {
             res.status(500).json({ error: "Failed to delete pastry" });

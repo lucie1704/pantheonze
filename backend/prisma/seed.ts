@@ -1,5 +1,4 @@
-import pkg from '@prisma/client'
-const { PrismaClient } = pkg
+import { PrismaClient } from '@prisma/client'
 import { hash } from 'bcrypt'
 
 const prisma = new PrismaClient()
@@ -44,6 +43,7 @@ async function main() {
   await prisma.cart.deleteMany()
   await prisma.promotion.deleteMany()
   await prisma.pastry.deleteMany()
+  await prisma.category.deleteMany()
   await prisma.user.deleteMany()
 
   console.log('✅ Base de données nettoyée')
@@ -58,7 +58,7 @@ async function main() {
       phone: '+33612345678',
       addresses: ['123 Rue de la Pâtisserie, 75001 Paris'],
       preferences: {
-        favoriteCategories: ['Gâteaux', 'Viennoiseries'],
+        favoriteCategories: ['Gateaux', 'Viennoiseries'],
         dietaryRestrictions: ['Sans gluten']
       },
       cart: {
@@ -72,6 +72,23 @@ async function main() {
     }
   })
 
+  console.log('✅ User créés')
+
+  const categoriesData = [
+    { name: 'Viennoiseries' },
+    { name: 'Pâtisseries' },
+    { name: 'Gâteaux' },
+    { name: 'Petits gâteaux' },
+    { name: 'Tartes' },
+  ]
+  const categories: { [key: string]: string } = {}
+  for (const cat of categoriesData) {
+    const created = await prisma.category.create({ data: cat })
+    categories[cat.name] = created.id
+  }
+
+  console.log('✅ Catégories créées')
+
   // Créer toutes les pâtisseries
   const pastries = await Promise.all([
     // Brioche
@@ -81,8 +98,7 @@ async function main() {
         description: 'Brioche traditionnelle française, moelleuse et dorée',
         price: 6.90,
         images: [PASTRIES_IMAGES.brioche1, PASTRIES_IMAGES.brioche2],
-        category: 'Viennoiseries',
-        subCategory: 'Brioches',
+        categoryId: categories['Viennoiseries'],
         tags: [],
         ingredients: ['Farine', 'Beurre', 'Œufs', 'Lait', 'Levure'],
         nutrition: {
@@ -107,8 +123,7 @@ async function main() {
         description: 'Petits choux sucrés parsemés de grains de sucre perlé',
         price: 1.50,
         images: [PASTRIES_IMAGES.chouquette],
-        category: 'Petits fours',
-        subCategory: 'Choux',
+        categoryId: categories['Viennoiseries'],
         tags: ['Populaire'],
         ingredients: ['Pâte à choux', 'Sucre perlé', 'Œufs', 'Beurre'],
         nutrition: {
@@ -133,8 +148,7 @@ async function main() {
         description: 'Croissant feuilleté au beurre français, croustillant et fondant',
         price: 1.80,
         images: [PASTRIES_IMAGES.croissant],
-        category: 'Viennoiseries',
-        subCategory: 'Feuilletés',
+        categoryId: categories['Viennoiseries'],
         tags: ['Populaire'],
         ingredients: ['Pâte feuilletée', 'Beurre français', 'Farine', 'Levure'],
         nutrition: {
@@ -159,8 +173,7 @@ async function main() {
         description: 'Éclair garni de crème pâtissière au chocolat noir et glaçage brillant',
         price: 4.50,
         images: [PASTRIES_IMAGES.eclairAuChocolat],
-        category: 'Éclairs',
-        subCategory: 'Chocolat',
+        categoryId: categories['Pâtisseries'],
         tags: ['Populaire'],
         ingredients: ['Pâte à choux', 'Crème pâtissière au chocolat', 'Glaçage chocolat'],
         nutrition: {
@@ -185,8 +198,7 @@ async function main() {
         description: 'Petit gâteau moelleux aux amandes et beurre noisette',
         price: 2.80,
         images: [PASTRIES_IMAGES.financier],
-        category: 'Petits gâteaux',
-        subCategory: 'Amandes',
+        categoryId: categories['Petits gâteaux'],
         tags: [],
         ingredients: ['Poudre d\'amandes', 'Beurre noisette', 'Blancs d\'œufs', 'Sucre glace'],
         nutrition: {
@@ -211,8 +223,7 @@ async function main() {
         description: 'Flan parisien traditionnel sur pâte brisée, vanille bourbon',
         price: 18.50,
         images: [PASTRIES_IMAGES.flanPatissier],
-        category: 'Gâteaux',
-        subCategory: 'Flans',
+        categoryId: categories['Pâtisseries'],
         tags: ['Populaire'],
         ingredients: ['Lait', 'Œufs', 'Vanille bourbon', 'Pâte brisée', 'Sucre'],
         nutrition: {
@@ -237,8 +248,7 @@ async function main() {
         description: 'Gâteau au chocolat, cerises griottes et chantilly, kirsch',
         price: 32.90,
         images: [PASTRIES_IMAGES.foretNoire],
-        category: 'Gâteaux',
-        subCategory: 'Chocolat',
+        categoryId: categories['Gâteaux'],
         tags: ['Nouveau'],
         ingredients: ['Génoise chocolat', 'Cerises griottes', 'Chantilly', 'Kirsch'],
         nutrition: {
@@ -263,8 +273,7 @@ async function main() {
         description: 'Gâteau aux fraises fraîches, crème mousseline et génoise',
         price: 28.90,
         images: [PASTRIES_IMAGES.fraisier],
-        category: 'Gâteaux',
-        subCategory: 'Fruits',
+        categoryId: categories['Gâteaux'],
         tags: [],
         ingredients: ['Fraises fraîches', 'Crème mousseline', 'Génoise', 'Pâte d\'amande'],
         nutrition: {
@@ -289,8 +298,7 @@ async function main() {
         description: 'Madeleines traditionnelles au citron et beurre de Charentes',
         price: 8.90,
         images: [PASTRIES_IMAGES.madeleine],
-        category: 'Petits gâteaux',
-        subCategory: 'Traditionnel',
+        categoryId: categories['Petits gâteaux'],
         tags: [],
         ingredients: ['Farine', 'Beurre de Charentes', 'Citron', 'Œufs', 'Miel'],
         nutrition: {
@@ -315,8 +323,7 @@ async function main() {
         description: 'Feuilletage croustillant, crème pâtissière vanille, glaçage fondant',
         price: 5.90,
         images: [PASTRIES_IMAGES.milleFeuille],
-        category: 'Feuilletés',
-        subCategory: 'Crème',
+        categoryId: categories['Gâteaux'],
         tags: [],
         ingredients: ['Pâte feuilletée', 'Crème pâtissière vanille', 'Glaçage fondant'],
         nutrition: {
@@ -341,8 +348,7 @@ async function main() {
         description: 'Meringue, chantilly et crème de marrons de l\'Ardèche',
         price: 7.50,
         images: [PASTRIES_IMAGES.montBlanc],
-        category: 'Entremets',
-        subCategory: 'Marrons',
+        categoryId: categories['Gâteaux'],
         tags: [],
         ingredients: ['Crème de marrons', 'Meringue', 'Chantilly', 'Marrons glacés'],
         nutrition: {
@@ -367,8 +373,7 @@ async function main() {
         description: 'Muffin américain aux myrtilles sauvages et streusel',
         price: 3.20,
         images: [PASTRIES_IMAGES.muffin],
-        category: 'Muffins',
-        subCategory: 'Fruits',
+        categoryId: categories['Pâtisseries'],
         tags: [],
         ingredients: ['Myrtilles sauvages', 'Farine', 'Beurre', 'Streusel'],
         nutrition: {
@@ -393,8 +398,7 @@ async function main() {
         description: 'Biscuit joconde, ganache chocolat, crème au beurre café',
         price: 8.90,
         images: [PASTRIES_IMAGES.opera],
-        category: 'Entremets',
-        subCategory: 'Chocolat',
+        categoryId: categories['Gâteaux'],
         tags: [],
         ingredients: ['Biscuit joconde', 'Ganache chocolat', 'Crème café', 'Glaçage'],
         nutrition: {
@@ -419,8 +423,7 @@ async function main() {
         description: 'Viennoiserie feuilletée avec deux barres de chocolat noir',
         price: 2.10,
         images: [PASTRIES_IMAGES.painAuChocolat],
-        category: 'Viennoiseries',
-        subCategory: 'Chocolat',
+        categoryId: categories['Viennoiseries'],
         tags: ['Populaire'],
         ingredients: ['Pâte feuilletée', 'Chocolat noir 70%', 'Beurre'],
         nutrition: {
@@ -445,8 +448,7 @@ async function main() {
         description: 'Spirale de pâte feuilletée, crème pâtissière et raisins secs',
         price: 2.30,
         images: [PASTRIES_IMAGES.painAuRaisin],
-        category: 'Viennoiseries',
-        subCategory: 'Fruits secs',
+        categoryId: categories['Viennoiseries'],
         tags: [],
         ingredients: ['Pâte feuilletée', 'Crème pâtissière', 'Raisins secs', 'Rhum'],
         nutrition: {
@@ -471,8 +473,7 @@ async function main() {
         description: 'Pâte feuilletée, crème pâtissière vanille et pépites de chocolat',
         price: 2.80,
         images: [PASTRIES_IMAGES.painSuisse],
-        category: 'Viennoiseries',
-        subCategory: 'Crème',
+        categoryId: categories['Viennoiseries'],
         tags: [],
         ingredients: ['Pâte feuilletée', 'Crème pâtissière vanille', 'Pépites chocolat'],
         nutrition: {
@@ -497,8 +498,7 @@ async function main() {
         description: 'Pâte à choux en couronne, crème pralinée et amandes effilées',
         price: 24.90,
         images: [PASTRIES_IMAGES.parisBrest],
-        category: 'Gâteaux',
-        subCategory: 'Choux',
+        categoryId: categories['Gâteaux'],
         tags: [],
         ingredients: ['Pâte à choux', 'Crème pralinée', 'Amandes effilées', 'Praliné maison'],
         nutrition: {
@@ -523,8 +523,7 @@ async function main() {
         description: 'Deux choux superposés, crème chocolat et glaçage chocolat',
         price: 6.50,
         images: [PASTRIES_IMAGES.religieuse],
-        category: 'Choux',
-        subCategory: 'Chocolat',
+        categoryId: categories['Pâtisseries'],
         tags: [],
         ingredients: ['Pâte à choux', 'Crème pâtissière chocolat', 'Glaçage chocolat'],
         nutrition: {
@@ -549,8 +548,7 @@ async function main() {
         description: 'Biscuit épais au beurre demi-sel, fondant et croustillant',
         price: 3.50,
         images: [PASTRIES_IMAGES.sable],
-        category: 'Biscuits',
-        subCategory: 'Breton',
+        categoryId: categories['Petits gâteaux'],
         tags: [],
         ingredients: ['Farine', 'Beurre demi-sel', 'Sucre', 'Œufs'],
         nutrition: {
@@ -575,8 +573,7 @@ async function main() {
         description: 'Base de pâte feuilletée, choux caramélisés, crème Chantilly',
         price: 7.20,
         images: [PASTRIES_IMAGES.saintHonore],
-        category: 'Pâtisseries classiques',
-        subCategory: 'Choux',
+        categoryId: categories['Gâteaux'],
         tags: [],
         ingredients: ['Pâte feuilletée', 'Pâte à choux', 'Crème Chantilly', 'Caramel'],
         nutrition: {
@@ -601,8 +598,7 @@ async function main() {
         description: 'Pâte sablée garnie d\'une ganache fondante au chocolat noir',
         price: 5.80,
         images: [PASTRIES_IMAGES.tarteAuChocolat],
-        category: 'Tartes',
-        subCategory: 'Chocolat',
+        categoryId: categories['Tartes'],
         tags: [],
         ingredients: ['Pâte sablée', 'Chocolat noir', 'Crème', 'Beurre'],
         nutrition: {
@@ -627,8 +623,7 @@ async function main() {
         description: 'Tarte au citron classique avec une crème citron acidulée sur pâte sablée',
         price: 5.50,
         images: [PASTRIES_IMAGES.tarteAuCitron],
-        category: 'Tartes',
-        subCategory: 'Citron',
+        categoryId: categories['Tartes'],
         tags: [],
         ingredients: ['Pâte sablée', 'Citron', 'Œufs', 'Sucre', 'Beurre'],
         nutrition: {
@@ -653,8 +648,7 @@ async function main() {
         description: 'Tarte estivale garnie d\'abricots frais sur une base d\'amande',
         price: 5.40,
         images: [PASTRIES_IMAGES.tarteAuxAbricots],
-        category: 'Tartes',
-        subCategory: 'Fruits',
+        categoryId: categories['Tartes'],
         tags: [],
         ingredients: ['Pâte sablée', 'Abricots', 'Poudre d\'amande', 'Sucre'],
         nutrition: {
@@ -679,8 +673,7 @@ async function main() {
         description: 'Pâte sablée, crème pâtissière et fraises fraîches',
         price: 5.90,
         images: [PASTRIES_IMAGES.tarteAuxFraises],
-        category: 'Tartes',
-        subCategory: 'Fruits rouges',
+        categoryId: categories['Tartes'],
         tags: [],
         ingredients: ['Pâte sablée', 'Fraises', 'Crème pâtissière', 'Gélatine'],
         nutrition: {
@@ -705,8 +698,7 @@ async function main() {
         description: 'Garniture généreuse de myrtilles sur pâte croustillante',
         price: 6.10,
         images: [PASTRIES_IMAGES.tarteAuxMyrtilles],
-        category: 'Tartes',
-        subCategory: 'Fruits rouges',
+        categoryId: categories['Tartes'],
         tags: [],
         ingredients: ['Pâte sablée', 'Myrtilles', 'Sucre', 'Maïzena'],
         nutrition: {
@@ -731,8 +723,7 @@ async function main() {
         description: 'Fine pâte garnie de compote et lamelles de pommes caramélisées',
         price: 5.30,
         images: [PASTRIES_IMAGES.tarteAuxPommes],
-        category: 'Tartes',
-        subCategory: 'Classique',
+        categoryId: categories['Tartes'],
         tags: [],
         ingredients: ['Pâte feuilletée', 'Pommes', 'Compote', 'Sucre'],
         nutrition: {
@@ -752,10 +743,12 @@ async function main() {
 
   ])
 
+  console.log('✅ Pâtisseries créées')
+
   console.log('✅ Base de données initialisée avec succès !')
 }
 
-  
+
 main()
   .catch((e) => {
     console.error(e)

@@ -4,7 +4,6 @@ import { useToast } from 'primevue/usetoast'
 import { ProductCard } from '@/components'
 import Drawer from 'primevue/drawer'
 import FiltersPanel from '@/components/FiltersPanel.vue'
-import Paginator from 'primevue/paginator'
 import { pastryService } from '@/services/pastry.service'
 import type { Pastry } from '@/types/pastry'
 import ProgressSpinner from 'primevue/progressspinner'
@@ -28,9 +27,7 @@ interface Filter {
 
 // État
 const searchQuery = ref('')
-const sortBy = ref('popularity')
-const currentPage = ref(1)
-const itemsPerPage = ref(12)
+const sortBy = ref()
 
 const filters = ref<Filter>({
   categories: [],
@@ -43,7 +40,7 @@ const filters = ref<Filter>({
 
 // Options de filtres
 const filterOptions = {
-  categories: ['Gâteaux', 'Tartes', 'Macarons', 'Viennoiseries', 'Pièces montées'],
+  categories: ['Gâteaux', 'Tartes', 'Viennoiseries'],
   diets: ['Végétarien', 'Vegan', 'Sans gluten', 'Sans lactose'],
   seasons: ['Printemps', 'Été', 'Automne', 'Hiver'],
   regions: ['Paris', 'Lyon', 'Bordeaux', 'Marseille'],
@@ -103,7 +100,40 @@ const fetchPastries = async () => {
   loading.value = true
   error.value = null
   try {
-    products.value = await pastryService.getAllPastries()
+    const params = new URLSearchParams()
+    let hasFilters = false
+
+    if (searchQuery.value) {
+      params.append('q', searchQuery.value)
+      hasFilters = true
+    }
+    if (filters.value.categories.length) {
+      params.append('categories', filters.value.categories.join(','))
+      hasFilters = true
+    }
+    if (filters.value.diets.length) {
+      params.append('diets', filters.value.diets.join(','))
+      hasFilters = true
+    }
+    if (filters.value.priceRange[0] !== 0) {
+      params.append('priceMin', filters.value.priceRange[0].toString())
+      hasFilters = true
+    }
+    if (filters.value.priceRange[1] !== 100) {
+      params.append('priceMax', filters.value.priceRange[1].toString())
+      hasFilters = true
+    }
+    if (filters.value.availability !== true) {
+      params.append('availability', filters.value.availability ? 'true' : 'false')
+      hasFilters = true
+    }
+    if (sortBy.value) {
+      params.append('sortBy', sortBy.value)
+      hasFilters = true
+    }
+
+    // Appel API : sans params si aucun filtre
+    products.value = hasFilters ? await pastryService.getAllPastries(params) : await pastryService.getAllPastries()
   } catch (err) {
     error.value = 'Erreur lors du chargement des pâtisseries'
     toast.add({
@@ -259,7 +289,7 @@ onMounted(() => {
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-content-center mt-4">
+      <!--      <div class="flex justify-content-center mt-4">
         <Paginator
           v-model:first="currentPage"
           :rows="itemsPerPage"
@@ -268,7 +298,7 @@ onMounted(() => {
           template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
           class="w-full md:w-auto"
         />
-      </div>
+      </div>-->
     </div>
   </div>
 </template>
