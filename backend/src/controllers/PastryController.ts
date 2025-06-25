@@ -59,31 +59,41 @@ export class PastryController {
           where.stockCount = { gt: 0 };
         }
 
-        let orderBy: any = {};
-        if (sortBy === "Populaire") {
-          orderBy = [
-            { isPopular: "desc" }, // Les populaires d'abord
-            { createdAt: "desc" }, // Puis les plus récents
-          ];
-        } else if (sortBy === "Nouveau") {
-          orderBy = [
-            { isNew: "desc" },     // Les nouveaux d'abord
-            { createdAt: "desc" },
-          ];
-        } else if (sortBy) {
-          console.log('sort and order', sortBy, order);
-          orderBy = { [String(sortBy)]: order === "desc" ? "desc" : "asc" };
-        }
+        // Fonction helper pour trier par tag
+        const sortByTag = async (tagName: string) => {
+          const pastriesWithTag = await prismaClient.pastry.findMany({
+            where: { ...where, tags: { has: tagName } },
+            orderBy: { createdAt: "desc" }
+          });
 
-        const pastries = await prismaClient.pastry.findMany({
-          where,
-          orderBy,
-        });
+          const pastriesWithoutTag = await prismaClient.pastry.findMany({
+            where: { ...where, NOT: { tags: { has: tagName } } },
+            orderBy: { createdAt: "desc" }
+          });
+
+          return [...pastriesWithTag, ...pastriesWithoutTag];
+        };
+
+        let pastries;
+
+        if (sortBy === "Populaire" || sortBy === "Nouveau") {
+          pastries = await sortByTag(String(sortBy));
+        } else {
+          let orderBy: any = {};
+          if (sortBy) {
+            orderBy = { [String(sortBy)]: order === "desc" ? "desc" : "asc" };
+          }
+
+          pastries = await prismaClient.pastry.findMany({
+            where,
+            orderBy,
+          });
+        }
 
         res.json(pastries);
-        } catch (error) {
-            res.status(500).json({ error: "Failed to fetch pastries" });
-        }
+      } catch (error) {
+          res.status(500).json(error);
+      }
     };
 
     // Get a single pastry by ID
