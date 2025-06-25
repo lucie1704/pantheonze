@@ -59,9 +59,21 @@ export class PastryController {
           where.stockCount = { gt: 0 };
         }
 
-        const orderBy = sortBy
-          ? { [String(sortBy)]: order === "desc" ? "desc" : "asc" }
-          : undefined;
+        let orderBy: any = {};
+        if (sortBy === "Populaire") {
+          orderBy = [
+            { isPopular: "desc" }, // Les populaires d'abord
+            { createdAt: "desc" }, // Puis les plus récents
+          ];
+        } else if (sortBy === "Nouveau") {
+          orderBy = [
+            { isNew: "desc" },     // Les nouveaux d'abord
+            { createdAt: "desc" },
+          ];
+        } else if (sortBy) {
+          console.log('sort and order', sortBy, order);
+          orderBy = { [String(sortBy)]: order === "desc" ? "desc" : "asc" };
+        }
 
         const pastries = await prismaClient.pastry.findMany({
           where,

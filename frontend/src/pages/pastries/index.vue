@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import { ProductCard } from '@/components'
@@ -31,11 +31,10 @@ const filters = ref<Filter>({
 
 // Options de tri
 const sortOptions = [
-  { value: 'popularity', label: 'Popularité' },
+  { value: 'Populaire', label: 'Popularité' },
   { value: 'price-asc', label: 'Prix croissant' },
   { value: 'price-desc', label: 'Prix décroissant' },
-  { value: 'newest', label: 'Nouveautés' },
-  { value: 'rating', label: 'Meilleures notes' },
+  { value: 'Nouveau', label: 'Nouveautés' },
 ]
 
 const products = ref<Pastry[]>([])
@@ -62,7 +61,13 @@ const updateURL = () => {
   if (filters.value.availability) {
     query.availability = 'true'
   }
-  if (sortBy.value) {
+  if (sortBy.value === 'price-asc') {
+    query.sortBy = 'price'
+    query.order = 'asc'
+  } else if (sortBy.value === 'price-desc') {
+    query.sortBy = 'price'
+    query.order = 'desc'
+  } else if (sortBy.value) {
     query.sortBy = sortBy.value
   }
 
@@ -91,7 +96,11 @@ const loadFromURL = () => {
   if (query.availability) {
     filters.value.availability = query.availability === 'true'
   }
-  if (query.sortBy) {
+  if (query.sortBy === 'price' && query.order === 'asc') {
+    sortBy.value = 'price-asc'
+  } else if (query.sortBy === 'price' && query.order === 'desc') {
+    sortBy.value = 'price-desc'
+  } else if (query.sortBy) {
     sortBy.value = query.sortBy as string
   }
 }
@@ -158,13 +167,21 @@ const fetchPastries = async () => {
       params.append('availability', 'true')
       hasFilters = true
     }
-    if (sortBy.value) {
+    if (sortBy.value === 'price-asc') {
+      params.append('sortBy', 'price')
+      params.append('order', 'asc')
+      hasFilters = true
+    } else if (sortBy.value === 'price-desc') {
+      params.append('sortBy', 'price')
+      params.append('order', 'desc')
+      hasFilters = true
+    } else if (sortBy.value) {
       params.append('sortBy', sortBy.value)
       hasFilters = true
     }
 
     products.value = hasFilters ? await pastryService.getAllPastries(params) : await pastryService.getAllPastries()
-  } catch (err) {
+  } catch {
     error.value = 'Erreur lors du chargement des pâtisseries'
     toast.add({
       severity: 'error',
@@ -177,31 +194,12 @@ const fetchPastries = async () => {
   }
 }
 
-// Watchers pour mettre à jour l'URL quand les filtres changent
-watch(searchQuery, () => {
-  updateURL()
-  fetchPastries()
-})
-
-watch(
-  filters,
-  () => {
-    updateURL()
-    fetchPastries()
-  },
-  { deep: true },
-)
-
-watch(sortBy, () => {
-  updateURL()
-  fetchPastries()
-})
-
 onMounted(() => {
   loadFromURL()
   fetchPastries()
 })
 
+// Watcher pour les changements dans l'URL
 watch(
   () => route.query,
   () => {
@@ -209,6 +207,23 @@ watch(
     fetchPastries()
   },
 )
+
+// Watchers pour mettre à jour l'URL quand les filtres changent
+watch(searchQuery, () => {
+  updateURL()
+})
+
+watch(
+  filters,
+  () => {
+    updateURL()
+  },
+  { deep: true },
+)
+
+watch(sortBy, () => {
+  updateURL()
+})
 </script>
 
 <template>
