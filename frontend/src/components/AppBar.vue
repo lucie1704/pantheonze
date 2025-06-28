@@ -31,7 +31,7 @@ const menuItems = [
 
 const userMenuItems = [
   {
-    label: 'Mon compte',
+    label: 'Mon profil',
     icon: 'pi pi-user',
     command: () => router.push('/account'),
     class: 'my-1',
@@ -154,7 +154,7 @@ const closeMobileMenu = () => {
               plain
               class="w-3rem h-3rem p-0 hover:surface-200"
               @click="userMenu.toggle($event)"
-              v-tooltip.bottom="{ value: 'Mon compte' }"
+              v-tooltip.bottom="{ value: 'Mon profil' }"
             >
               <i class="pi pi-user text-900 text-xl hover:text-primary"></i>
             </Button>

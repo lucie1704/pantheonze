@@ -63,12 +63,20 @@ export class PastryController {
         const sortByTag = async (tagName: string) => {
           const pastriesWithTag = await prismaClient.pastry.findMany({
             where: { ...where, tags: { has: tagName } },
-            orderBy: { createdAt: "desc" }
+            orderBy: { createdAt: "desc" },
+            include: {
+              category: true,
+              diet: true
+            }
           });
 
           const pastriesWithoutTag = await prismaClient.pastry.findMany({
             where: { ...where, NOT: { tags: { has: tagName } } },
-            orderBy: { createdAt: "desc" }
+            orderBy: { createdAt: "desc" },
+            include: {
+              category: true,
+              diet: true
+            }
           });
 
           return [...pastriesWithTag, ...pastriesWithoutTag];
@@ -87,6 +95,10 @@ export class PastryController {
           pastries = await prismaClient.pastry.findMany({
             where,
             orderBy,
+            include: {
+              category: true,
+              diet: true
+            }
           });
         }
 
@@ -101,7 +113,11 @@ export class PastryController {
         try {
             const { id } = req.params;
             const pastry = await prismaClient.pastry.findUnique({
-                where: { id }
+                where: { id },
+                include: {
+                    category: true,
+                    diet: true
+                }
             });
 
             if (!pastry) {

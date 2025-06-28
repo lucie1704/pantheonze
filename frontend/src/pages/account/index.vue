@@ -4,13 +4,6 @@
       <!-- Header avec navigation -->
       <div class="flex justify-content-between align-items-center mb-4">
         <h1 class="text-4xl font-bold m-0 text-primary">Mon Profil</h1>
-        <Button
-          label="Paramètres"
-          icon="pi pi-cog"
-          severity="secondary"
-          size="small"
-          @click="$router.push('/account/settings')"
-        />
       </div>
 
       <!-- Informations personnelles -->
@@ -66,6 +59,12 @@
               class="w-full"
             />
           </div>
+          <Button
+            label="Enregistrer les modifications"
+            icon="pi pi-save"
+            class="align-self-start"
+            @click="savePersonalInfo"
+          />
         </div>
       </div>
 
@@ -213,6 +212,12 @@ const passwordForm = ref({
   new: '',
   confirm: '',
 })
+
+const savePersonalInfo = () => {
+  // Logique de sauvegarde des informations personnelles
+  console.log('Sauvegarde des informations personnelles', user.value)
+  alert('Informations personnelles sauvegardées avec succès !')
+}
 
 const changePassword = () => {
   if (passwordForm.value.new !== passwordForm.value.confirm) {

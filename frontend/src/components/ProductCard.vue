@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
+import DietIcon from './DietIcon.vue'
 import type { Pastry } from '@/types/pastry'
 
 const props = defineProps<{
@@ -13,6 +14,33 @@ const quantity = ref(1)
 const emit = defineEmits<{
   (e: 'add-to-cart', data: { pastryId: string; quantity: number }): void
 }>()
+
+// Configuration des icônes et couleurs pour les régimes alimentaires
+const dietConfig = computed(() => {
+  const config: Record<string, { iconPath: string; label: string }> = {
+    Végétarien: {
+      iconPath: '/diet-icons/vegetarian.svg',
+      label: 'Végétarien',
+    },
+    Vegan: {
+      iconPath: '/diet-icons/vegan.svg',
+      label: 'Vegan',
+    },
+    'Sans Gluten': {
+      iconPath: '/diet-icons/gluten-free.svg',
+      label: 'Sans Gluten',
+    },
+    'Sans Lactose': {
+      iconPath: '/diet-icons/lactose-free.svg',
+      label: 'Sans Lactose',
+    },
+    'Sans Sucre': {
+      iconPath: '/diet-icons/sugar-free.svg',
+      label: 'Sans Sucre',
+    },
+  }
+  return config
+})
 
 const addToCart = () => {
   emit('add-to-cart', {
@@ -62,7 +90,17 @@ const incrementQuantity = () => {
     <!-- Contenu -->
     <div class="p-3 flex flex-column flex-1">
       <!-- Nom -->
-      <h3 class="text-900 font-medium text-xl m-0 line-height-3">{{ pastry.name }}</h3>
+      <h3 class="text-900 font-medium text-xl m-0 line-height-3 mb-2">{{ pastry.name }}</h3>
+      <!-- Icônes des régimes alimentaires -->
+      <div
+        v-if="pastry.diet?.name && dietConfig[pastry.diet.name]"
+        class="flex gap-1 mb-2"
+      >
+        <DietIcon
+          :icon-path="dietConfig[pastry.diet.name].iconPath"
+          :label="dietConfig[pastry.diet.name].label"
+        />
+      </div>
 
       <!-- Espace flexible -->
       <div class="flex-1"></div>

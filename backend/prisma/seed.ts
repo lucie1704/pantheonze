@@ -4,6 +4,7 @@ import { hash } from 'bcrypt'
 const PASTRIES_IMAGES = {
   brioche1: 'https://images.unsplash.com/photo-1552056413-b8b5eed0170b?q=80&w=858&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   brioche2: 'https://images.unsplash.com/photo-1620921568790-c1cf8984624c?q=80&w=1548&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  brownie: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ25CXHgbxRxsfkdbvuAtEWUvd3JEux675UgA&s',
   chouquette: 'https://images.ricardocuisine.com/services/recipes/7855-1519923152.jpg',
   croissant: 'https://images.unsplash.com/photo-1623334044303-241021148842?w=800&h=600&fit=crop',
   eclairAuChocolat: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxs9zU7IVzQhOtwGdzf3-VeT1lARHm5DkJjw&s',
@@ -15,6 +16,7 @@ const PASTRIES_IMAGES = {
   milleFeuille: 'https://adc-dev-images-recipes.s3.eu-west-1.amazonaws.com/lv_23790_millefeuilles_bd.jpg',
   montBlanc: 'https://cache.marieclaire.fr/data/photo/w1000_ci/1pe/recette-mont-blanc-marrons.jpg',
   muffin: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm-NwO0zqR2rGOTU4y0AlDM-q0x5ejL6jsrQ&s',
+  muffinSansSucre: 'https://www.cuisineactuelle.fr/imgre/fit/~1~cac~2025~01~20~25e03ebc-a66f-4d13-bec9-fe481228f412.jpg/750x562/quality/80/crop-from/center/cr/wqkgR2V0dHkgSW1hZ2VzL2lTdG9ja3Bob3RvIGJhcm1hbGluaSAvIEN1aXNpbmUgQWN0dWVsbGU%3D/focus-point/1006%2C666/muffin-aux-pommes.jpeg',
   opera: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNVm8vqk2lvAW0CxulbWa8Am-OFM3xTBqB-A&s',
   painAuChocolat: 'https://images.unsplash.com/photo-1681218424681-b4f8228ecea9?q=80&w=1548&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   painAuRaisin: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTXn968tFc6p5SON5Ke9tBmmHnMX6x0j337g&s',
@@ -719,6 +721,52 @@ async function main() {
         },
         stockCount: 20,
         slug: 'tarte-pommes',
+      }
+    }),
+
+    // Brownie Vegan
+    prisma.pastry.create({
+      data: {
+        name: 'Brownie aux Noix',
+        description: 'Brownie fondant sans produits animaux, chocolat noir et noix',
+        price: 4.50,
+        images: [PASTRIES_IMAGES.brownie],
+        category: { connect: { id: categories['Petits gâteaux'] } },
+        diet: { connect: { id: diets['Vegan'] } },
+        tags: ['Nouveau', 'Vegan'],
+        ingredients: ['Farine complète', 'Chocolat noir vegan', 'Lait d\'amande', 'Huile de coco', 'Noix', 'Sucre de coco'],
+        nutrition: {
+          calories: 320,
+          protein: 6,
+          carbs: 28,
+          fat: 18,
+          allergens: ['gluten', 'fruits à coque']
+        },
+        stockCount: 18,
+        slug: 'brownie-vegan-noix',
+      }
+    }),
+
+    // Muffin Sans Sucre
+    prisma.pastry.create({
+      data: {
+        name: 'Muffin Pomme-Cannelle',
+        description: 'Muffin moelleux sucré naturellement aux pommes et dattes',
+        price: 3.80,
+        images: [PASTRIES_IMAGES.muffinSansSucre],
+        category: { connect: { id: categories['Pâtisseries'] } },
+        diet: { connect: { id: diets['Sans Sucre'] } },
+        tags: ['Sans Sucre', 'Healthy'],
+        ingredients: ['Farine d\'avoine', 'Pommes', 'Dattes', 'Cannelle', 'Œufs', 'Yaourt grec', 'Levure'],
+        nutrition: {
+          calories: 185,
+          protein: 8,
+          carbs: 22,
+          fat: 6,
+          allergens: ['gluten', 'œufs', 'lait']
+        },
+        stockCount: 25,
+        slug: 'muffin-pomme-cannelle-sans-sucre',
       }
     }),
 

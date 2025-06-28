@@ -1,11 +1,21 @@
+export interface Category {
+  id: string;
+  name: string;
+}
+
+export interface Diet {
+  id: string;
+  name: string;
+}
+
 export interface Pastry {
   id: string;
   name: string;
   description: string;
   price: number;
   images: string[];
-  category: string;
-  diet?: string;
+  category: Category;
+  diet?: Diet;
   tags: string[];
   ingredients: string[];
   nutrition: {

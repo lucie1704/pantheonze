@@ -73,41 +73,6 @@
 
       <Divider />
 
-      <!-- Préférences de livraison -->
-      <div class="surface-card p-4 border-round mb-4">
-        <h2 class="text-2xl font-bold mb-4">Préférences de livraison</h2>
-        <div class="flex flex-column gap-3">
-          <div class="field">
-            <label
-              for="defaultAddress"
-              class="block mb-2"
-              >Adresse de livraison par défaut</label
-            >
-            <Textarea
-              id="defaultAddress"
-              v-model="settings.defaultAddress"
-              rows="3"
-              class="w-full"
-            />
-          </div>
-          <div class="field">
-            <label
-              for="deliveryInstructions"
-              class="block mb-2"
-              >Instructions de livraison</label
-            >
-            <InputText
-              id="deliveryInstructions"
-              v-model="settings.deliveryInstructions"
-              class="w-full"
-              placeholder="Ex: Code d'entrée, étage..."
-            />
-          </div>
-        </div>
-      </div>
-
-      <Divider />
-
       <!-- Préférences de paiement -->
       <div class="surface-card p-4 border-round">
         <h2 class="text-2xl font-bold mb-4">Préférences de paiement</h2>
@@ -143,7 +108,6 @@
 import { ref, onMounted } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import InputSwitch from 'primevue/inputswitch'
-import Textarea from 'primevue/textarea'
 import RadioButton from 'primevue/radiobutton'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
@@ -157,8 +121,6 @@ const toast = useToast()
 const settings = ref({
   emailNotifications: true,
   promoNotifications: false,
-  defaultAddress: '',
-  deliveryInstructions: '',
   preferredPayment: 'card',
   dietaryRestrictions: [] as string[],
 })
@@ -206,8 +168,6 @@ const resetSettings = () => {
   settings.value = {
     emailNotifications: true,
     promoNotifications: false,
-    defaultAddress: '',
-    deliveryInstructions: '',
     preferredPayment: 'card',
     dietaryRestrictions: [],
   }

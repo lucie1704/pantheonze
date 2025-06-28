@@ -31,6 +31,9 @@ const filters = ref<Filter>({
   availability: false,
 })
 
+// Flag pour ignorer temporairement les préférences utilisateur
+const ignoreUserPreferences = ref(false)
+
 // Options de tri
 const sortOptions = [
   { value: 'Populaire', label: 'Popularité' },
@@ -88,8 +91,8 @@ const loadFromURL = () => {
   }
   if (query.diets) {
     filters.value.diets = (query.diets as string).split(',')
-  } else {
-    // Si aucun filtre diet dans l'URL, appliquer les préférences utilisateur
+  } else if (!ignoreUserPreferences.value) {
+    // Si aucun filtre diet dans l'URL et qu'on n'ignore pas les préférences, les appliquer
     const userDietaryPreferences = userService.getUserDietaryPreferences()
     filters.value.diets = userDietaryPreferences
   }
@@ -114,7 +117,7 @@ const loadFromURL = () => {
 // Fonction pour appliquer les préférences utilisateur par défaut
 const applyUserPreferences = () => {
   const userDietaryPreferences = userService.getUserDietaryPreferences()
-  if (userDietaryPreferences.length > 0 && filters.value.diets.length === 0) {
+  if (userDietaryPreferences.length > 0 && filters.value.diets.length === 0 && !ignoreUserPreferences.value) {
     filters.value.diets = userDietaryPreferences
   }
 }
@@ -145,6 +148,14 @@ const clearFilters = async () => {
   }
   searchQuery.value = ''
   sortBy.value = undefined
+  ignoreUserPreferences.value = false // Reset du flag
+  updateURL()
+}
+
+// Fonction pour supprimer les préférences appliquées automatiquement
+const removeAppliedPreferences = () => {
+  ignoreUserPreferences.value = true
+  filters.value.diets = []
   updateURL()
 }
 
@@ -217,6 +228,10 @@ onMounted(() => {
 watch(
   () => route.query,
   () => {
+    // Reset du flag si des filtres diet sont explicitement définis dans l'URL
+    if (route.query.diets) {
+      ignoreUserPreferences.value = false
+    }
     loadFromURL()
     fetchPastries()
   },
@@ -331,7 +346,9 @@ watch(sortBy, () => {
 
             <!-- Message informatif pour les préférences appliquées -->
             <div
-              v-if="userService.getUserDietaryPreferences().length > 0 && filters.diets.length > 0"
+              v-if="
+                userService.getUserDietaryPreferences().length > 0 && filters.diets.length > 0 && !ignoreUserPreferences
+              "
               class="flex align-items-center gap-2 text-sm text-primary"
             >
               <i class="pi pi-info-circle"></i>
@@ -340,7 +357,7 @@ watch(sortBy, () => {
                 text
                 size="small"
                 class="p-0 text-xs"
-                @click="filters.diets = []"
+                @click="removeAppliedPreferences"
               >
                 (supprimer)
               </Button>
