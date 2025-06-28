@@ -12,6 +12,11 @@ export default function (router: Router) {
     "/pastries",
     PastryController.getAllPastries
   );
+
+  router.get(
+    "/pastries/popular",
+    PastryController.getPopularPastries
+  );
   
   router.post(
     "/pastries",

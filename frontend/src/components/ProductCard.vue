@@ -61,9 +61,7 @@ const incrementQuantity = () => {
 </script>
 
 <template>
-  <div
-    class="surface-card border-round-xl overflow-hidden flex flex-column min-h-25rem h-full min-w-16rem flex-shrink-0"
-  >
+  <div class="surface-card border-round-xl overflow-hidden flex flex-column h-25rem min-w-16rem flex-shrink-0">
     <!-- Image ou Fallback -->
     <div class="p-3 pb-0">
       <div
@@ -90,16 +88,18 @@ const incrementQuantity = () => {
     <!-- Contenu -->
     <div class="p-3 flex flex-column flex-1">
       <!-- Nom -->
-      <h3 class="text-900 font-medium text-xl m-0 line-height-3 mb-2">{{ pastry.name }}</h3>
-      <!-- Icônes des régimes alimentaires -->
-      <div
-        v-if="pastry.diet?.name && dietConfig[pastry.diet.name]"
-        class="flex gap-1 mb-2"
-      >
-        <DietIcon
-          :icon-path="dietConfig[pastry.diet.name].iconPath"
-          :label="dietConfig[pastry.diet.name].label"
-        />
+      <div class="flex justify-content-between align-items-start">
+        <h3 class="text-900 font-medium text-xl m-0 line-height-3 mb-2 product-title">{{ pastry.name }}</h3>
+        <!-- Icônes des régimes alimentaires -->
+        <div
+          v-if="pastry.diet?.name && dietConfig[pastry.diet.name]"
+          class="flex gap-1 mb-2 pt-2 px-2"
+        >
+          <DietIcon
+            :icon-path="dietConfig[pastry.diet.name].iconPath"
+            :label="dietConfig[pastry.diet.name].label"
+          />
+        </div>
       </div>
 
       <!-- Espace flexible -->
@@ -201,5 +201,14 @@ const incrementQuantity = () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.product-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 4rem;
 }
 </style>

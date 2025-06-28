@@ -618,7 +618,7 @@ async function main() {
         images: [PASTRIES_IMAGES.tarteAuCitron],
         category: { connect: { id: categories['Tartes'] } },
         diet: { connect: { id: diets['Sans Lactose'] } },
-        tags: ['Spécial'],
+        tags: [],
         ingredients: ['Pâte sablée', 'Citron', 'Œufs', 'Sucre', 'Margarine végétale'],
         nutrition: {
           calories: 260,

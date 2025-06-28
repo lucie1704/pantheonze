@@ -24,4 +24,17 @@ export const pastryService = {
       throw error
     }
   },
+
+  getPopularPastries: async (limit?: number): Promise<Pastry[]> => {
+    try {
+      const params = limit ? { limit: limit.toString() } : {}
+      const response = await axios.get<Pastry[]>(`${API_URL}/pastries/popular`, {
+        params,
+      })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching popular pastries:', error)
+      throw error
+    }
+  },
 }

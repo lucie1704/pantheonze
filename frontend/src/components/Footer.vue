@@ -90,7 +90,7 @@
         class="text-center mt-5 text-500 flex flex-column lg:flex-row align-items-center justify-content-center gap-2 border-top-1 surface-border pt-3"
       >
         <i class="pi pi-copyright"></i>
-        <span class="text-sm lg:text-base">2024 PanthéOnze - Tous droits réservés</span>
+        <span class="text-sm lg:text-base">2025 PanthéOnze - Tous droits réservés</span>
       </div>
     </div>
   </footer>

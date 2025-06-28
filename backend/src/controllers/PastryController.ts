@@ -108,6 +108,30 @@ export class PastryController {
       }
     };
 
+    // Get popular pastries only
+    static getPopularPastries = async (req: Request, res: Response) => {
+        try {
+            const { limit } = req.query;
+            const limitNumber = limit ? parseInt(String(limit)) : 6;
+
+            const popularPastries = await prismaClient.pastry.findMany({
+                where: {
+                    tags: { has: "Populaire" }
+                },
+                orderBy: { createdAt: "desc" },
+                include: {
+                    category: true,
+                    diet: true
+                },
+                take: limitNumber
+            });
+
+            res.json(popularPastries);
+        } catch (error) {
+            res.status(500).json({ error: "Failed to fetch popular pastries" });
+        }
+    };
+
     // Get a single pastry by ID
     static getPastryById = async (req: Request, res: Response) => {
         try {
