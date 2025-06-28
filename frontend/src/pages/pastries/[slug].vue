@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { pastryService } from '@/services/pastry.service'
 import { ProductCard, DietIcon } from '@/components'
+import { DIET_CONFIG } from '@/constants/diets'
 import Carousel from 'primevue/carousel'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
+import Tag from 'primevue/tag'
 
 const route = useRoute()
 const router = useRouter()
@@ -16,30 +18,14 @@ const loading = ref(true)
 
 // Galerie photos
 const images = ref<any[]>([])
+const currentImageIndex = ref(0)
 
-onMounted(async () => {
+const loadPastryData = async () => {
   try {
+    loading.value = true
     // Charger les données du produit par slug
     const pastryData = await pastryService.getPastryBySlug(route.params.slug as string)
     pastry.value = pastryData
-
-    // Mettre à jour les images avec les vraies images du produit
-    if (pastryData.images && pastryData.images.length > 0) {
-      images.value = pastryData.images.map((img: string, index: number) => ({
-        itemImageSrc: img,
-        thumbnailImageSrc: img,
-        alt: `${pastryData.name} - Vue ${index + 1}`,
-      }))
-    } else {
-      // Image par défaut si pas d'images
-      images.value = [
-        {
-          itemImageSrc: '/no-image.svg',
-          thumbnailImageSrc: '/no-image.svg',
-          alt: pastryData.name,
-        },
-      ]
-    }
 
     // Charger les produits similaires (populaires pour l'instant)
     const popularPastries = await pastryService.getPopularPastries(8)
@@ -49,6 +35,13 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+}
+
+onMounted(loadPastryData)
+
+// Surveiller les changements de route
+watch(() => route.params.slug, () => {
+  loadPastryData()
 })
 
 const addToCart = () => {
@@ -60,8 +53,11 @@ const addToCart = () => {
 }
 
 const handleAddToCart = (pastryData: any) => {
-  // Navigation vers la page du produit avec slug
-  router.push(`/pastries/${pastryData.slug}`)
+  // Logique d'ajout au panier sans navigation
+  console.log('Ajout au panier:', {
+    productSlug: pastryData.slug,
+    quantity: 1,
+  })
 }
 
 const increaseQuantity = () => {
@@ -75,204 +71,250 @@ const decreaseQuantity = () => {
     quantity.value--
   }
 }
+
+const previousImage = () => {
+  if (pastry.value.images && pastry.value.images.length > 1) {
+    currentImageIndex.value = (currentImageIndex.value - 1 + pastry.value.images.length) % pastry.value.images.length
+  }
+}
+
+const nextImage = () => {
+  if (pastry.value.images && pastry.value.images.length > 1) {
+    currentImageIndex.value = (currentImageIndex.value + 1) % pastry.value.images.length
+  }
+}
+
+const navigateToProduct = (slug: string) => {
+  router.push(`/pastries/${slug}`)
+}
+
+const handleAddToCartFromCarousel = (cartData: any) => {
+  // Empêcher la navigation et juste ajouter au panier
+  console.log('Ajout au panier depuis carousel:', cartData)
+}
 </script>
 
 <template>
-  <div class="max-w-screen-xl mx-auto p-4">
-    <div
-      v-if="loading"
-      class="flex justify-content-center py-6"
-    >
+  <div :key="String(route.params.slug)" class="max-w-screen-xl mx-auto p-4">
+    <div v-if="loading" class="flex justify-content-center py-6">
       <ProgressSpinner style="width: 50px; height: 50px" />
     </div>
-
-    <div
-      v-else-if="pastry"
-      class="grid"
-    >
+    <div v-else-if="pastry" class="grid">
       <!-- Galerie photos (gauche sur desktop) -->
-      <div class="col-12 lg:col-6 mb-4">
-        <Galleria
-          :value="images"
-          :numVisible="5"
-          :showThumbnails="true"
-          :showIndicators="true"
-          containerClass="w-full"
-        >
-          <template #item="slotProps">
-            <img
-              :src="slotProps.item.itemImageSrc"
-              :alt="slotProps.item.alt"
-              class="w-full h-25rem object-cover"
-            />
-          </template>
-          <template #thumbnail="slotProps">
-            <img
-              :src="slotProps.item.thumbnailImageSrc"
-              :alt="slotProps.item.alt"
-              class="w-full h-4rem object-cover"
-            />
-          </template>
-        </Galleria>
+      <div class="col-12 lg:col-6">
+        <div class="relative w-full">
+          <!-- Image principale -->
+          <div class="relative border-round-xl overflow-hidden" style="aspect-ratio: 1">
+            <img :src="pastry.images && pastry.images.length > 0 ? pastry.images[currentImageIndex] : '/no-image.svg'"
+              :alt="pastry.name" class="w-full h-full object-cover" />
+
+            <!-- Flèches de navigation -->
+            <Button v-if="pastry.images && pastry.images.length > 1" icon="pi pi-chevron-left"
+              class="absolute left-2 top-50 transform-translate-y-n50 p-button-rounded p-button-text surface-200"
+              @click="previousImage" />
+            <Button v-if="pastry.images && pastry.images.length > 1"
+              class="absolute right-2 top-50 transform-translate-y-n50 p-button-rounded p-button-text surface-200"
+              @click="nextImage">
+              <i class="pi pi-chevron-right"></i>
+            </Button>
+          </div>
+
+          <!-- Points indicateurs -->
+          <div v-if="pastry.images && pastry.images.length > 1" class="flex justify-content-center gap-2 mt-3">
+            <div v-for="(image, index) in pastry.images" :key="index"
+              class="w-2 h-2 border-round cursor-pointer transition-colors"
+              :class="index === currentImageIndex ? 'bg-primary' : 'bg-300'" @click="currentImageIndex = index"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Informations principales (droite sur desktop) -->
-      <div class="col-12 lg:col-6">
-        <h1 class="text-4xl font-bold mb-3">{{ pastry.name }}</h1>
+      <div class="col-12 lg:col-6 px-4">
+        <div class="flex flex-column h-full">
+          <h1 class="text-4xl font-bold mb-3">{{ pastry.name }}</h1>
 
-        <!-- Icônes des régimes alimentaires -->
-        <div
-          v-if="pastry.diets && pastry.diets.length > 0"
-          class="flex flex-wrap gap-2 mb-4"
-        >
-          <DietIcon
-            v-for="diet in pastry.diets"
-            :key="diet.id"
-            :icon-path="`/diet-icons/${diet.name.toLowerCase().replace(' ', '-')}.svg`"
-            :label="diet.name"
-          />
-        </div>
 
-        <div class="text-3xl text-primary font-bold mb-4">{{ pastry.price }}€</div>
-        <p class="text-lg mb-6">{{ pastry.description }}</p>
-
-        <!-- Contrôles de quantité -->
-        <div class="flex align-items-center gap-4 mb-6">
           <div class="flex align-items-center gap-2">
-            <Button
-              icon="pi pi-minus"
-              @click="decreaseQuantity"
-              :disabled="quantity <= 1"
-              class="p-button-rounded p-button-text"
-            />
-            <span class="text-xl font-bold min-w-3rem text-center">{{ quantity }}</span>
-            <Button
-              icon="pi pi-plus"
-              @click="increaseQuantity"
-              :disabled="quantity >= 10"
-              class="p-button-rounded p-button-text"
-            />
+            <!-- Icônes des régimes alimentaires -->
+            <div v-if="pastry.diets && pastry.diets.length > 0" class="flex flex-wrap gap-2 mb-4">
+              <DietIcon v-for="diet in pastry.diets" :key="diet.id" :icon-path="DIET_CONFIG[diet.name]?.iconPath"
+                :label="DIET_CONFIG[diet.name]?.label" />
+            </div>
+            <!-- Tags -->
+            <div v-if="pastry.tags && pastry.tags.length > 0" class="flex flex-wrap gap-2 mb-4">
+              <Tag v-for="tag in pastry.tags" :key="tag" :value="tag" />
+            </div>
           </div>
-          <Button
-            label="Ajouter au panier"
-            icon="pi pi-shopping-cart"
-            size="large"
-            class="flex-grow-1"
-            @click="addToCart"
-            :disabled="!pastry.stockCount || pastry.stockCount <= 0"
-          />
-        </div>
 
-        <!-- Disponibilité -->
-        <div class="mb-6">
-          <Tag
-            :severity="pastry.stockCount && pastry.stockCount > 0 ? 'success' : 'danger'"
-            :value="pastry.stockCount && pastry.stockCount > 0 ? 'En stock' : 'Indisponible'"
-            class="text-lg"
-          />
+
+          <p class="text-lg mb-4">{{ pastry.description }}</p>
+
+          <div class="text-3xl text-primary font-bold mb-6 text-right">{{ pastry.price.toFixed(2).replace('.', ',') }}€
+          </div>
+
+          <!-- Espace flexible pour aligner les boutons avec le bas de l'image -->
+          <div class="flex-1"></div>
+
+          <!-- Contrôles de quantité -->
+          <div class="align-items-center gap-4">
+            <div v-if="pastry.stockCount > 0" class="flex gap-2">
+              <div
+                class="quantity-control flex align-items-center justify-content-between border-1 surface-border border-round flex-1"
+                @click.stop>
+                <Button icon="pi pi-minus" text @click.stop="decreaseQuantity" :disabled="quantity <= 1"
+                  class="quantity-button flex-none" />
+                <input type="number" v-model="quantity" min="1" class="quantity-input flex-none" @click.stop />
+                <Button icon="pi pi-plus" text @click.stop="increaseQuantity" class="quantity-button flex-none" />
+              </div>
+              <Button class="flex-1" severity="primary" @click.stop="addToCart">
+                <i class="pi pi-shopping-cart"></i>
+                <span class="hidden sm:inline">Ajouter au panier</span>
+              </Button>
+            </div>
+            <div v-else class="text-center">
+              <Tag severity="secondary" value="Rupture de stock" class="w-full justify-content-center py-2" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Accordéons de détails -->
-    <div
-      v-if="pastry"
-      class="mt-6"
-    >
+    <div v-if="pastry" class="mt-6">
       <Accordion>
         <!-- Ingrédients et nutrition -->
-        <AccordionTab header="Ingrédients & Valeurs nutritionnelles">
-          <div class="grid">
-            <div class="col-12 lg:col-6">
-              <h3 class="text-xl font-bold mb-3">Ingrédients</h3>
-              <ul class="list-none p-0">
-                <li
-                  v-for="ingredient in pastry.ingredients"
-                  :key="ingredient"
-                  class="mb-2 p-2 surface-100 border-round"
-                >
-                  {{ ingredient }}
-                </li>
-              </ul>
-            </div>
-            <div class="col-12 lg:col-6">
-              <h3 class="text-xl font-bold mb-3">Valeurs nutritionnelles</h3>
-              <div class="grid">
-                <div class="col-6">
-                  <div class="surface-card p-3 border-round text-center">
-                    <div class="text-2xl font-bold text-primary">{{ pastry.nutrition?.calories || 0 }}</div>
-                    <div class="text-500">Calories</div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="surface-card p-3 border-round text-center">
-                    <div class="text-2xl font-bold text-primary">{{ pastry.nutrition?.protein || 0 }}g</div>
-                    <div class="text-500">Protéines</div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="surface-card p-3 border-round text-center">
-                    <div class="text-2xl font-bold text-primary">{{ pastry.nutrition?.carbs || 0 }}g</div>
-                    <div class="text-500">Glucides</div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="surface-card p-3 border-round text-center">
-                    <div class="text-2xl font-bold text-primary">{{ pastry.nutrition?.fat || 0 }}g</div>
-                    <div class="text-500">Lipides</div>
-                  </div>
-                </div>
+        <AccordionTab header="Ingrédients, Allergènes & Valeurs nutritionnelles">
+          <div class="p-3">
+            <p class="text-lg mt-0 leading-relaxed mb-4">Ingrédients : {{ pastry.ingredients.join(', ') }}</p>
+
+            <p v-if="pastry.nutrition?.allergens && pastry.nutrition.allergens.length > 0"
+              class="text-lg leading-relaxed mb-4">
+              Allergènes : {{ pastry.nutrition.allergens.join(', ') }}
+            </p>
+
+            <p class="text-lg leading-relaxed mb-4">
+              Valeurs nutritionnelles (pour 100g) :
+            </p>
+
+            <div class="surface-card border-round">
+              <div class="overflow-x-auto">
+                <table class="w-auto border-round overflow-hidden border-1 surface-border min-w-full">
+                  <thead>
+                    <tr>
+                      <th
+                        class="text-center p-2 sm:p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border text-sm sm:text-base">
+                        Énergie
+                      </th>
+                      <th
+                        class="text-center p-2 sm:p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border text-sm sm:text-base">
+                        Matières grasses
+                      </th>
+                      <th
+                        class="text-center p-2 sm:p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border text-sm sm:text-base">
+                        Glucides
+                      </th>
+                      <th
+                        class="text-center p-2 sm:p-3 font-medium border-bottom-1 surface-border text-sm sm:text-base">
+                        Protéines</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td
+                        class="p-2 sm:p-3 text-center border-right-1 surface-border surface-border text-sm sm:text-base">
+                        {{ pastry.nutrition?.calories || 0 }} kcal
+                      </td>
+                      <td
+                        class="p-2 sm:p-3 text-center border-right-1 surface-border surface-border text-sm sm:text-base">
+                        {{ pastry.nutrition?.fat || 0 }}g
+                      </td>
+                      <td
+                        class="p-2 sm:p-3 text-center border-right-1 surface-border surface-border text-sm sm:text-base">
+                        {{ pastry.nutrition?.carbs || 0 }}g
+                      </td>
+                      <td class="p-2 sm:p-3 text-center surface-border text-sm sm:text-base">{{
+                        pastry.nutrition?.protein || 0 }}g</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-          </div>
-        </AccordionTab>
-
-        <!-- Conservation -->
-        <AccordionTab header="Conservation">
-          <div class="p-3">
-            <p class="text-lg mb-3">À conserver au réfrigérateur</p>
-            <ul class="list-none p-0">
-              <li class="mb-2 flex align-items-center">
-                <i class="pi pi-clock text-primary mr-2"></i>
-                À consommer dans les 48h après achat
-              </li>
-              <li class="mb-2 flex align-items-center">
-                <i class="pi pi-snowflake text-primary mr-2"></i>
-                Température de conservation : 2-4°C
-              </li>
-              <li class="mb-2 flex align-items-center">
-                <i class="pi pi-exclamation-triangle text-warning mr-2"></i>
-                Ne pas congeler
-              </li>
-            </ul>
           </div>
         </AccordionTab>
       </Accordion>
     </div>
 
     <!-- Produits similaires -->
-    <div
-      v-if="similarPastries.length > 0"
-      class="mt-8"
-    >
+    <div v-if="similarPastries.length > 0" class="mt-8">
       <h2 class="text-2xl font-bold mb-4">Vous aimerez aussi</h2>
-      <Carousel
-        :value="similarPastries"
-        :numVisible="4"
-        :numScroll="4"
-        :showNavigators="true"
-        :showIndicators="true"
-        class="carousel-container"
-      >
+      <Carousel :value="similarPastries" :numVisible="4" :numScroll="4" :showNavigators="false" :showIndicators="true"
+        :responsiveOptions="[
+          {
+            breakpoint: '1024px',
+            numVisible: 3,
+            numScroll: 3
+          },
+          {
+            breakpoint: '768px',
+            numVisible: 2,
+            numScroll: 2
+          },
+          {
+            breakpoint: '560px',
+            numVisible: 1,
+            numScroll: 1
+          }
+        ]" class="carousel-container">
         <template #item="slotProps">
           <div class="p-2">
-            <ProductCard
-              :pastry="slotProps.data"
-              @add-to-cart="handleAddToCart"
-            />
+            <div @click="navigateToProduct(slotProps.data.slug)" class="cursor-pointer">
+              <ProductCard :pastry="slotProps.data" @add-to-cart="handleAddToCartFromCarousel" />
+            </div>
           </div>
         </template>
       </Carousel>
     </div>
   </div>
 </template>
+
+<style scoped>
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 8rem;
+}
+
+.quantity-button {
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  flex: none;
+}
+
+.quantity-input {
+  width: 2rem;
+  border: none;
+  text-align: center;
+  background: transparent;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.quantity-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Masquer les flèches du carousel sur mobile */
+@media (max-width: 768px) {
+  .carousel-container .p-carousel-prev,
+  .carousel-container .p-carousel-next {
+    display: none !important;
+  }
+}
+</style>

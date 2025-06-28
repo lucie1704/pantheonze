@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import DietIcon from './DietIcon.vue'
+import { DIET_CONFIG } from '@/constants/diets'
 import type { Pastry } from '@/types/pastry'
 
 const props = defineProps<{
@@ -14,33 +15,6 @@ const quantity = ref(1)
 const emit = defineEmits<{
   (e: 'add-to-cart', data: { pastryId: string; quantity: number }): void
 }>()
-
-// Configuration des icônes et couleurs pour les régimes alimentaires
-const dietConfig = computed(() => {
-  const config: Record<string, { iconPath: string; label: string }> = {
-    Végétarien: {
-      iconPath: '/diet-icons/vegetarian.svg',
-      label: 'Végétarien',
-    },
-    Vegan: {
-      iconPath: '/diet-icons/vegan.svg',
-      label: 'Vegan',
-    },
-    'Sans Gluten': {
-      iconPath: '/diet-icons/gluten-free.svg',
-      label: 'Sans Gluten',
-    },
-    'Sans Lactose': {
-      iconPath: '/diet-icons/lactose-free.svg',
-      label: 'Sans Lactose',
-    },
-    'Sans Sucre': {
-      iconPath: '/diet-icons/sugar-free.svg',
-      label: 'Sans Sucre',
-    },
-  }
-  return config
-})
 
 const addToCart = () => {
   emit('add-to-cart', {
@@ -113,8 +87,8 @@ const incrementQuantity = () => {
               <DietIcon
                 v-for="diet in pastry.diets"
                 :key="diet.id"
-                :icon-path="dietConfig[diet.name]?.iconPath"
-                :label="dietConfig[diet.name]?.label"
+                :icon-path="DIET_CONFIG[diet.name]?.iconPath"
+                :label="DIET_CONFIG[diet.name]?.label"
               />
             </div>
           </div>
