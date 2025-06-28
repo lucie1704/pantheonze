@@ -15,7 +15,7 @@ export interface Pastry {
   price: number;
   images: string[];
   category: Category;
-  diet?: Diet;
+  diets?: Diet[];
   tags: string[];
   ingredients: string[];
   nutrition: {

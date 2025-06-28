@@ -352,15 +352,14 @@ watch(sortBy, () => {
               class="flex align-items-center gap-2 text-sm text-primary"
             >
               <i class="pi pi-info-circle"></i>
-              <span>Vos préférences alimentaires sont appliquées</span>
-              <Button
-                text
-                size="small"
-                class="p-0 text-xs"
-                @click="removeAppliedPreferences"
+              <span>Vos préférences alimentaires sont appliquées :</span>
+              <a
+                href="#"
+                class="text-primary cursor-pointer no-underline hover:underline"
+                @click.prevent="removeAppliedPreferences"
               >
-                (supprimer)
-              </Button>
+                supprimer
+              </a>
             </div>
           </div>
           <div class="flex-grow-1 lg:flex-grow-0"></div>

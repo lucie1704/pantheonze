@@ -170,7 +170,7 @@ const closeMobileMenu = () => {
                 <RouterLink
                   :to="item.to"
                   class="no-underline text-900 font-medium hover:text-primary transition-colors transition-duration-150 px-3"
-                  :class="{ 'text-primary': $route.path === item.to }"
+                  :class="{ 'text-primary': $route.fullPath === item.to }"
                 >
                   {{ item.label }}
                 </RouterLink>
@@ -247,7 +247,7 @@ const closeMobileMenu = () => {
               <RouterLink
                 :to="item.to"
                 class="no-underline text-900 font-medium hover:text-primary transition-colors transition-duration-150 flex align-items-center gap-3 p-3 hover:surface-100 relative"
-                :class="{ 'border-left-3 border-primary': $route.path.startsWith(item.to) }"
+                :class="{ 'border-left-3 border-primary': $route.fullPath === item.to }"
                 @click="closeMobileMenu"
               >
                 <span>{{ item.label }}</span>

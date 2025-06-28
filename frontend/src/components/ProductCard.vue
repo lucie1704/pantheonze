@@ -61,101 +61,121 @@ const incrementQuantity = () => {
 </script>
 
 <template>
-  <div class="surface-card border-round-xl overflow-hidden flex flex-column h-25rem min-w-16rem flex-shrink-0">
-    <!-- Image ou Fallback -->
-    <div class="p-3 pb-0">
-      <div
-        class="relative border-round-xl overflow-hidden"
-        style="aspect-ratio: 1"
-      >
-        <img
-          :src="pastry.images[0] || '/no-image.svg'"
-          :alt="pastry.name"
-          class="w-full h-full product-image"
-        />
+  <div
+    class="surface-card border-round-xl overflow-hidden flex flex-column h-28rem min-w-16rem flex-shrink-0 product-card"
+  >
+    <!-- Lien vers la page détail (zone cliquable) -->
+    <RouterLink
+      :to="`/pastries/${pastry.id}`"
+      class="product-link flex flex-column flex-1 no-underline text-inherit"
+    >
+      <!-- Image ou Fallback -->
+      <div class="p-3 pb-0">
         <div
-          v-if="pastry.tags.length > 0"
-          class="absolute top-0 right-0 m-2"
+          class="relative border-round-xl overflow-hidden"
+          style="aspect-ratio: 1"
         >
-          <Tag
-            :value="pastry.tags[0]"
-            severity="warning"
+          <img
+            :src="pastry.images[0] || '/no-image.svg'"
+            :alt="pastry.name"
+            class="w-full h-full product-image"
           />
-        </div>
-      </div>
-    </div>
-
-    <!-- Contenu -->
-    <div class="p-3 flex flex-column flex-1">
-      <!-- Nom -->
-      <div class="flex justify-content-between align-items-start">
-        <h3 class="text-900 font-medium text-xl m-0 line-height-3 mb-2 product-title">{{ pastry.name }}</h3>
-        <!-- Icônes des régimes alimentaires -->
-        <div
-          v-if="pastry.diet?.name && dietConfig[pastry.diet.name]"
-          class="flex gap-1 mb-2 pt-2 px-2"
-        >
-          <DietIcon
-            :icon-path="dietConfig[pastry.diet.name].iconPath"
-            :label="dietConfig[pastry.diet.name].label"
-          />
-        </div>
-      </div>
-
-      <!-- Espace flexible -->
-      <div class="flex-1"></div>
-
-      <!-- Quantité, Prix et Bouton -->
-      <div class="mt-3">
-        <div class="mb-2 text-right">
-          <span class="text-primary font-medium text-xl">{{ pastry.price.toFixed(2).replace('.', ',') }}€</span>
-        </div>
-        <div
-          v-if="pastry.stockCount > 0"
-          class="flex gap-2"
-        >
           <div
-            class="quantity-control flex align-items-center justify-content-between border-1 surface-border border-round flex-1"
+            v-if="pastry.tags.length > 0"
+            class="absolute top-0 right-0 m-2"
           >
-            <Button
-              icon="pi pi-minus"
-              text
-              @click="decrementQuantity"
-              :disabled="quantity <= 1"
-              class="quantity-button flex-none"
-            />
-            <input
-              type="number"
-              v-model="quantity"
-              min="1"
-              class="quantity-input flex-none"
-            />
-            <Button
-              icon="pi pi-plus"
-              text
-              @click="incrementQuantity"
-              class="quantity-button flex-none"
+            <Tag
+              :value="pastry.tags[0]"
+              severity="warning"
             />
           </div>
-          <Button
-            class="flex-1"
-            severity="primary"
-            @click="addToCart"
-            v-tooltip="'Ajouter au panier'"
-          >
-            <i class="pi pi-shopping-cart"></i>
-          </Button>
         </div>
+      </div>
+
+      <!-- Contenu cliquable -->
+      <div class="p-3 pb-0 flex flex-column flex-1">
+        <!-- Nom -->
+        <div class="product-header mb-2">
+          <h3 class="text-900 font-medium text-xl m-0 line-height-3 product-title">{{ pastry.name }}</h3>
+        </div>
+
+        <!-- Espace flexible -->
+        <div class="flex-1"></div>
+
+        <!-- Prix et Diets (même ligne) -->
+        <div class="flex justify-content-between align-items-center mb-2">
+          <!-- Icônes des régimes alimentaires -->
+          <div class="diet-icons-container">
+            <div
+              v-if="pastry.diets && pastry.diets.length > 0"
+              class="flex gap-2 flex-wrap"
+            >
+              <DietIcon
+                v-for="diet in pastry.diets"
+                :key="diet.id"
+                :icon-path="dietConfig[diet.name]?.iconPath"
+                :label="dietConfig[diet.name]?.label"
+              />
+            </div>
+          </div>
+
+          <!-- Prix -->
+          <div class="text-right">
+            <span class="text-primary font-medium text-xl">{{ pastry.price.toFixed(2).replace('.', ',') }}€</span>
+          </div>
+        </div>
+      </div>
+    </RouterLink>
+
+    <!-- Zone non-cliquable pour les contrôles -->
+    <div class="p-3 pt-0">
+      <div
+        v-if="pastry.stockCount > 0"
+        class="flex gap-2"
+      >
         <div
-          v-else
-          class="text-center"
+          class="quantity-control flex align-items-center justify-content-between border-1 surface-border border-round flex-1"
+          @click.stop
         >
-          <Tag
-            severity="secondary"
-            value="Rupture de stock"
-            class="w-full justify-content-center py-2"
+          <Button
+            icon="pi pi-minus"
+            text
+            @click.stop="decrementQuantity"
+            :disabled="quantity <= 1"
+            class="quantity-button flex-none"
+          />
+          <input
+            type="number"
+            v-model="quantity"
+            min="1"
+            class="quantity-input flex-none"
+            @click.stop
+          />
+          <Button
+            icon="pi pi-plus"
+            text
+            @click.stop="incrementQuantity"
+            class="quantity-button flex-none"
           />
         </div>
+        <Button
+          class="flex-1"
+          severity="primary"
+          @click.stop="addToCart"
+          v-tooltip="'Ajouter au panier'"
+        >
+          <i class="pi pi-shopping-cart"></i>
+        </Button>
+      </div>
+      <div
+        v-else
+        class="text-center"
+      >
+        <Tag
+          severity="secondary"
+          value="Rupture de stock"
+          class="w-full justify-content-center py-2"
+        />
       </div>
     </div>
   </div>
@@ -209,6 +229,28 @@ const incrementQuantity = () => {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  height: 4rem;
+  min-height: 2rem; /* Hauteur minimum pour 1 ligne */
+  max-height: 4rem; /* Hauteur maximum pour 2 lignes */
+}
+
+.diet-icons-container {
+  min-height: 2rem; /* Espace réservé pour les icônes même si vide */
+  display: flex;
+  align-items: flex-start;
+  margin-top: 0.5rem;
+}
+
+.product-card {
+  cursor: pointer;
+}
+
+.product-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.product-link:hover {
+  color: inherit;
+  text-decoration: none;
 }
 </style>

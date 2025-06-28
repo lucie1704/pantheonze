@@ -121,10 +121,7 @@ onMounted(() => {
           <ProgressSpinner />
         </div>
 
-        <div
-          v-else-if="popularProducts.length > 0"
-          class="carousel-container"
-        >
+        <div v-else-if="popularProducts.length > 0">
           <Carousel
             :value="popularProducts"
             :numVisible="3"
@@ -270,10 +267,6 @@ onMounted(() => {
 <style scoped>
 .container {
   max-width: 1200px;
-}
-
-.carousel-container {
-  margin: 0 -1rem;
 }
 
 .service-card {
