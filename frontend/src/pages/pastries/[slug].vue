@@ -6,8 +6,12 @@ import { ProductCard, DietIcon } from '@/components'
 import { DIET_CONFIG } from '@/constants/diets'
 import Carousel from 'primevue/carousel'
 import Accordion from 'primevue/accordion'
-import AccordionTab from 'primevue/accordiontab'
+import AccordionPanel from 'primevue/accordionpanel'
+import AccordionHeader from 'primevue/accordionheader'
+import AccordionContent from 'primevue/accordioncontent'
 import Tag from 'primevue/tag'
+import ProgressSpinner from 'primevue/progressspinner'
+import Button from 'primevue/button'
 
 const route = useRoute()
 const router = useRouter()
@@ -181,66 +185,68 @@ const handleAddToCartFromCarousel = (cartData: any) => {
 
     <!-- Accordéons de détails -->
     <div v-if="pastry" class="mt-6">
-      <Accordion>
-        <!-- Ingrédients et nutrition -->
-        <AccordionTab header="Ingrédients, Allergènes & Valeurs nutritionnelles">
-          <div class="p-3">
-            <p class="text-lg mt-0 leading-relaxed mb-4">Ingrédients : {{ pastry.ingredients.join(', ') }}</p>
+      <Accordion :value="['0']" multiple>
+        <AccordionPanel value="0">
+          <AccordionHeader>Ingrédients, Allergènes & Valeurs nutritionnelles</AccordionHeader>
+          <AccordionContent>
+            <div class="p-3">
+              <p class="text-lg mt-0 leading-relaxed mb-4">Ingrédients : {{ pastry.ingredients.join(', ') }}</p>
 
-            <p v-if="pastry.nutrition?.allergens && pastry.nutrition.allergens.length > 0"
-              class="text-lg leading-relaxed mb-4">
-              Allergènes : {{ pastry.nutrition.allergens.join(', ') }}
-            </p>
+              <p v-if="pastry.nutrition?.allergens && pastry.nutrition.allergens.length > 0"
+                class="text-lg leading-relaxed mb-4">
+                Allergènes : {{ pastry.nutrition.allergens.join(', ') }}
+              </p>
 
-            <p class="text-lg leading-relaxed mb-4">
-              Valeurs nutritionnelles (pour 100g) :
-            </p>
+              <p class="text-lg leading-relaxed mb-4">
+                Valeurs nutritionnelles (pour 100g) :
+              </p>
 
-            <div class="surface-card border-round">
-              <div class="overflow-x-auto">
-                <table class="w-auto border-round overflow-hidden border-1 surface-border min-w-full">
-                  <thead>
-                    <tr>
-                      <th
-                        class="text-center p-2 sm:p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border text-sm sm:text-base">
-                        Énergie
-                      </th>
-                      <th
-                        class="text-center p-2 sm:p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border text-sm sm:text-base">
-                        Matières grasses
-                      </th>
-                      <th
-                        class="text-center p-2 sm:p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border text-sm sm:text-base">
-                        Glucides
-                      </th>
-                      <th
-                        class="text-center p-2 sm:p-3 font-medium border-bottom-1 surface-border text-sm sm:text-base">
-                        Protéines</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td
-                        class="p-2 sm:p-3 text-center border-right-1 surface-border surface-border text-sm sm:text-base">
-                        {{ pastry.nutrition?.calories || 0 }} kcal
-                      </td>
-                      <td
-                        class="p-2 sm:p-3 text-center border-right-1 surface-border surface-border text-sm sm:text-base">
-                        {{ pastry.nutrition?.fat || 0 }}g
-                      </td>
-                      <td
-                        class="p-2 sm:p-3 text-center border-right-1 surface-border surface-border text-sm sm:text-base">
-                        {{ pastry.nutrition?.carbs || 0 }}g
-                      </td>
-                      <td class="p-2 sm:p-3 text-center surface-border text-sm sm:text-base">{{
-                        pastry.nutrition?.protein || 0 }}g</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="surface-card border-round">
+                <div class="overflow-x-auto">
+                  <table class="w-auto border-round overflow-hidden border-1 surface-border min-w-full">
+                    <thead>
+                      <tr>
+                        <th
+                          class="text-center p-2 sm:p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border text-sm sm:text-base">
+                          Énergie
+                        </th>
+                        <th
+                          class="text-center p-2 sm:p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border text-sm sm:text-base">
+                          Matières grasses
+                        </th>
+                        <th
+                          class="text-center p-2 sm:p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border text-sm sm:text-base">
+                          Glucides
+                        </th>
+                        <th
+                          class="text-center p-2 sm:p-3 font-medium border-bottom-1 surface-border text-sm sm:text-base">
+                          Protéines</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td
+                          class="p-2 sm:p-3 text-center border-right-1 surface-border surface-border text-sm sm:text-base">
+                          {{ pastry.nutrition?.calories || 0 }} kcal
+                        </td>
+                        <td
+                          class="p-2 sm:p-3 text-center border-right-1 surface-border surface-border text-sm sm:text-base">
+                          {{ pastry.nutrition?.fat || 0 }}g
+                        </td>
+                        <td
+                          class="p-2 sm:p-3 text-center border-right-1 surface-border surface-border text-sm sm:text-base">
+                          {{ pastry.nutrition?.carbs || 0 }}g
+                        </td>
+                        <td class="p-2 sm:p-3 text-center surface-border text-sm sm:text-base">{{
+                          pastry.nutrition?.protein || 0 }}g</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
-        </AccordionTab>
+          </AccordionContent>
+        </AccordionPanel>
       </Accordion>
     </div>
 

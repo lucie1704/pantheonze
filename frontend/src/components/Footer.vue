@@ -57,7 +57,7 @@
           <ul class="list-none p-0 m-0">
             <li class="mb-2">
               <RouterLink
-                to="legal/mentions-legales"
+                to="/legal/mentions-legales"
                 class="text-primary hover:text-primary-600 no-underline flex align-items-center gap-2"
               >
                 <i class="pi pi-file-edit w-1rem"></i>
