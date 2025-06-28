@@ -6,11 +6,13 @@ import { ProductCard } from '@/components'
 import Drawer from 'primevue/drawer'
 import FiltersPanel from '@/components/FiltersPanel.vue'
 import { pastryService } from '@/services/pastry.service'
+import { userService } from '@/services/user.service'
 import type { Pastry } from '@/types/pastry'
 import ProgressSpinner from 'primevue/progressspinner'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
 import type { Filter } from '@/types'
+import Button from 'primevue/button'
 
 const route = useRoute()
 const router = useRouter()
@@ -86,6 +88,10 @@ const loadFromURL = () => {
   }
   if (query.diets) {
     filters.value.diets = (query.diets as string).split(',')
+  } else {
+    // Si aucun filtre diet dans l'URL, appliquer les préférences utilisateur
+    const userDietaryPreferences = userService.getUserDietaryPreferences()
+    filters.value.diets = userDietaryPreferences
   }
   if (query.minPrice) {
     filters.value.priceRange[0] = parseInt(query.minPrice as string)
@@ -102,6 +108,14 @@ const loadFromURL = () => {
     sortBy.value = 'price-desc'
   } else if (query.sortBy) {
     sortBy.value = query.sortBy as string
+  }
+}
+
+// Fonction pour appliquer les préférences utilisateur par défaut
+const applyUserPreferences = () => {
+  const userDietaryPreferences = userService.getUserDietaryPreferences()
+  if (userDietaryPreferences.length > 0 && filters.value.diets.length === 0) {
+    filters.value.diets = userDietaryPreferences
   }
 }
 
@@ -195,6 +209,7 @@ const fetchPastries = async () => {
 
 onMounted(() => {
   loadFromURL()
+  applyUserPreferences()
   fetchPastries()
 })
 
@@ -313,6 +328,23 @@ watch(sortBy, () => {
               class="text-500"
               >{{ products.length }} résultats</span
             >
+
+            <!-- Message informatif pour les préférences appliquées -->
+            <div
+              v-if="userService.getUserDietaryPreferences().length > 0 && filters.diets.length > 0"
+              class="flex align-items-center gap-2 text-sm text-primary"
+            >
+              <i class="pi pi-info-circle"></i>
+              <span>Vos préférences alimentaires sont appliquées</span>
+              <Button
+                text
+                size="small"
+                class="p-0 text-xs"
+                @click="filters.diets = []"
+              >
+                (supprimer)
+              </Button>
+            </div>
           </div>
           <div class="flex-grow-1 lg:flex-grow-0"></div>
           <div class="flex flex-column lg:flex-row align-items-start lg:align-items-center gap-2 w-full lg:w-auto">

@@ -1,109 +1,136 @@
 <template>
   <div class="surface-ground">
     <div class="surface-section border-round-xl m-4 p-4">
-      <h1 class="text-4xl font-bold mb-4 text-primary">Paramètres</h1>
+      <!-- Header avec navigation et boutons d'action -->
+      <div class="flex justify-content-between align-items-center mb-4">
+        <h1 class="text-4xl font-bold m-0 text-primary">Paramètres</h1>
+        <div class="flex gap-2">
+          <Button
+            label="Sauvegarder"
+            icon="pi pi-save"
+            size="small"
+            @click="saveSettings"
+          />
+          <Button
+            label="Réinitialiser"
+            icon="pi pi-refresh"
+            severity="secondary"
+            size="small"
+            @click="resetSettings"
+          />
+        </div>
+      </div>
 
-      <div class="grid">
-        <div class="col-12 md:col-8">
-          <div class="surface-card p-4 border-round mb-4">
-            <h2 class="text-2xl font-bold mb-4">Préférences de notification</h2>
-            <div class="flex flex-column gap-3">
-              <div class="flex align-items-center justify-content-between">
-                <div>
-                  <h3 class="text-xl m-0 mb-1">Notifications par email</h3>
-                  <p class="text-500 m-0">Recevoir des emails pour les mises à jour de commande</p>
-                </div>
-                <InputSwitch v-model="settings.emailNotifications" />
-              </div>
-              <div class="flex align-items-center justify-content-between">
-                <div>
-                  <h3 class="text-xl m-0 mb-1">Notifications promotionnelles</h3>
-                  <p class="text-500 m-0">Recevoir des offres spéciales et promotions</p>
-                </div>
-                <InputSwitch v-model="settings.promoNotifications" />
-              </div>
-            </div>
-          </div>
-
-          <div class="surface-card p-4 border-round mb-4">
-            <h2 class="text-2xl font-bold mb-4">Préférences de livraison</h2>
-            <div class="flex flex-column gap-3">
-              <div class="field">
-                <label
-                  for="defaultAddress"
-                  class="block mb-2"
-                  >Adresse de livraison par défaut</label
-                >
-                <Textarea
-                  id="defaultAddress"
-                  v-model="settings.defaultAddress"
-                  rows="3"
-                  class="w-full"
+      <!-- Préférences alimentaires -->
+      <div class="surface-card p-4 border-round mb-4">
+        <h2 class="text-2xl font-bold mb-4">Préférences alimentaires</h2>
+        <div class="flex flex-column gap-3">
+          <p class="text-500 mb-3">Sélectionnez vos régimes alimentaires pour personnaliser vos recherches</p>
+          <div class="flex flex-column gap-2">
+            <div
+              v-for="diet in availableDiets"
+              :key="diet"
+            >
+              <div class="flex align-items-center gap-2">
+                <Checkbox
+                  v-model="settings.dietaryRestrictions"
+                  :inputId="`diet-${diet}`"
+                  name="diet"
+                  :value="diet"
                 />
-              </div>
-              <div class="field">
                 <label
-                  for="deliveryInstructions"
-                  class="block mb-2"
-                  >Instructions de livraison</label
+                  :for="`diet-${diet}`"
+                  class="cursor-pointer"
                 >
-                <InputText
-                  id="deliveryInstructions"
-                  v-model="settings.deliveryInstructions"
-                  class="w-full"
-                  placeholder="Ex: Code d'entrée, étage..."
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="surface-card p-4 border-round">
-            <h2 class="text-2xl font-bold mb-4">Préférences de paiement</h2>
-            <div class="flex flex-column gap-3">
-              <div class="field">
-                <label class="block mb-2">Mode de paiement préféré</label>
-                <div class="flex gap-4">
-                  <div class="flex align-items-center gap-2">
-                    <RadioButton
-                      v-model="settings.preferredPayment"
-                      value="card"
-                      inputId="payment1"
-                    />
-                    <label for="payment1">Carte bancaire</label>
-                  </div>
-                  <div class="flex align-items-center gap-2">
-                    <RadioButton
-                      v-model="settings.preferredPayment"
-                      value="paypal"
-                      inputId="payment2"
-                    />
-                    <label for="payment2">PayPal</label>
-                  </div>
-                </div>
+                  {{ diet }}
+                </label>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="col-12 md:col-4">
-          <div
-            class="surface-card p-4 border-round sticky"
-            style="top: 1rem"
-          >
-            <h2 class="text-2xl font-bold mb-4">Actions</h2>
+      <Divider />
+
+      <!-- Préférences de notification -->
+      <div class="surface-card p-4 border-round mb-4">
+        <h2 class="text-2xl font-bold mb-4">Préférences de notification</h2>
+        <div class="flex flex-column gap-3">
+          <div class="flex align-items-center gap-3">
+            <InputSwitch v-model="settings.emailNotifications" />
+            <div>
+              <p class="text-500 m-0">Recevoir des emails pour les mises à jour de commande</p>
+            </div>
+          </div>
+          <div class="flex align-items-center gap-3">
+            <InputSwitch v-model="settings.promoNotifications" />
+            <div>
+              <p class="text-500 m-0">Recevoir des offres spéciales et promotions</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Divider />
+
+      <!-- Préférences de livraison -->
+      <div class="surface-card p-4 border-round mb-4">
+        <h2 class="text-2xl font-bold mb-4">Préférences de livraison</h2>
+        <div class="flex flex-column gap-3">
+          <div class="field">
+            <label
+              for="defaultAddress"
+              class="block mb-2"
+              >Adresse de livraison par défaut</label
+            >
+            <Textarea
+              id="defaultAddress"
+              v-model="settings.defaultAddress"
+              rows="3"
+              class="w-full"
+            />
+          </div>
+          <div class="field">
+            <label
+              for="deliveryInstructions"
+              class="block mb-2"
+              >Instructions de livraison</label
+            >
+            <InputText
+              id="deliveryInstructions"
+              v-model="settings.deliveryInstructions"
+              class="w-full"
+              placeholder="Ex: Code d'entrée, étage..."
+            />
+          </div>
+        </div>
+      </div>
+
+      <Divider />
+
+      <!-- Préférences de paiement -->
+      <div class="surface-card p-4 border-round">
+        <h2 class="text-2xl font-bold mb-4">Préférences de paiement</h2>
+        <div class="flex flex-column gap-3">
+          <div class="field">
+            <label class="block mb-2">Mode de paiement préféré</label>
             <div class="flex flex-column gap-2">
-              <Button
-                label="Enregistrer les modifications"
-                icon="pi pi-check"
-                class="w-full"
-              />
-              <Button
-                label="Réinitialiser"
-                icon="pi pi-refresh"
-                severity="secondary"
-                text
-                class="w-full"
-              />
+              <div class="flex align-items-center gap-2">
+                <RadioButton
+                  v-model="settings.preferredPayment"
+                  value="card"
+                  inputId="payment1"
+                />
+                <label for="payment1">Carte bancaire</label>
+              </div>
+              <div class="flex align-items-center gap-2">
+                <RadioButton
+                  v-model="settings.preferredPayment"
+                  value="paypal"
+                  inputId="payment2"
+                />
+                <label for="payment2">PayPal</label>
+              </div>
             </div>
           </div>
         </div>
@@ -113,10 +140,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useToast } from 'primevue/usetoast'
 import InputSwitch from 'primevue/inputswitch'
 import Textarea from 'primevue/textarea'
 import RadioButton from 'primevue/radiobutton'
+import Checkbox from 'primevue/checkbox'
+import Button from 'primevue/button'
+import axios from 'axios'
+import { API_URL } from '@/constants/api.ts'
+import { userService } from '@/services/user.service'
+import Divider from 'primevue/divider'
+
+const toast = useToast()
 
 const settings = ref({
   emailNotifications: true,
@@ -124,5 +160,68 @@ const settings = ref({
   defaultAddress: '',
   deliveryInstructions: '',
   preferredPayment: 'card',
+  dietaryRestrictions: [] as string[],
+})
+
+const availableDiets = ref<string[]>([])
+
+// Charger les régimes alimentaires disponibles depuis l'API
+const loadAvailableDiets = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/diets`)
+    availableDiets.value = response.data.map((diet: { name: string }) => diet.name)
+  } catch (error) {
+    console.error('Error loading diets:', error)
+  }
+}
+
+// Charger les préférences utilisateur
+const loadUserPreferences = () => {
+  const savedDiets = userService.getUserDietaryPreferences()
+  settings.value.dietaryRestrictions = savedDiets
+}
+
+// Sauvegarder les préférences
+const saveSettings = () => {
+  try {
+    userService.setUserDietaryPreferences(settings.value.dietaryRestrictions)
+    toast.add({
+      severity: 'success',
+      summary: 'Paramètres sauvegardés',
+      detail: 'Vos préférences ont été mises à jour avec succès',
+      life: 3000,
+    })
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Erreur',
+      detail: 'Impossible de sauvegarder vos préférences',
+      life: 3000,
+    })
+  }
+}
+
+// Réinitialiser les paramètres
+const resetSettings = () => {
+  settings.value = {
+    emailNotifications: true,
+    promoNotifications: false,
+    defaultAddress: '',
+    deliveryInstructions: '',
+    preferredPayment: 'card',
+    dietaryRestrictions: [],
+  }
+  userService.setUserDietaryPreferences([])
+  toast.add({
+    severity: 'info',
+    summary: 'Paramètres réinitialisés',
+    detail: 'Tous les paramètres ont été remis à zéro',
+    life: 3000,
+  })
+}
+
+onMounted(() => {
+  loadAvailableDiets()
+  loadUserPreferences()
 })
 </script>
