@@ -132,7 +132,6 @@ const clearFilters = async () => {
   searchQuery.value = ''
   sortBy.value = undefined
   updateURL()
-  await fetchPastries()
 }
 
 const fetchPastries = async () => {
@@ -340,7 +339,11 @@ watch(sortBy, () => {
         v-if="loading"
         class="flex justify-content-center"
       >
-        <ProgressSpinner />
+        <ProgressSpinner
+          style="width: 40px; height: 40px"
+          strokeWidth="4"
+          fill="transparent"
+        />
       </div>
 
       <div
@@ -354,7 +357,10 @@ watch(sortBy, () => {
       </div>
 
       <!-- Grille des produits -->
-      <div class="grid">
+      <div
+        class="grid"
+        v-else
+      >
         <div
           v-for="product in products"
           :key="product.id"
