@@ -127,38 +127,41 @@ const closeMobileMenu = () => {
     <div class="surface-section border-bottom-1 surface-border">
       <div class="w-full lg:w-9 mx-auto">
         <div
-          class="flex align-items-center lg:justify-content-between py-3 px-2"
+          class="flex align-items-center justify-content-between py-3 px-2"
           style="height: 80px"
         >
-          <Button
-            text
-            plain
-            class="block lg:hidden w-3rem h-3rem p-0 hover:surface-200"
-            @click="mobileMenu = true"
-          >
-            <i class="pi pi-bars text-900 text-xl"></i>
-          </Button>
-
-          <!-- Logo (masqué sur la page d'accueil, centré sur mobile, à gauche sur desktop) -->
-          <div
-            v-if="route.path !== '/'"
-            class="flex align-items-center flex-grow-1 lg:flex-grow-0"
-          >
-            <RouterLink
-              to="/"
-              class="no-underline flex align-items-center"
+          <!-- Section gauche : Menu burger + Logo -->
+          <div class="flex align-items-center gap-3">
+            <Button
+              text
+              plain
+              class="block lg:hidden w-3rem h-3rem p-0 hover:surface-200"
+              @click="mobileMenu = true"
             >
-              <img
-                src="/Logo.svg"
-                alt="PanthéOnze Logo"
-                class="h-2rem sm:h-3rem md:h-4rem"
-              />
-            </RouterLink>
+              <i class="pi pi-bars text-900 text-xl"></i>
+            </Button>
+
+            <!-- Logo (masqué sur la page d'accueil, centré sur mobile, à gauche sur desktop) -->
+            <div
+              v-if="route.path !== '/'"
+              class="flex align-items-center"
+            >
+              <RouterLink
+                to="/"
+                class="no-underline flex align-items-center"
+              >
+                <img
+                  src="/Logo.svg"
+                  alt="PanthéOnze Logo"
+                  class="h-2rem sm:h-3rem md:h-4rem"
+                />
+              </RouterLink>
+            </div>
           </div>
 
           <!-- Menu principal (caché sur mobile) -->
           <div
-            class="hidden lg:flex flex-grow-1"
+            class="hidden lg:flex"
             :class="route.path === '/' ? 'justify-content-start' : 'justify-content-center'"
           >
             <ul class="list-none p-0 m-0 flex">

@@ -103,16 +103,18 @@ const props = withDefaults(defineProps<Props>(), {
 /* Responsive */
 @media (max-width: 768px) {
   .banner-section {
-    height: 200px;
+    height: 100vh;
+    min-height: 100vh;
   }
 
   .logo-image {
     max-height: 80px;
-    max-width: 300px;
+    max-width: 250px;
   }
 
   .banner-subtitle {
-    font-size: 1rem;
+    font-size: 1.1rem;
+    padding: 0 2rem;
   }
 
   .banner-content {

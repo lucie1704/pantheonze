@@ -81,8 +81,8 @@ onMounted(() => {
     <section class="my-6">
       <div class="container mx-auto px-4">
         <div class="flex justify-content-center">
-          <div class="w-8">
-            <div class="flex gap-2">
+          <div class="w-full sm:w-8">
+            <div class="flex flex-column sm:flex-row gap-2">
               <IconField
                 iconPosition="left"
                 class="flex-1"
@@ -98,6 +98,7 @@ onMounted(() => {
               <Button
                 label="Rechercher"
                 icon="pi pi-search"
+                class="w-full sm:w-auto"
                 @click="performSearch"
               />
             </div>
@@ -127,6 +128,8 @@ onMounted(() => {
             :numVisible="3"
             :numScroll="1"
             :responsiveOptions="carouselResponsiveOptions"
+            :showNavigators="false"
+            :showIndicators="true"
             circular
             :autoplayInterval="4000"
             class="popular-carousel"
@@ -225,13 +228,13 @@ onMounted(() => {
                 Dans ce quartier vibrant et créatif, nous cultivons l'art de la pâtisserie contemporaine, où chaque
                 création reflète l'esprit avant-gardiste de notre époque tout en respectant l'excellence française.
               </p>
-              <div class="flex justify-content-between align-items-center mb-4">
-                <div class="flex gap-6">
-                  <div class="text-center">
+              <div class="flex flex-column sm:flex-row justify-content-between align-items-center mb-4">
+                <div class="flex flex-column sm:flex-row gap-6">
+                  <div class="text-center mb-3 sm:mb-0">
                     <div class="text-3xl font-bold text-primary">50+</div>
                     <div class="text-sm text-600">Créations originales</div>
                   </div>
-                  <div class="text-center">
+                  <div class="text-center mb-3 sm:mb-0">
                     <div class="text-3xl font-bold text-primary">11e</div>
                     <div class="text-sm text-600">Arrondissement</div>
                   </div>
@@ -288,8 +291,8 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
-  .flex.gap-2 {
-    flex-direction: column;
+  .service-card {
+    margin-bottom: 1rem;
   }
 }
 
