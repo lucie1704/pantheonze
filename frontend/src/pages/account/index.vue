@@ -1,19 +1,19 @@
 <template>
   <div class="surface-ground">
-    <div class="surface-section border-round-xl m-4 p-4">
+    <div class="surface-section border-round-xl m-2 sm:m-4 p-3 sm:p-4">
       <!-- Header avec navigation -->
       <div class="flex justify-content-between align-items-center mb-4">
-        <h1 class="text-4xl font-bold m-0 text-primary">Mon Profil</h1>
+        <h1 class="text-2xl sm:text-4xl font-bold m-0 text-primary">Mon Profil</h1>
       </div>
 
       <!-- Informations personnelles -->
-      <div class="surface-card p-4 border-round mb-4">
-        <h2 class="text-2xl font-bold mb-4">Informations personnelles</h2>
+      <div class="surface-card p-3 sm:p-4 border-round mb-4">
+        <h2 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Informations personnelles</h2>
         <div class="flex flex-column gap-3">
           <div class="field">
             <label
               for="firstName"
-              class="block mb-2"
+              class="block mb-2 text-sm sm:text-base"
               >Prénom</label
             >
             <InputText
@@ -25,7 +25,7 @@
           <div class="field">
             <label
               for="lastName"
-              class="block mb-2"
+              class="block mb-2 text-sm sm:text-base"
               >Nom</label
             >
             <InputText
@@ -37,7 +37,7 @@
           <div class="field">
             <label
               for="email"
-              class="block mb-2"
+              class="block mb-2 text-sm sm:text-base"
               >Email</label
             >
             <InputText
@@ -50,7 +50,7 @@
           <div class="field">
             <label
               for="phone"
-              class="block mb-2"
+              class="block mb-2 text-sm sm:text-base"
               >Téléphone</label
             >
             <InputText
@@ -62,7 +62,7 @@
           <Button
             label="Enregistrer les modifications"
             icon="pi pi-save"
-            class="align-self-start"
+            class="align-self-start w-full sm:w-auto"
             @click="savePersonalInfo"
           />
         </div>
@@ -71,13 +71,13 @@
       <Divider />
 
       <!-- Changement de mot de passe -->
-      <div class="surface-card p-4 border-round mb-4">
-        <h2 class="text-2xl font-bold mb-4">Changement de mot de passe</h2>
+      <div class="surface-card p-3 sm:p-4 border-round mb-4">
+        <h2 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Changement de mot de passe</h2>
         <div class="flex flex-column gap-3">
           <div class="field">
             <label
               for="currentPassword"
-              class="block mb-2"
+              class="block mb-2 text-sm sm:text-base"
               >Mot de passe actuel</label
             >
             <Password
@@ -91,7 +91,7 @@
           <div class="field">
             <label
               for="newPassword"
-              class="block mb-2"
+              class="block mb-2 text-sm sm:text-base"
               >Nouveau mot de passe</label
             >
             <Password
@@ -104,7 +104,7 @@
           <div class="field">
             <label
               for="confirmPassword"
-              class="block mb-2"
+              class="block mb-2 text-sm sm:text-base"
               >Confirmer le nouveau mot de passe</label
             >
             <Password
@@ -118,7 +118,7 @@
           <Button
             label="Changer le mot de passe"
             icon="pi pi-key"
-            class="align-self-start"
+            class="align-self-start w-full sm:w-auto"
             @click="changePassword"
           />
         </div>
@@ -127,13 +127,14 @@
       <Divider />
 
       <!-- Adresses de livraison -->
-      <div class="surface-card p-4 border-round">
-        <div class="flex justify-content-between align-items-center mb-4">
-          <h2 class="text-2xl font-bold m-0">Adresses de livraison</h2>
+      <div class="surface-card p-3 sm:p-4 border-round">
+        <div class="flex flex-column sm:flex-row justify-content-between align-items-start sm:align-items-center mb-4 gap-3">
+          <h2 class="text-xl sm:text-2xl font-bold m-0">Adresses de livraison</h2>
           <Button
             label="Ajouter une adresse"
             icon="pi pi-plus"
             size="small"
+            class="w-full sm:w-auto"
             @click="addAddress"
           />
         </div>
@@ -143,11 +144,11 @@
             :key="index"
             class="surface-border border-1 border-round p-3"
           >
-            <div class="flex justify-content-between align-items-start">
+            <div class="flex flex-column sm:flex-row justify-content-between align-items-start gap-3">
               <div class="flex-1">
-                <h3 class="text-lg font-semibold m-0 mb-2">{{ address.name }}</h3>
-                <p class="m-0 text-600">{{ address.street }}</p>
-                <p class="m-0 text-600">{{ address.city }}, {{ address.postalCode }}</p>
+                <h3 class="text-base sm:text-lg font-semibold m-0 mb-2">{{ address.name }}</h3>
+                <p class="m-0 text-600 text-sm sm:text-base">{{ address.street }}</p>
+                <p class="m-0 text-600 text-sm sm:text-base">{{ address.city }}, {{ address.postalCode }}</p>
               </div>
               <div class="flex gap-2">
                 <Button
@@ -169,7 +170,7 @@
           </div>
           <div
             v-if="user.addresses.length === 0"
-            class="text-center text-500 py-4"
+            class="text-center text-500 py-4 text-sm sm:text-base"
           >
             Aucune adresse enregistrée
           </div>

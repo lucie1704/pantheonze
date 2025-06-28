@@ -162,7 +162,7 @@ const closeMobileMenu = () => {
           <!-- Menu principal (caché sur mobile) -->
           <div
             class="hidden lg:flex"
-            :class="route.path === '/' ? 'justify-content-start' : 'justify-content-center'"
+            :class="route.path === '/' ? 'justify-content-start flex-grow-1' : 'justify-content-center'"
           >
             <ul class="list-none p-0 m-0 flex">
               <li
@@ -187,7 +187,7 @@ const closeMobileMenu = () => {
           </div>
 
           <!-- Icônes droite -->
-          <div class="flex align-items-center gap-2">
+          <div class="flex align-items-center">
             <Button
               text
               plain

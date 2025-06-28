@@ -1,3 +1,31 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const orders = ref([
+  {
+    id: '2024-001',
+    date: '15 Mars 2024',
+    total: 42.5,
+    status: 'Livré',
+    items: [
+      { id: 1, name: 'Éclair au chocolat', quantity: 2 },
+      { id: 2, name: 'Paris-Brest', quantity: 1 },
+      { id: 3, name: 'Mille-feuille', quantity: 1 },
+    ],
+  },
+  {
+    id: '2024-002',
+    date: '18 Mars 2024',
+    total: 35.0,
+    status: 'En préparation',
+    items: [
+      { id: 4, name: 'Tarte aux fraises', quantity: 1 },
+      { id: 5, name: 'Croissants', quantity: 4 },
+    ],
+  },
+])
+</script>
+
 <template>
   <div class="surface-ground">
     <div class="surface-section border-round-xl m-4 p-4">
@@ -79,31 +107,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const orders = ref([
-  {
-    id: '2024-001',
-    date: '15 Mars 2024',
-    total: 42.5,
-    status: 'Livré',
-    items: [
-      { id: 1, name: 'Éclair au chocolat', quantity: 2 },
-      { id: 2, name: 'Paris-Brest', quantity: 1 },
-      { id: 3, name: 'Mille-feuille', quantity: 1 },
-    ],
-  },
-  {
-    id: '2024-002',
-    date: '18 Mars 2024',
-    total: 35.0,
-    status: 'En préparation',
-    items: [
-      { id: 4, name: 'Tarte aux fraises', quantity: 1 },
-      { id: 5, name: 'Croissants', quantity: 4 },
-    ],
-  },
-])
-</script>
