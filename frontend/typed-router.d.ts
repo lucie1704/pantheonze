@@ -35,6 +35,6 @@ declare module 'vue-router/auto-routes' {
     '/order/payment': RouteRecordInfo<'/order/payment', '/order/payment', Record<never, never>, Record<never, never>>,
     '/order/summary': RouteRecordInfo<'/order/summary', '/order/summary', Record<never, never>, Record<never, never>>,
     '/pastries/': RouteRecordInfo<'/pastries/', '/pastries', Record<never, never>, Record<never, never>>,
-    '/pastries/[id]': RouteRecordInfo<'/pastries/[id]', '/pastries/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/pastries/[slug]': RouteRecordInfo<'/pastries/[slug]', '/pastries/:slug', { slug: ParamValue<true> }, { slug: ParamValue<false> }>,
   }
 }

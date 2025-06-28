@@ -25,6 +25,16 @@ export const pastryService = {
     }
   },
 
+  getPastryBySlug: async (slug: string): Promise<Pastry> => {
+    try {
+      const response = await axios.get<Pastry>(`${API_URL}/pastries/slug/${slug}`)
+      return response.data
+    } catch (error) {
+      console.error('Error fetching pastry by slug:', error)
+      throw error
+    }
+  },
+
   getPopularPastries: async (limit?: number): Promise<Pastry[]> => {
     try {
       const params = limit ? { limit: limit.toString() } : {}

@@ -181,6 +181,37 @@ export class PastryController {
         }
     };
 
+    // Get a single pastry by slug
+    static getPastryBySlug = async (req: Request, res: Response) => {
+        try {
+            const { slug } = req.params;
+            const pastry = await prismaClient.pastry.findUnique({
+                where: { slug },
+                include: {
+                    category: true
+                }
+            });
+
+            if (!pastry) {
+                res.status(404).json({ error: "Pastry not found" });
+                return;
+            }
+
+            // Enrichir avec les diets
+            if ((pastry as any).dietIds && (pastry as any).dietIds.length > 0) {
+                (pastry as any).diets = await prismaClient.diet.findMany({
+                    where: { id: { in: (pastry as any).dietIds } }
+                });
+            } else {
+                (pastry as any).diets = [];
+            }
+
+            res.json(pastry);
+        } catch (error) {
+            res.status(500).json({ error: "Failed to fetch pastry" });
+        }
+    };
+
     // Update a pastry
     static updatePastry = async (req: Request, res: Response) => {
        /* try {

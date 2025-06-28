@@ -30,6 +30,11 @@ export default function (router: Router) {
     PastryController.getPastryById
   );
 
+  router.get(
+    "/pastries/slug/:slug",
+    PastryController.getPastryBySlug
+  );
+
   router.put(
     "/pastries/:id",
     validateContract(UpdatePastryContract),

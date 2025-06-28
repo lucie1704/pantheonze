@@ -66,7 +66,7 @@ const incrementQuantity = () => {
   >
     <!-- Lien vers la page détail (zone cliquable) -->
     <RouterLink
-      :to="`/pastries/${pastry.id}`"
+      :to="`/pastries/${pastry.slug}`"
       class="product-link flex flex-column flex-1 no-underline text-inherit"
     >
       <!-- Image ou Fallback -->
