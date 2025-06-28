@@ -115,7 +115,7 @@ async function main() {
         price: 6.90,
         images: [PASTRIES_IMAGES.brioche1, PASTRIES_IMAGES.brioche2],
         category: { connect: { id: categories['Viennoiseries'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien'], diets['Vegan']],
         tags: [],
         ingredients: ['Farine', 'Beurre', 'Œufs', 'Lait', 'Levure'],
         nutrition: {
@@ -138,8 +138,8 @@ async function main() {
         price: 1.50,
         images: [PASTRIES_IMAGES.chouquette],
         category: { connect: { id: categories['Viennoiseries'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
-        tags: ['Populaire'],
+        dietIds: [diets['Végétarien']],
+        tags: ['Populaire', 'Vegan'],
         ingredients: ['Pâte à choux', 'Sucre perlé', 'Œufs', 'Beurre'],
         nutrition: {
           calories: 85,
@@ -161,7 +161,7 @@ async function main() {
         price: 1.80,
         images: [PASTRIES_IMAGES.croissant],
         category: { connect: { id: categories['Viennoiseries'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien']],
         tags: ['Populaire'],
         ingredients: ['Pâte feuilletée', 'Beurre français', 'Farine', 'Levure'],
         nutrition: {
@@ -184,7 +184,7 @@ async function main() {
         price: 4.50,
         images: [PASTRIES_IMAGES.eclairAuChocolat],
         category: { connect: { id: categories['Pâtisseries'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien']],
         tags: ['Populaire'],
         ingredients: ['Pâte à choux', 'Crème pâtissière au chocolat', 'Glaçage chocolat'],
         nutrition: {
@@ -207,7 +207,7 @@ async function main() {
         price: 2.80,
         images: [PASTRIES_IMAGES.financier],
         category: { connect: { id: categories['Petits gâteaux'] } },
-        diet: { connect: { id: diets['Sans Gluten'] } },
+        dietIds: [diets['Sans Gluten']],
         tags: [],
         ingredients: ['Poudre d\'amandes', 'Beurre noisette', 'Blancs d\'œufs', 'Sucre glace'],
         nutrition: {
@@ -230,7 +230,7 @@ async function main() {
         price: 18.50,
         images: [PASTRIES_IMAGES.flanPatissier],
         category: { connect: { id: categories['Pâtisseries'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien']],
         tags: ['Populaire'],
         ingredients: ['Lait', 'Œufs', 'Vanille bourbon', 'Pâte brisée', 'Sucre'],
         nutrition: {
@@ -253,7 +253,7 @@ async function main() {
         price: 32.90,
         images: [PASTRIES_IMAGES.foretNoire],
         category: { connect: { id: categories['Gâteaux'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien']],
         tags: ['Nouveau'],
         ingredients: ['Génoise chocolat', 'Cerises griottes', 'Chantilly', 'Kirsch'],
         nutrition: {
@@ -276,7 +276,7 @@ async function main() {
         price: 28.90,
         images: [PASTRIES_IMAGES.fraisier],
         category: { connect: { id: categories['Gâteaux'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien']],
         tags: [],
         ingredients: ['Fraises fraîches', 'Crème mousseline', 'Génoise', 'Pâte d\'amande'],
         nutrition: {
@@ -387,7 +387,7 @@ async function main() {
         price: 8.90,
         images: [PASTRIES_IMAGES.opera],
         category: { connect: { id: categories['Gâteaux'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [],
         tags: [],
         ingredients: ['Biscuit joconde', 'Ganache chocolat', 'Crème café', 'Glaçage'],
         nutrition: {
@@ -410,7 +410,7 @@ async function main() {
         price: 2.10,
         images: [PASTRIES_IMAGES.painAuChocolat],
         category: { connect: { id: categories['Viennoiseries'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [],
         tags: ['Populaire'],
         ingredients: ['Pâte feuilletée', 'Chocolat noir 70%', 'Beurre'],
         nutrition: {
@@ -433,7 +433,7 @@ async function main() {
         price: 2.30,
         images: [PASTRIES_IMAGES.painAuRaisin],
         category: { connect: { id: categories['Viennoiseries'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [],
         tags: [],
         ingredients: ['Pâte feuilletée', 'Crème pâtissière', 'Raisins secs', 'Rhum'],
         nutrition: {
@@ -456,7 +456,7 @@ async function main() {
         price: 2.80,
         images: [PASTRIES_IMAGES.painSuisse],
         category: { connect: { id: categories['Viennoiseries'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [],
         tags: [],
         ingredients: ['Pâte feuilletée', 'Crème pâtissière vanille', 'Pépites chocolat'],
         nutrition: {
@@ -479,7 +479,7 @@ async function main() {
         price: 24.90,
         images: [PASTRIES_IMAGES.parisBrest],
         category: { connect: { id: categories['Gâteaux'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien']],
         tags: [],
         ingredients: ['Pâte à choux', 'Crème pralinée', 'Amandes effilées', 'Praliné maison'],
         nutrition: {
@@ -497,23 +497,22 @@ async function main() {
     // Religieuse
     prisma.pastry.create({
       data: {
-        name: 'Religieuse au Chocolat',
-        description: 'Deux choux superposés, crème chocolat et glaçage chocolat',
+        name: 'Religieuse au Café',
+        description: 'Deux choux superposés, crème pâtissière café et glaçage fondant',
         price: 6.50,
         images: [PASTRIES_IMAGES.religieuse],
         category: { connect: { id: categories['Pâtisseries'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
         tags: [],
-        ingredients: ['Pâte à choux', 'Crème pâtissière chocolat', 'Glaçage chocolat'],
+        ingredients: ['Pâte à choux', 'Crème pâtissière café', 'Glaçage fondant'],
         nutrition: {
-          calories: 325,
-          protein: 6.4,
-          carbs: 32.8,
-          fat: 19.5,
+          calories: 315,
+          protein: 5.8,
+          carbs: 35.6,
+          fat: 18.4,
           allergens: ['gluten', 'œufs', 'lait']
         },
         stockCount: 12,
-        slug: 'religieuse-chocolat',
+        slug: 'religieuse-cafe',
       }
     }),
 
@@ -525,7 +524,7 @@ async function main() {
         price: 3.50,
         images: [PASTRIES_IMAGES.sable],
         category: { connect: { id: categories['Petits gâteaux'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien']],
         tags: [],
         ingredients: ['Farine', 'Beurre demi-sel', 'Sucre', 'Œufs'],
         nutrition: {
@@ -544,21 +543,20 @@ async function main() {
     prisma.pastry.create({
       data: {
         name: 'Saint-Honoré',
-        description: 'Base de pâte feuilletée, choux caramélisés, crème Chantilly',
-        price: 7.20,
+        description: 'Pâte brisée, choux à la crème chantilly et caramel',
+        price: 28.90,
         images: [PASTRIES_IMAGES.saintHonore],
         category: { connect: { id: categories['Gâteaux'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
-        tags: [],
-        ingredients: ['Pâte feuilletée', 'Pâte à choux', 'Crème Chantilly', 'Caramel'],
+        tags: ['Nouveau'],
+        ingredients: ['Pâte brisée', 'Choux à la crème', 'Chantilly', 'Caramel'],
         nutrition: {
-          calories: 390,
-          protein: 5,
-          carbs: 36,
-          fat: 24,
+          calories: 425,
+          protein: 6.2,
+          carbs: 38.7,
+          fat: 28.5,
           allergens: ['gluten', 'œufs', 'lait']
         },
-        stockCount: 10,
+        stockCount: 4,
         slug: 'saint-honore',
       }
     }),
@@ -571,7 +569,7 @@ async function main() {
         price: 5.80,
         images: [PASTRIES_IMAGES.tarteAuChocolat],
         category: { connect: { id: categories['Tartes'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien']],
         tags: [],
         ingredients: ['Pâte sablée', 'Chocolat noir', 'Crème', 'Beurre'],
         nutrition: {
@@ -589,23 +587,22 @@ async function main() {
     // Tarte au Citron
     prisma.pastry.create({
       data: {
-        name: 'Tarte au Citron',
-        description: 'Tarte au citron classique avec une crème citron acidulée sur pâte sablée',
-        price: 5.50,
+        name: 'Tarte au Citron Meringuée',
+        description: 'Pâte sablée, crème citron et meringue italienne',
+        price: 22.50,
         images: [PASTRIES_IMAGES.tarteAuCitron],
         category: { connect: { id: categories['Tartes'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
-        tags: [],
-        ingredients: ['Pâte sablée', 'Citron', 'Œufs', 'Sucre', 'Beurre'],
+        tags: ['Populaire'],
+        ingredients: ['Pâte sablée', 'Crème citron', 'Meringue italienne', 'Citrons bio'],
         nutrition: {
-          calories: 280,
-          protein: 3,
-          carbs: 35,
-          fat: 12,
+          calories: 285,
+          protein: 4.8,
+          carbs: 32.4,
+          fat: 16.2,
           allergens: ['gluten', 'œufs', 'lait']
         },
-        stockCount: 16,
-        slug: 'tarte-citron',
+        stockCount: 6,
+        slug: 'tarte-citron-meringuee',
       }
     }),
 
@@ -617,7 +614,7 @@ async function main() {
         price: 5.80,
         images: [PASTRIES_IMAGES.tarteAuCitron],
         category: { connect: { id: categories['Tartes'] } },
-        diet: { connect: { id: diets['Sans Lactose'] } },
+        dietIds: [diets['Sans Lactose']],
         tags: [],
         ingredients: ['Pâte sablée', 'Citron', 'Œufs', 'Sucre', 'Margarine végétale'],
         nutrition: {
@@ -640,7 +637,7 @@ async function main() {
         price: 5.40,
         images: [PASTRIES_IMAGES.tarteAuxAbricots],
         category: { connect: { id: categories['Tartes'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien'], diets['Sans Lactose']],
         tags: [],
         ingredients: ['Pâte sablée', 'Abricots', 'Poudre d\'amande', 'Sucre'],
         nutrition: {
@@ -663,7 +660,7 @@ async function main() {
         price: 5.90,
         images: [PASTRIES_IMAGES.tarteAuxFraises],
         category: { connect: { id: categories['Tartes'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien'], diets['Vegan']],
         tags: [],
         ingredients: ['Pâte sablée', 'Fraises', 'Crème pâtissière', 'Gélatine'],
         nutrition: {
@@ -686,7 +683,7 @@ async function main() {
         price: 6.10,
         images: [PASTRIES_IMAGES.tarteAuxMyrtilles],
         category: { connect: { id: categories['Tartes'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien'], diets['Vegan']],
         tags: [],
         ingredients: ['Pâte sablée', 'Myrtilles', 'Sucre', 'Maïzena'],
         nutrition: {
@@ -709,7 +706,7 @@ async function main() {
         price: 5.30,
         images: [PASTRIES_IMAGES.tarteAuxPommes],
         category: { connect: { id: categories['Tartes'] } },
-        diet: { connect: { id: diets['Végétarien'] } },
+        dietIds: [diets['Végétarien']],
         tags: [],
         ingredients: ['Pâte feuilletée', 'Pommes', 'Compote', 'Sucre'],
         nutrition: {
@@ -732,8 +729,8 @@ async function main() {
         price: 4.50,
         images: [PASTRIES_IMAGES.brownie],
         category: { connect: { id: categories['Petits gâteaux'] } },
-        diet: { connect: { id: diets['Vegan'] } },
-        tags: ['Nouveau', 'Vegan'],
+        dietIds: [diets['Vegan']],
+        tags: ['Nouveau'],
         ingredients: ['Farine complète', 'Chocolat noir vegan', 'Lait d\'amande', 'Huile de coco', 'Noix', 'Sucre de coco'],
         nutrition: {
           calories: 320,
@@ -754,9 +751,9 @@ async function main() {
         description: 'Muffin moelleux sucré naturellement aux pommes et dattes',
         price: 3.80,
         images: [PASTRIES_IMAGES.muffinSansSucre],
-        category: { connect: { id: categories['Pâtisseries'] } },
-        diet: { connect: { id: diets['Sans Sucre'] } },
-        tags: ['Sans Sucre', 'Healthy'],
+        category: { connect: { id: categories['Pâtisseries'] } },        
+        dietIds: [diets['Sans Sucre']],
+        tags: ['Healthy'],
         ingredients: ['Farine d\'avoine', 'Pommes', 'Dattes', 'Cannelle', 'Œufs', 'Yaourt grec', 'Levure'],
         nutrition: {
           calories: 185,
@@ -769,7 +766,6 @@ async function main() {
         slug: 'muffin-pomme-cannelle-sans-sucre',
       }
     }),
-
   ])
 
   console.log('✅ Pâtisseries créées')

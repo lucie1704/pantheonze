@@ -47,7 +47,7 @@ export class PastryController {
             .filter(id => id !== undefined);
 
           if (dietIds.length !== 0) {
-            where.dietId = { in: dietIds };
+            where.dietIds = { hasSome: dietIds };
           }
         }
         if (minPrice || maxPrice) {
@@ -65,8 +65,7 @@ export class PastryController {
             where: { ...where, tags: { has: tagName } },
             orderBy: { createdAt: "desc" },
             include: {
-              category: true,
-              diet: true
+              category: true
             }
           });
 
@@ -74,8 +73,7 @@ export class PastryController {
             where: { ...where, NOT: { tags: { has: tagName } } },
             orderBy: { createdAt: "desc" },
             include: {
-              category: true,
-              diet: true
+              category: true
             }
           });
 
@@ -96,10 +94,20 @@ export class PastryController {
             where,
             orderBy,
             include: {
-              category: true,
-              diet: true
+              category: true
             }
           });
+
+          // Enrichir avec les diets
+          for (const pastry of pastries as any[]) {
+            if (pastry.dietIds && pastry.dietIds.length > 0) {
+              pastry.diets = await prismaClient.diet.findMany({
+                where: { id: { in: pastry.dietIds } }
+              });
+            } else {
+              pastry.diets = [];
+            }
+          }
         }
 
         res.json(pastries);
@@ -120,11 +128,21 @@ export class PastryController {
                 },
                 orderBy: { createdAt: "desc" },
                 include: {
-                    category: true,
-                    diet: true
+                    category: true
                 },
                 take: limitNumber
             });
+
+            // Enrichir avec les diets
+            for (const pastry of popularPastries as any[]) {
+                if (pastry.dietIds && pastry.dietIds.length > 0) {
+                    pastry.diets = await prismaClient.diet.findMany({
+                        where: { id: { in: pastry.dietIds } }
+                    });
+                } else {
+                    pastry.diets = [];
+                }
+            }
 
             res.json(popularPastries);
         } catch (error) {
@@ -139,14 +157,22 @@ export class PastryController {
             const pastry = await prismaClient.pastry.findUnique({
                 where: { id },
                 include: {
-                    category: true,
-                    diet: true
+                    category: true
                 }
             });
 
             if (!pastry) {
                 res.status(404).json({ error: "Pastry not found" });
                 return;
+            }
+
+            // Enrichir avec les diets
+            if ((pastry as any).dietIds && (pastry as any).dietIds.length > 0) {
+                (pastry as any).diets = await prismaClient.diet.findMany({
+                    where: { id: { in: (pastry as any).dietIds } }
+                });
+            } else {
+                (pastry as any).diets = [];
             }
 
             res.json(pastry);
