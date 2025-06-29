@@ -404,6 +404,30 @@ watch(sortBy, () => {
         />
       </div>
 
+      <!-- Message aucun résultat -->
+      <div
+        v-else-if="products.length === 0"
+        class="flex flex-column align-items-center justify-content-center py-8"
+      >
+        <div class="text-center">
+          <i class="pi pi-search text-6xl text-400 mb-4"></i>
+          <h3 class="text-2xl font-bold text-900 mb-2">Aucun résultat trouvé</h3>
+          <p class="text-600 mb-4">
+            Aucune pâtisserie ne correspond à vos critères de recherche.
+          </p>
+          <Button
+            label="Réinitialiser les filtres"
+            icon="pi pi-refresh"
+            severity="primary"
+            @click="clearFilters"
+            class="mb-3"
+          />
+          <p class="text-sm text-500">
+            Essayez de modifier vos filtres ou votre recherche pour trouver ce que vous cherchez.
+          </p>
+        </div>
+      </div>
+
       <!-- Grille des produits -->
       <div
         class="grid"

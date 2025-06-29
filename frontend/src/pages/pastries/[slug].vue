@@ -320,6 +320,7 @@ const handleAddToCartFromCarousel = (cartData: any) => {
 
 .quantity-input[type=number] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 /* Masquer les flèches du carousel sur mobile */
