@@ -12,6 +12,7 @@ import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
+import { authService } from '@/services'
 
 const router = useRouter()
 const toast = useToast()
@@ -71,20 +72,29 @@ const handleLogin = async () => {
   if (isValid) {
     loading.value = true
     try {
-      // TODO: Implement login logic here
-      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate API call
+      const response = await authService.login({
+        email: loginForm.email,
+        password: loginForm.password
+      })
+      
       toast.add({
         severity: 'success',
         summary: 'Succès',
-        detail: 'Connexion réussie',
+        detail: `Bienvenue ${response.user.name} !`,
         life: 3000,
       })
-      router.push('/dashboard')
-    } catch (error) {
+
+      // Rediriger selon le rôle
+      if (authService.isAdminOrStorekeeper()) {
+        router.push('/admin')
+      } else {
+        router.push('/')
+      }
+    } catch (error: any) {
       toast.add({
         severity: 'error',
         summary: 'Erreur',
-        detail: 'Échec de la connexion',
+        detail: error.message || 'Échec de la connexion',
         life: 3000,
       })
       console.error('Erreur de connexion:', error)

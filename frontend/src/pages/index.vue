@@ -9,7 +9,7 @@ import Button from 'primevue/button'
 import Carousel from 'primevue/carousel'
 import ProgressSpinner from 'primevue/progressspinner'
 import { ProductCard } from '@/components'
-import { pastryService } from '@/services/pastry.service'
+import { pastryService } from '@/services'
 import type { Pastry } from '@/types/pastry'
 
 const router = useRouter()

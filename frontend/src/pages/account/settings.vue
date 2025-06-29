@@ -7,7 +7,7 @@ import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import axios from 'axios'
 import { API_URL } from '@/constants/api.ts'
-import { userService } from '@/services/user.service'
+import { userService } from '@/services'
 import Divider from 'primevue/divider'
 
 const toast = useToast()

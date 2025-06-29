@@ -23,7 +23,15 @@ import Select from 'primevue/select'
 
 import App from './App.vue'
 import { router } from './router'
+import { authService } from '@/services'
 import { definePreset } from '@primevue/themes'
+
+// Vérifier l'authentification au démarrage
+authService.verifyToken().catch(() => {
+  // Token invalide, on le supprime automatiquement
+  console.log('Token invalide détecté, déconnexion automatique')
+})
+
 const PastryTheme = definePreset(Aura, {
   semantic: {
     primary: {

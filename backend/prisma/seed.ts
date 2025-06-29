@@ -54,7 +54,7 @@ async function main() {
 
   const admin = await prisma.user.create({
     data: {
-      email: 'admin@pantheonze.com',
+      email: 'lucie.godard@demo.com',
       password: hashedPassword,
       name: 'Lucie GODARD',
       phone: '0123456789',
@@ -64,7 +64,7 @@ async function main() {
 
   const storekeeper = await prisma.user.create({
     data: {
-      email: 'storekeeper@pantheonze.com',
+      email: 'andree.faire@demo.com',
       password: hashedPassword,
       name: 'Andrée FAIRE',
       phone: '0987654321',
@@ -74,7 +74,7 @@ async function main() {
 
   const client = await prisma.user.create({
     data: {
-      email: 'client@pantheonze.com',
+      email: 'paulo.carpee@demo.com',
       password: hashedPassword,
       name: 'Paulo CARPEE',
       phone: '0555666777',

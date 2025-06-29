@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { pastryService } from '@/services/pastry.service'
+import { pastryService } from '@/services'
 import { ProductCard, DietIcon } from '@/components'
 import { DIET_CONFIG } from '@/constants/diets'
 import Carousel from 'primevue/carousel'

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import TieredMenu from 'primevue/tieredmenu'
 import Button from 'primevue/button'
 import Drawer from 'primevue/drawer'
 import { useRouter, useRoute } from 'vue-router'
 import { Banner } from '@/components'
+import { authService } from '@/services'
 
 interface Props {
   showBanner?: boolean
@@ -59,7 +60,25 @@ const bannerConfig = computed(() => {
   return homeBannerConfig
 })
 
-const isLoggedIn = ref(true)
+// Utiliser le service d'authentification avec réactivité forcée
+const authState = ref({
+  isLoggedIn: authService.isAuthenticated(),
+  user: authService.getUser()
+})
+
+// Forcer la réactivité en écoutant les changements
+const updateAuthState = () => {
+  authState.value = {
+    isLoggedIn: authService.isAuthenticated(),
+    user: authService.getUser()
+  }
+}
+
+// Écouter les changements d'authentification
+window.addEventListener('auth-change', updateAuthState)
+
+const isLoggedIn = computed(() => authState.value.isLoggedIn)
+const currentUser = computed(() => authState.value.user)
 const userMenu = ref()
 const mobileMenu = ref(false)
 const router = useRouter()
@@ -83,9 +102,9 @@ const menuItems = [
   },
 ]
 
-const userMenuItems = [
+const userMenuItems = computed(() => [
   {
-    label: 'Mon profil',
+    label: currentUser.value?.name || 'Mon profil',
     icon: 'pi pi-user',
     command: () => router.push('/account'),
     class: 'my-1',
@@ -102,6 +121,13 @@ const userMenuItems = [
     command: () => router.push('/account/settings'),
     class: 'my-1',
   },
+  // Bouton backoffice pour admin/storekeeper
+  ...(authService.isAdminOrStorekeeper() ? [{
+    label: 'Backoffice',
+    icon: 'pi pi-cog',
+    command: () => router.push('/admin'),
+    class: 'my-1',
+  }] : []),
   {
     separator: true,
     class: 'my-1',
@@ -110,16 +136,20 @@ const userMenuItems = [
     label: 'Se déconnecter',
     icon: 'pi pi-sign-out',
     command: () => {
-      isLoggedIn.value = false
+      authService.logout()
+      updateAuthState() // Forcer la mise à jour
       router.push('/login')
     },
     class: 'my-1',
   },
-]
+])
 
 const closeMobileMenu = () => {
   mobileMenu.value = false
 }
+
+// Mettre à jour l'état d'auth au montage du composant
+updateAuthState()
 </script>
 
 <template>
