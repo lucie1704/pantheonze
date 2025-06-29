@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import InputNumber from 'primevue/inputnumber'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
 
 const router = useRouter()
 

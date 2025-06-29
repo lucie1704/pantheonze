@@ -36,7 +36,7 @@ const incrementQuantity = () => {
 
 <template>
   <div
-    class="surface-card border-round-xl overflow-hidden flex flex-column h-28rem min-w-16rem flex-shrink-0 product-card"
+    class="surface-card border-round-xl overflow-hidden flex flex-column min-h-24rem min-w-16rem flex-shrink-0 product-card"
   >
     <!-- Lien vers la page détail (zone cliquable) -->
     <RouterLink
@@ -89,6 +89,7 @@ const incrementQuantity = () => {
                 :key="diet.id"
                 :icon-path="DIET_CONFIG[diet.name]?.iconPath"
                 :label="DIET_CONFIG[diet.name]?.label"
+                :icon-only="true"
               />
             </div>
           </div>
@@ -203,8 +204,7 @@ const incrementQuantity = () => {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-height: 2rem; /* Hauteur minimum pour 1 ligne */
-  max-height: 4rem; /* Hauteur maximum pour 2 lignes */
+  height: 4rem; 
 }
 
 .diet-icons-container {

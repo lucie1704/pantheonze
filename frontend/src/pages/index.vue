@@ -132,14 +132,13 @@ onMounted(() => {
             :showIndicators="true"
             circular
             :autoplayInterval="4000"
-            class="popular-carousel"
           >
             <template #item="{ data: product }">
               <div class="p-3">
                 <ProductCard
                   :pastry="product"
                   @add-to-cart="handleAddToCart"
-                  class="h-full"
+                  :icon-only="true"
                 />
               </div>
             </template>

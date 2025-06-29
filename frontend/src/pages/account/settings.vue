@@ -1,8 +1,7 @@
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useToast } from 'primevue/usetoast'
-import InputSwitch from 'primevue/inputswitch'
+import ToggleSwitch from 'primevue/toggleswitch'
 import RadioButton from 'primevue/radiobutton'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
@@ -142,13 +141,13 @@ onMounted(() => {
         <h2 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Préférences de notification</h2>
         <div class="flex flex-column gap-3">
           <div class="flex flex-column sm:flex-row align-items-start sm:align-items-center gap-3">
-            <InputSwitch v-model="settings.emailNotifications" />
+            <ToggleSwitch v-model="settings.emailNotifications" />
             <div>
               <p class="text-500 m-0 text-sm sm:text-base">Recevoir des emails pour les mises à jour de commande</p>
             </div>
           </div>
           <div class="flex flex-column sm:flex-row align-items-start sm:align-items-center gap-3">
-            <InputSwitch v-model="settings.promoNotifications" />
+            <ToggleSwitch v-model="settings.promoNotifications" />
             <div>
               <p class="text-500 m-0 text-sm sm:text-base">Recevoir des offres spéciales et promotions</p>
             </div>

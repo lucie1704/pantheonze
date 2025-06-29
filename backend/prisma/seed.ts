@@ -139,7 +139,7 @@ async function main() {
         images: [PASTRIES_IMAGES.chouquette],
         category: { connect: { id: categories['Viennoiseries'] } },
         dietIds: [diets['Végétarien']],
-        tags: ['Populaire', 'Vegan'],
+        tags: ['Populaire'],
         ingredients: ['Pâte à choux', 'Sucre perlé', 'Œufs', 'Beurre'],
         nutrition: {
           calories: 85,
@@ -753,7 +753,7 @@ async function main() {
         images: [PASTRIES_IMAGES.muffinSansSucre],
         category: { connect: { id: categories['Pâtisseries'] } },        
         dietIds: [diets['Sans Sucre']],
-        tags: ['Healthy'],
+        tags: [],
         ingredients: ['Farine d\'avoine', 'Pommes', 'Dattes', 'Cannelle', 'Œufs', 'Yaourt grec', 'Levure'],
         nutrition: {
           calories: 185,

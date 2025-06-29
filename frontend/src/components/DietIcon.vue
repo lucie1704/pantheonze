@@ -1,17 +1,11 @@
-<template>
-  <div
-    class="diet-icon-wrapper"
-    v-html="svgContent"
-    v-tooltip.top="label"
-  />
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
+import Tag from 'primevue/tag'
 
 const props = defineProps<{
   iconPath: string
   label: string
+  iconOnly?: boolean
 }>()
 
 const svgContent = ref('')
@@ -21,7 +15,7 @@ const loadSvg = async () => {
     const response = await fetch(props.iconPath)
     if (response.ok) {
       const svg = await response.text()
-      // Ajouter la classe CSS pour la couleur verte
+      // Ajouter la classe CSS pour la couleur
       svgContent.value = svg.replace('<svg', '<svg class="diet-svg-icon"')
     }
   } catch (error) {
@@ -40,6 +34,22 @@ watch(
   },
 )
 </script>
+
+<template>
+  <div v-if="iconOnly"
+    class="diet-icon-wrapper"
+    v-html="svgContent"
+    v-tooltip.top="label"
+  />
+  <Tag v-else :value="label" severity="success" class="diet-tag">
+    <template #icon>
+      <div
+        class="diet-icon-wrapper"
+        v-html="svgContent"
+      />
+    </template>
+  </Tag>
+</template>
 
 <style scoped>
 .diet-icon-wrapper {

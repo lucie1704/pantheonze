@@ -110,7 +110,7 @@ const handleAddToCartFromCarousel = (cartData: any) => {
           <!-- Image principale -->
           <div class="relative border-round-xl overflow-hidden" style="aspect-ratio: 1">
             <img :src="pastry.images && pastry.images.length > 0 ? pastry.images[currentImageIndex] : '/no-image.svg'"
-              :alt="pastry.name" class="w-full h-full object-cover" />
+              :alt="pastry.name" class="w-full h-full product-image" />
 
             <!-- Flèches de navigation -->
             <Button v-if="pastry.images && pastry.images.length > 1" icon="pi pi-chevron-left"
@@ -141,8 +141,13 @@ const handleAddToCartFromCarousel = (cartData: any) => {
           <div class="flex align-items-center gap-2">
             <!-- Icônes des régimes alimentaires -->
             <div v-if="pastry.diets && pastry.diets.length > 0" class="flex flex-wrap gap-2 mb-4">
-              <DietIcon v-for="diet in pastry.diets" :key="diet.id" :icon-path="DIET_CONFIG[diet.name]?.iconPath"
-                :label="DIET_CONFIG[diet.name]?.label" />
+              <DietIcon
+                v-for="diet in pastry.diets"
+                :key="diet.id"
+                :icon-path="DIET_CONFIG[diet.name]?.iconPath"
+                :label="DIET_CONFIG[diet.name]?.label"
+                :icon-only="false"
+              />
             </div>
             <!-- Tags -->
             <div v-if="pastry.tags && pastry.tags.length > 0" class="flex flex-wrap gap-2 mb-4">
@@ -153,11 +158,12 @@ const handleAddToCartFromCarousel = (cartData: any) => {
 
           <p class="text-lg mb-4">{{ pastry.description }}</p>
 
-          <div class="text-3xl text-primary font-bold mb-6 text-right">{{ pastry.price.toFixed(2).replace('.', ',') }}€
-          </div>
-
           <!-- Espace flexible pour aligner les boutons avec le bas de l'image -->
           <div class="flex-1"></div>
+
+          <div class="text-3xl text-primary font-bold mb-3 text-right">{{ pastry.price.toFixed(2).replace('.', ',') }}€
+          </div>
+
 
           <!-- Contrôles de quantité -->
           <div class="align-items-center gap-4">
@@ -322,5 +328,11 @@ const handleAddToCartFromCarousel = (cartData: any) => {
   .carousel-container .p-carousel-next {
     display: none !important;
   }
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>
