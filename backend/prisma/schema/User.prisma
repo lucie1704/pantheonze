@@ -5,6 +5,7 @@ model User {
   name        String
   phone       String?
   addresses   String[]
+  role        UserRole   @default(CLIENT)
   cart        Cart?      @relation("UserCart")
   preferences Json? // { favoriteCategories: [], dietaryRestrictions: [], etc. }
   isActive    Boolean   @default(true)

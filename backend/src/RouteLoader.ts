@@ -22,6 +22,11 @@ export default async function RouteLoader(
   }
 
   for (const file of files) {
+    // Exclure le fichier index.ts
+    if (file.includes('index.ts')) {
+      continue;
+    }
+    
     if (
       fs.statSync(file).isFile() &&
       path.extname(file).toLowerCase() === ".ts"

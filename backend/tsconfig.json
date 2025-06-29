@@ -14,10 +14,9 @@
         "src/prisma/generated"
       ]
     } /* Specify a set of entries that re-map imports to additional lookup locations. */,
-    //    "typeRoots": [
-    //      "./src/types"
-    //    ],
-    //    "moduleResolution": "NodeNext",
+    "typeRoots": [
+      "./src/types"
+    ],
     "moduleResolution": "node",
     /* Emit */
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,

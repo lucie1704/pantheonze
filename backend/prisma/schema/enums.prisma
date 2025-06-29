@@ -22,3 +22,9 @@ enum PromoType {
   FREE_DELIVERY
   BUY_ONE_GET_ONE
 }
+
+enum UserRole {
+  ADMIN
+  STOREKEEPER
+  CLIENT
+}

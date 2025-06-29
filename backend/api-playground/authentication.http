@@ -1,9 +1,103 @@
 @BASE_URL = http://localhost:3333
+@API_URL = {{BASE_URL}}/api
 
-# @name = base
-POST {{BASE_URL}}
+### ========================================
+### AUTHENTIFICATION
+### ========================================
+
+### Login Admin
+# @name loginAdmin
+POST {{API_URL}}/auth/login
 Content-Type: application/json
 
 {
-  "my_field": "my_value"
+  "email": "admin@pantheonze.com",
+  "password": "password123"
 }
+
+### Login Storekeeper
+# @name loginStorekeeper
+POST {{API_URL}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "storekeeper@pantheonze.com",
+  "password": "password123"
+}
+
+### Login Client
+# @name loginClient
+POST {{API_URL}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "client@pantheonze.com",
+  "password": "password123"
+}
+
+### Vérifier Token
+# @name verifyToken
+GET {{API_URL}}/auth/verify
+Authorization: Bearer {{loginAdmin.response.body.data.token}}
+
+### ========================================
+### ADMINISTRATION
+### ========================================
+
+### Dashboard Admin (avec token admin)
+# @name dashboardAdmin
+GET {{API_URL}}/admin/dashboard
+Authorization: Bearer {{loginAdmin.response.body.data.token}}
+
+### Dashboard Admin (avec token storekeeper)
+# @name dashboardStorekeeper
+GET {{API_URL}}/admin/dashboard
+Authorization: Bearer {{loginStorekeeper.response.body.data.token}}
+
+### Dashboard Admin (avec token client - devrait échouer)
+# @name dashboardClient
+GET {{API_URL}}/admin/dashboard
+Authorization: Bearer {{loginClient.response.body.data.token}}
+
+### Statistiques (avec token admin)
+# @name statsAdmin
+GET {{API_URL}}/admin/stats
+Authorization: Bearer {{loginAdmin.response.body.data.token}}
+
+### Statistiques (avec token storekeeper)
+# @name statsStorekeeper
+GET {{API_URL}}/admin/stats
+Authorization: Bearer {{loginStorekeeper.response.body.data.token}}
+
+### ========================================
+### TESTS D'ERREURS
+### ========================================
+
+### Login avec mauvais email
+# @name loginWrongEmail
+POST {{API_URL}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "wrong@email.com",
+  "password": "password123"
+}
+
+### Login avec mauvais mot de passe
+# @name loginWrongPassword
+POST {{API_URL}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@pantheonze.com",
+  "password": "wrongpassword"
+}
+
+### Accès admin sans token
+# @name adminNoToken
+GET {{API_URL}}/admin/dashboard
+
+### Accès admin avec token invalide
+# @name adminInvalidToken
+GET {{API_URL}}/admin/dashboard
+Authorization: Bearer invalid_token_here

@@ -1,0 +1,5 @@
+export { default as authRoutes } from './auth.routes'
+export { default as adminRoutes } from './admin.routes'
+export { default as pastryRoutes } from './pastry.routes'
+export { default as categoryRoutes } from './category.routes'
+export { default as dietRoutes } from './diet.routes' 

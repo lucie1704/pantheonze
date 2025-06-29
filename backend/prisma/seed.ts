@@ -49,31 +49,40 @@ async function main() {
 
   console.log('✅ Base de données nettoyée')
 
-  // Créer un utilisateur de test
+  // Créer les utilisateurs de test
   const hashedPassword = await hash('password123', 10)
-  const user = await prisma.user.create({
+
+  const admin = await prisma.user.create({
     data: {
-      email: 'test@example.com',
+      email: 'admin@pantheonze.com',
       password: hashedPassword,
-      name: 'John Doe',
-      phone: '+33612345678',
-      addresses: ['123 Rue de la Pâtisserie, 75001 Paris'],
-      preferences: {
-        favoriteCategories: ['Gateaux', 'Viennoiseries'],
-        dietaryRestrictions: ['Sans gluten']
-      },
-      cart: {
-        create: {
-          updatedAt: new Date()
-        }
-      }
-    },
-    include: {
-      cart: true
+      name: 'Lucie GODARD',
+      phone: '0123456789',
+      role: 'ADMIN',
     }
   })
 
-  console.log('✅ User créés')
+  const storekeeper = await prisma.user.create({
+    data: {
+      email: 'storekeeper@pantheonze.com',
+      password: hashedPassword,
+      name: 'Andrée FAIRE',
+      phone: '0987654321',
+      role: 'STOREKEEPER',
+    }
+  })
+
+  const client = await prisma.user.create({
+    data: {
+      email: 'client@pantheonze.com',
+      password: hashedPassword,
+      name: 'Paulo CARPEE',
+      phone: '0555666777',
+      role: 'CLIENT',
+    }
+  })
+
+  console.log('✅ Utilisateurs créés')
 
   const categoriesData = [
     { name: 'Viennoiseries' },
