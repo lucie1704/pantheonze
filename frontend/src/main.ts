@@ -20,6 +20,7 @@ import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Tooltip from 'primevue/tooltip'
 import Select from 'primevue/select'
+import Drawer from 'primevue/drawer'
 
 import App from './App.vue'
 import { router } from './router'
@@ -99,6 +100,7 @@ app.component('Password', Password)
 app.component('Checkbox', Checkbox)
 app.component('Toast', Toast)
 app.component('Select', Select)
+app.component('Drawer', Drawer)
 
 // Register directives
 app.directive('tooltip', Tooltip)
