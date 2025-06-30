@@ -332,7 +332,7 @@ onMounted(() => {
     <!-- Header -->
     <div class="flex justify-content-between align-items-center mb-4 pb-3 border-bottom-1 surface-border">
       <div class="flex-1">
-        <h1 class="text-3xl font-bold text-900 mb-2">Gestion des Produits</h1>
+        <h1 class="text-3xl font-bold text-900 mb-2">Produits</h1>
         <p class="text-600 m-0">Administrez vos produits de pâtisserie</p>
       </div>
       <div class="flex gap-2">
@@ -569,7 +569,7 @@ onMounted(() => {
         </template>
       </DataTable>
     </div>
-    
+
     <AddPastryModal
       v-model:visible="showAddModal"
     />

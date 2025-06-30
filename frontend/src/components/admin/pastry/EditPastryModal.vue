@@ -6,16 +6,15 @@ import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import Accordion from 'primevue/accordion'
-import AccordionTab from 'primevue/accordiontab'
+import AccordionPanel from 'primevue/accordionpanel'
+import AccordionHeader from 'primevue/accordionheader'
+import AccordionContent from 'primevue/accordioncontent'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import InputNumber from 'primevue/inputnumber'
-import Dropdown from 'primevue/dropdown'
-import MultiSelect from 'primevue/multiselect'
 import Select from 'primevue/select'
-import Tooltip from 'primevue/tooltip'
+import MultiSelect from 'primevue/multiselect'
 import { ref, reactive, computed, onMounted, watch } from 'vue'
-import { pastryService } from '@/services/pastry.service'
 import { API_URL } from '@/constants/api'
 import axios from 'axios'
 
@@ -129,7 +128,6 @@ const descriptionLineClamp = computed(() => {
 // Initialiser les données éditables quand le pastry change
 const initializeEditableData = () => {
   if (props.pastry) {
-    console.log('Initializing editable data with pastry:', props.pastry)
     editableData.value = {
       name: props.pastry.name,
       description: props.pastry.description,
@@ -143,7 +141,6 @@ const initializeEditableData = () => {
       nutrition: props.pastry.nutrition ? { ...props.pastry.nutrition } : undefined,
       diets: props.pastry.diets?.map(diet => diet.id) || []
     }
-    console.log('Editable data initialized:', editableData.value)
   }
 }
 
@@ -155,6 +152,47 @@ const startEditing = (field: keyof typeof editingState) => {
       editingState[key as keyof typeof editingState] = false
     }
   })
+  
+  // Reset les valeurs modifiées aux valeurs initiales
+  if (props.pastry) {
+    switch (field) {
+      case 'name':
+        editableData.value.name = props.pastry.name
+        break
+      case 'description':
+        editableData.value.description = props.pastry.description
+        break
+      case 'price':
+        editableData.value.price = props.pastry.price
+        break
+      case 'stockCount':
+        editableData.value.stockCount = props.pastry.stockCount
+        break
+      case 'category':
+        editableData.value.category = props.pastry.category.id
+        break
+      case 'tags':
+        editableData.value.tags = (props.pastry.tags || []).filter(
+          tag => typeof tag === 'string' && tagOptions.value.some(opt => opt.value === tag)
+        )
+        break
+      case 'ingredients':
+        editableData.value.ingredients = [...(props.pastry.ingredients || [])]
+        break
+      case 'diets':
+        editableData.value.diets = props.pastry.diets?.map(diet => diet.id) || []
+        break
+      case 'nutrition':
+        editableData.value.nutrition = props.pastry.nutrition ? { ...props.pastry.nutrition } : undefined
+        break
+      case 'allergens':
+        if (editableData.value.nutrition && props.pastry.nutrition) {
+          editableData.value.nutrition.allergens = [...(props.pastry.nutrition.allergens || [])]
+        }
+        break
+    }
+  }
+  
   // Ouvrir le champ sélectionné
   editingState[field] = true
 }
@@ -203,6 +241,7 @@ const getTagSeverity = (tag: string) => {
 
 const handleSave = () => {
   if (props.pastry && editableData.value) {
+    // Préparer les données modifiées
     const updatedPastry = {
       ...props.pastry,
       name: editableData.value.name || props.pastry.name,
@@ -219,8 +258,15 @@ const handleSave = () => {
         availableDiets.value.filter(diet => editableData.value.diets?.includes(diet.value)) :
         props.pastry.diets
     }
+    
+    // Émettre l'événement avec les données mises à jour
     emit('save', updatedPastry as Pastry)
     emit('update:visible', false)
+    
+    // Réinitialiser les états d'édition
+    Object.keys(editingState).forEach(key => {
+      editingState[key as keyof typeof editingState] = false
+    })
   }
 }
 
@@ -419,7 +465,7 @@ const addIngredient = () => {
                 />
               </div>
               <div v-else class="flex align-items-center gap-2">
-                <Dropdown
+                <Select
                   v-model="editableData.category"
                   :options="categories"
                   option-label="label"
@@ -438,8 +484,8 @@ const addIngredient = () => {
       <!-- Accordéon avec les détails -->
       <Accordion :value="['0', '1', '2', '3', '4']" multiple>
         <!-- Régimes alimentaires -->
-        <AccordionTab value="0">
-          <template #header>
+        <AccordionPanel value="0">
+          <AccordionHeader>
             <div class="flex align-items-center justify-content-between w-full">
               <span>Régimes alimentaires</span>
               <Button
@@ -451,34 +497,36 @@ const addIngredient = () => {
                 class="p-button-text"
               />
             </div>
-          </template>
-          <div class="p-3">
-            <div v-if="!editingState.diets" class="flex gap-2 flex-wrap">
-              <DietIcon
-                v-for="diet in pastry.diets"
-                :diet-name="DIET_CONFIG[diet.name]?.dietName"
-                :key="diet.id"
-                :label="diet.name"
-              />
+          </AccordionHeader>
+          <AccordionContent>
+            <div class="p-3">
+              <div v-if="!editingState.diets" class="flex gap-2 flex-wrap">
+                <DietIcon
+                  v-for="diet in pastry.diets"
+                  :diet-name="DIET_CONFIG[diet.name]?.dietName"
+                  :key="diet.id"
+                  :label="diet.name"
+                />
+              </div>
+              <div v-else class="flex align-items-center gap-2">
+                <MultiSelect
+                  v-model="editableData.diets"
+                  :options="availableDiets"
+                  option-label="label"
+                  option-value="value"
+                  placeholder="Sélectionner les régimes"
+                  class="flex-1"
+                  @keyup.esc="stopEditing('diets')"
+                  autofocus
+                />
+              </div>
             </div>
-            <div v-else class="flex align-items-center gap-2">
-              <MultiSelect
-                v-model="editableData.diets"
-                :options="availableDiets"
-                option-label="label"
-                option-value="value"
-                placeholder="Sélectionner les régimes"
-                class="flex-1"
-                @keyup.esc="stopEditing('diets')"
-                autofocus
-              />
-            </div>
-          </div>
-        </AccordionTab>
+          </AccordionContent>
+        </AccordionPanel>
 
         <!-- Tags -->
-        <AccordionTab value="1">
-          <template #header>
+        <AccordionPanel value="1">
+          <AccordionHeader>
             <div class="flex align-items-center justify-content-between w-full">
               <span>Tags</span>
               <Button
@@ -490,34 +538,36 @@ const addIngredient = () => {
                 class="p-button-text"
               />
             </div>
-          </template>
-          <div class="p-3">
-            <div v-if="!editingState.tags" class="flex gap-2 flex-wrap">
-              <Tag
-                v-for="tag in formatTags(pastry.tags)"
-                :key="tag.value"
-                :value="tag.label"
-                :severity="getTagSeverity(tag.value)"
-              />
+          </AccordionHeader>
+          <AccordionContent>
+            <div class="p-3">
+              <div v-if="!editingState.tags" class="flex gap-2 flex-wrap">
+                <Tag
+                  v-for="tag in formatTags(pastry.tags)"
+                  :key="tag.value"
+                  :value="tag.label"
+                  :severity="getTagSeverity(tag.value)"
+                />
+              </div>
+              <div v-else class="flex align-items-center gap-2">
+                <MultiSelect
+                  v-model="editableData.tags"
+                  :options="tagOptions"
+                  option-label="label"
+                  option-value="value"
+                  placeholder="Sélectionner un ou plusieurs tags"
+                  class="flex-1"
+                  @keyup.esc="stopEditing('tags')"
+                  autofocus
+                />
+              </div>
             </div>
-            <div v-else class="flex align-items-center gap-2">
-              <MultiSelect
-                v-model="editableData.tags"
-                :options="tagOptions"
-                option-label="label"
-                option-value="value"
-                placeholder="Sélectionner un ou plusieurs tags"
-                class="flex-1"
-                @keyup.esc="stopEditing('tags')"
-                autofocus
-              />
-            </div>
-          </div>
-        </AccordionTab>
+          </AccordionContent>
+        </AccordionPanel>
 
         <!-- Ingrédients -->
-        <AccordionTab value="2">
-          <template #header>
+        <AccordionPanel value="2">
+          <AccordionHeader>
             <div class="flex align-items-center justify-content-between w-full">
               <span>Ingrédients</span>
               <Button
@@ -529,55 +579,57 @@ const addIngredient = () => {
                 class="p-button-text"
               />
             </div>
-          </template>
-          <div class="p-3">
-            <div v-if="!editingState.ingredients" class="flex gap-2 flex-wrap">
-              <Tag
-                v-for="(ingredient, index) in pastry.ingredients" 
-                :key="index"
-                :value="ingredient"
-                severity="secondary"
-              />
-            </div>
-            <div v-else class="flex align-items-start gap-2">
-              <div class="flex-1">
-                <div class="flex gap-2 flex-wrap mb-3">
-                  <div 
-                    v-for="(ingredient, index) in editableData.ingredients" 
-                    :key="index"
-                    class="flex align-items-center gap-1 surface-100 border-round px-2 py-1 cursor-pointer hover:surface-200"
-                    @click="() => {
-                      if (editableData.ingredients) {
-                        editableData.ingredients = editableData.ingredients.filter((_, i) => i !== index)
-                      }
-                    }"
-                  >
-                    <i class="pi pi-times text-500 text-sm"></i>
-                    <span class="text-600">{{ ingredient }}</span>
+          </AccordionHeader>
+          <AccordionContent>
+            <div class="p-3">
+              <div v-if="!editingState.ingredients" class="flex gap-2 flex-wrap">
+                <Tag
+                  v-for="(ingredient, index) in pastry.ingredients" 
+                  :key="index"
+                  :value="ingredient"
+                  severity="secondary"
+                />
+              </div>
+              <div v-else class="flex align-items-start gap-2">
+                <div class="flex-1">
+                  <div class="flex gap-2 flex-wrap mb-3">
+                    <div 
+                      v-for="(ingredient, index) in editableData.ingredients" 
+                      :key="index"
+                      class="flex align-items-center gap-1 surface-100 border-round px-2 py-1 cursor-pointer hover:surface-200"
+                      @click="() => {
+                        if (editableData.ingredients) {
+                          editableData.ingredients = editableData.ingredients.filter((_, i) => i !== index)
+                        }
+                      }"
+                    >
+                      <i class="pi pi-times text-500 text-sm"></i>
+                      <span class="text-600">{{ ingredient }}</span>
+                    </div>
                   </div>
-                </div>
-                <div class="flex gap-2">
-                  <InputText
-                    v-model="newIngredient"
-                    placeholder="Ajouter un ingrédient"
-                    class="flex-1"
-                    @keyup.enter="addIngredient"
-                    @keyup.esc="stopEditing('ingredients')"
-                  />
-                  <Button
-                    label="Ajouter"
-                    size="small"
-                    @click="addIngredient"
-                  />
+                  <div class="flex gap-2">
+                    <InputText
+                      v-model="newIngredient"
+                      placeholder="Ajouter un ingrédient"
+                      class="flex-1"
+                      @keyup.enter="addIngredient"
+                      @keyup.esc="stopEditing('ingredients')"
+                    />
+                    <Button
+                      label="Ajouter"
+                      size="small"
+                      @click="addIngredient"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </AccordionTab>
+          </AccordionContent>
+        </AccordionPanel>
 
         <!-- Allergènes -->
-        <AccordionTab value="3">
-          <template #header>
+        <AccordionPanel value="3">
+          <AccordionHeader>
             <div class="flex align-items-center justify-content-between w-full">
               <span>Allergènes</span>
               <Button
@@ -589,58 +641,60 @@ const addIngredient = () => {
                 class="p-button-text"
               />
             </div>
-          </template>
-          <div class="p-3">
-            <div v-if="!editingState.allergens" class="flex gap-2 flex-wrap">
-              <Tag
-                v-for="(allergen, index) in pastry.nutrition?.allergens || []" 
-                :key="index"
-                :value="allergen"
-                severity="secondary"
-              />
-              <div v-if="!pastry.nutrition?.allergens || pastry.nutrition.allergens.length === 0" class="text-500 italic">
-                Aucun allergène déclaré
+          </AccordionHeader>
+          <AccordionContent>
+            <div class="p-3">
+              <div v-if="!editingState.allergens" class="flex gap-2 flex-wrap">
+                <Tag
+                  v-for="(allergen, index) in pastry.nutrition?.allergens || []" 
+                  :key="index"
+                  :value="allergen"
+                  severity="secondary"
+                />
+                <div v-if="!pastry.nutrition?.allergens || pastry.nutrition.allergens.length === 0" class="text-500 italic">
+                  Aucun allergène déclaré
+                </div>
               </div>
-            </div>
-            <div v-else class="flex align-items-start gap-2">
-              <div class="flex-1">
-                <div class="flex gap-2 flex-wrap mb-3">
-                  <div 
-                    v-for="(allergen, index) in editableData.nutrition?.allergens || []" 
-                    :key="index"
-                    class="flex align-items-center gap-1 surface-100 border-round px-2 py-1 cursor-pointer hover:surface-200"
-                    @click="() => {
-                      if (editableData.nutrition) {
-                        editableData.nutrition.allergens = editableData.nutrition.allergens.filter((_, i) => i !== index)
-                      }
-                    }"
-                  >
-                    <i class="pi pi-times text-500 text-sm"></i>
-                    <span class="text-600">{{ allergen }}</span>
+              <div v-else class="flex align-items-start gap-2">
+                <div class="flex-1">
+                  <div class="flex gap-2 flex-wrap mb-3">
+                    <div 
+                      v-for="(allergen, index) in editableData.nutrition?.allergens || []" 
+                      :key="index"
+                      class="flex align-items-center gap-1 surface-100 border-round px-2 py-1 cursor-pointer hover:surface-200"
+                      @click="() => {
+                        if (editableData.nutrition) {
+                          editableData.nutrition.allergens = editableData.nutrition.allergens.filter((_, i) => i !== index)
+                        }
+                      }"
+                    >
+                      <i class="pi pi-times text-500 text-sm"></i>
+                      <span class="text-600">{{ allergen }}</span>
+                    </div>
+                  </div>
+                  <div class="flex gap-2">
+                    <InputText
+                      v-model="newAllergen"
+                      placeholder="Ajouter un allergène"
+                      class="flex-1"
+                      @keyup.enter="addAllergen"
+                      @keyup.esc="stopEditing('allergens')"
+                    />
+                    <Button
+                      label="Ajouter"
+                      size="small"
+                      @click="addAllergen"
+                    />
                   </div>
                 </div>
-                <div class="flex gap-2">
-                  <InputText
-                    v-model="newAllergen"
-                    placeholder="Ajouter un allergène"
-                    class="flex-1"
-                    @keyup.enter="addAllergen"
-                    @keyup.esc="stopEditing('allergens')"
-                  />
-                  <Button
-                    label="Ajouter"
-                    size="small"
-                    @click="addAllergen"
-                  />
-                </div>
               </div>
             </div>
-          </div>
-        </AccordionTab>
+          </AccordionContent>
+        </AccordionPanel>
 
         <!-- Valeurs nutritionnelles -->
-        <AccordionTab value="4" v-if="editableData.nutrition">
-          <template #header>
+        <AccordionPanel value="4" v-if="editableData.nutrition">
+          <AccordionHeader>
             <div class="flex align-items-center justify-content-between w-full">
               <span>Valeurs nutritionnelles (pour 100g)</span>
               <Button
@@ -652,95 +706,97 @@ const addIngredient = () => {
                 class="p-button-text"
               />
             </div>
-          </template>
-          <div class="p-3">
-            <div v-if="!editingState.nutrition" class="flex-1">
-              <div class="surface-card border-round">
-                <div class="overflow-x-auto">
-                  <table class="w-auto border-round overflow-hidden border-1 surface-border min-w-full">
-                    <thead>
-                      <tr>
-                        <th class="text-center p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border">
-                          Énergie
-                        </th>
-                        <th class="text-center p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border">
-                          Matières grasses
-                        </th>
-                        <th class="text-center p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border">
-                          Glucides
-                        </th>
-                        <th class="text-center p-3 font-medium border-bottom-1 surface-border">
-                          Protéines
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="p-3 text-center border-right-1 surface-border">
-                          {{ editableData.nutrition.calories }} kcal
-                        </td>
-                        <td class="p-3 text-center border-right-1 surface-border">
-                          {{ editableData.nutrition.fat }}g
-                        </td>
-                        <td class="p-3 text-center border-right-1 surface-border">
-                          {{ editableData.nutrition.carbs }}g
-                        </td>
-                        <td class="p-3 text-center">
-                          {{ editableData.nutrition.protein }}g
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+          </AccordionHeader>
+          <AccordionContent>
+            <div class="p-3">
+              <div v-if="!editingState.nutrition" class="flex-1">
+                <div class="surface-card border-round">
+                  <div class="overflow-x-auto">
+                    <table class="w-auto border-round overflow-hidden border-1 surface-border min-w-full">
+                      <thead>
+                        <tr>
+                          <th class="text-center p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border">
+                            Énergie
+                          </th>
+                          <th class="text-center p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border">
+                            Matières grasses
+                          </th>
+                          <th class="text-center p-3 font-medium border-right-1 surface-border border-bottom-1 surface-border">
+                            Glucides
+                          </th>
+                          <th class="text-center p-3 font-medium border-bottom-1 surface-border">
+                            Protéines
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="p-3 text-center border-right-1 surface-border">
+                            {{ editableData.nutrition.calories }} kcal
+                          </td>
+                          <td class="p-3 text-center border-right-1 surface-border">
+                            {{ editableData.nutrition.fat }}g
+                          </td>
+                          <td class="p-3 text-center border-right-1 surface-border">
+                            {{ editableData.nutrition.carbs }}g
+                          </td>
+                          <td class="p-3 text-center">
+                            {{ editableData.nutrition.protein }}g
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div v-else class="flex align-items-start gap-2">
-              <div class="flex-1">
-                <div class="surface-card border-round p-4">
-                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="flex flex-column gap-2">
-                      <label class="font-medium text-900">Énergie (kcal)</label>
-                      <InputNumber
-                        :model-value="editableData.nutrition?.calories"
-                        @update:model-value="(value) => editableData.nutrition && (editableData.nutrition.calories = value)"
-                        class="w-full"
-                        @keyup.esc="stopEditing('nutrition')"
-                        autofocus
-                      />
-                    </div>
-                    <div class="flex flex-column gap-2">
-                      <label class="font-medium text-900">Matières grasses (g)</label>
-                      <InputNumber
-                        :model-value="editableData.nutrition?.fat"
-                        @update:model-value="(value) => editableData.nutrition && (editableData.nutrition.fat = value)"
-                        class="w-full"
-                        @keyup.esc="stopEditing('nutrition')"
-                      />
-                    </div>
-                    <div class="flex flex-column gap-2">
-                      <label class="font-medium text-900">Glucides (g)</label>
-                      <InputNumber
-                        :model-value="editableData.nutrition?.carbs"
-                        @update:model-value="(value) => editableData.nutrition && (editableData.nutrition.carbs = value)"
-                        class="w-full"
-                        @keyup.esc="stopEditing('nutrition')"
-                      />
-                    </div>
-                    <div class="flex flex-column gap-2">
-                      <label class="font-medium text-900">Protéines (g)</label>
-                      <InputNumber
-                        :model-value="editableData.nutrition?.protein"
-                        @update:model-value="(value) => editableData.nutrition && (editableData.nutrition.protein = value)"
-                        class="w-full"
-                        @keyup.esc="stopEditing('nutrition')"
-                      />
+              <div v-else class="flex align-items-start gap-2">
+                <div class="flex-1">
+                  <div class="surface-card border-round p-4">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div class="flex flex-column gap-2">
+                        <label class="font-medium text-900">Énergie (kcal)</label>
+                        <InputNumber
+                          :model-value="editableData.nutrition?.calories"
+                          @update:model-value="(value) => editableData.nutrition && (editableData.nutrition.calories = value)"
+                          class="w-full"
+                          @keyup.esc="stopEditing('nutrition')"
+                          autofocus
+                        />
+                      </div>
+                      <div class="flex flex-column gap-2">
+                        <label class="font-medium text-900">Matières grasses (g)</label>
+                        <InputNumber
+                          :model-value="editableData.nutrition?.fat"
+                          @update:model-value="(value) => editableData.nutrition && (editableData.nutrition.fat = value)"
+                          class="w-full"
+                          @keyup.esc="stopEditing('nutrition')"
+                        />
+                      </div>
+                      <div class="flex flex-column gap-2">
+                        <label class="font-medium text-900">Glucides (g)</label>
+                        <InputNumber
+                          :model-value="editableData.nutrition?.carbs"
+                          @update:model-value="(value) => editableData.nutrition && (editableData.nutrition.carbs = value)"
+                          class="w-full"
+                          @keyup.esc="stopEditing('nutrition')"
+                        />
+                      </div>
+                      <div class="flex flex-column gap-2">
+                        <label class="font-medium text-900">Protéines (g)</label>
+                        <InputNumber
+                          :model-value="editableData.nutrition?.protein"
+                          @update:model-value="(value) => editableData.nutrition && (editableData.nutrition.protein = value)"
+                          class="w-full"
+                          @keyup.esc="stopEditing('nutrition')"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </AccordionTab>
+          </AccordionContent>
+        </AccordionPanel>
       </Accordion>
 
       <!-- Section des images supplémentaires -->
