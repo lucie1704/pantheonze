@@ -285,9 +285,10 @@ const addIngredient = () => {
           />
           <Button
             icon="pi pi-pencil"
-            class="p-button-rounded p-button-sm p-button-secondary absolute top-2 right-2 z-10 shadow-2"
+            class="edit-image-button"
           />
         </div>
+
         
         <!-- Informations principales -->
         <div class="flex-1 overflow-hidden flex flex-column">
@@ -809,5 +810,50 @@ const addIngredient = () => {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.modal-product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  z-index: 1;
+}
+
+.edit-image-button {
+  position: absolute !important;
+  top: 0.5rem !important;
+  right: 0.5rem !important;
+  z-index: 10 !important;
+  border-radius: 50% !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  padding: 0 !important;
+  background: rgba(255, 255, 255, 0.4) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.2s ease !important;
+}
+
+.edit-image-button:hover {
+  transform: scale(1.05) !important;
+}
+
+.image-container {
+  position: relative;
+}
+
+.image-container .p-button {
+  position: absolute;
+  top: 15px;
+  right: 8px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0;
 }
 </style> 
