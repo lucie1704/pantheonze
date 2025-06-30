@@ -31,7 +31,6 @@ import { definePreset } from '@primevue/themes'
 
 // Vérifier l'authentification au démarrage
 authService.verifyToken().catch(() => {
-  // Token invalide, on le supprime automatiquement
   console.log('Token invalide détecté, déconnexion automatique')
 })
 
@@ -89,6 +88,9 @@ app.use(PrimeVue, {
       cssLayer: false,
     },
   },
+  inputStyle: 'outlined',
+  autoZIndex: true,
+  focusOnHover: false,
 })
 app.use(ToastService)
 

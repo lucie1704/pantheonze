@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { API_URL } from '@/constants/api.ts'
+import { API_URL } from '@/constants/api'
+import { authService } from './auth.service'
 
 export interface UserPreferences {
   favoriteCategories: string[]
@@ -39,14 +40,129 @@ export const userService = {
     }
   },
 
-  getUserDietaryPreferences: (): string[] => {
-    // Récupère les préférences depuis le localStorage en attendant l'authentification
-    const preferences = localStorage.getItem('userDietaryPreferences')
-    return preferences ? JSON.parse(preferences) : []
+  getUserDietaryPreferences: async (): Promise<string[]> => {
+    try {
+      const token = authService.getToken()
+      if (!token) {
+        return []
+      }
+
+      const response = await fetch(`${API_URL}/user/dietary-preferences`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (response.ok) {
+        const preferences = await response.json()
+        return preferences.map((pref: { name: string }) => pref.name)
+      }
+      
+      return []
+    } catch (error) {
+      console.error('Erreur lors de la récupération des préférences:', error)
+      return []
+    }
   },
 
-  setUserDietaryPreferences: (diets: string[]): void => {
-    // Sauvegarde temporaire dans le localStorage
-    localStorage.setItem('userDietaryPreferences', JSON.stringify(diets))
+  setUserDietaryPreferences: async (dietNames: string[]): Promise<boolean> => {
+    try {
+      const token = authService.getToken()
+      if (!token) {
+        return false
+      }
+
+      const dietsResponse = await fetch(`${API_URL}/diets`)
+      if (!dietsResponse.ok) {
+        return false
+      }
+
+      const availableDiets = await dietsResponse.json()
+      const dietIds = dietNames
+        .map(name => availableDiets.find((diet: { name: string }) => diet.name === name)?.id)
+        .filter(id => id !== undefined)
+
+      const response = await fetch(`${API_URL}/user/dietary-preferences`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ dietIds })
+      })
+
+      return response.ok
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour des préférences:', error)
+      return false
+    }
+  },
+
+  addDietaryPreference: async (dietName: string): Promise<boolean> => {
+    try {
+      const token = authService.getToken()
+      if (!token) {
+        return false
+      }
+
+      const dietsResponse = await fetch(`${API_URL}/diets`)
+      if (!dietsResponse.ok) {
+        return false
+      }
+
+      const availableDiets = await dietsResponse.json()
+      const diet = availableDiets.find((d: { name: string }) => d.name === dietName)
+      if (!diet) {
+        return false
+      }
+
+      const response = await fetch(`${API_URL}/user/dietary-preferences`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ dietId: diet.id })
+      })
+
+      return response.ok
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout de la préférence:', error)
+      return false
+    }
+  },
+
+  removeDietaryPreference: async (dietName: string): Promise<boolean> => {
+    try {
+      const token = authService.getToken()
+      if (!token) {
+        return false
+      }
+
+      const dietsResponse = await fetch(`${API_URL}/diets`)
+      if (!dietsResponse.ok) {
+        return false
+      }
+
+      const availableDiets = await dietsResponse.json()
+      const diet = availableDiets.find((d: { name: string }) => d.name === dietName)
+      if (!diet) {
+        return false
+      }
+
+      const response = await fetch(`${API_URL}/user/dietary-preferences/${diet.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      return response.ok
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la préférence:', error)
+      return false
+    }
   }
 } 

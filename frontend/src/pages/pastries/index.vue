@@ -5,17 +5,20 @@ import { useToast } from 'primevue/usetoast'
 import { ProductCard } from '@/components'
 import Drawer from 'primevue/drawer'
 import FiltersPanel from '@/components/FiltersPanel.vue'
-import { pastryService, userService } from '@/services'
+import { pastryService } from '@/services'
+import { useUserPreferencesStore } from '@/stores/userPreferences'
 import type { Pastry } from '@/types/pastry'
 import ProgressSpinner from 'primevue/progressspinner'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
+import InputText from 'primevue/inputtext'
 import type { Filter } from '@/types'
 import Button from 'primevue/button'
 
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
+const userPreferencesStore = useUserPreferencesStore()
 const showFilters = ref(false)
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -84,7 +87,7 @@ const updateURL = () => {
 }
 
 // Fonction pour charger les paramètres depuis l'URL
-const loadFromURL = () => {
+const loadFromURL = async () => {
   const query = route.query
 
   if (query.query) {
@@ -95,10 +98,6 @@ const loadFromURL = () => {
   }
   if (query.diets) {
     filters.value.diets = (query.diets as string).split(',')
-  } else if (!ignoreUserPreferences.value) {
-    // Si aucun filtre diet dans l'URL et qu'on n'ignore pas les préférences, les appliquer
-    const userDietaryPreferences = userService.getUserDietaryPreferences()
-    filters.value.diets = userDietaryPreferences
   }
   if (query.minPrice) {
     filters.value.priceRange[0] = parseInt(query.minPrice as string)
@@ -119,10 +118,11 @@ const loadFromURL = () => {
 }
 
 // Fonction pour appliquer les préférences utilisateur par défaut
-const applyUserPreferences = () => {
-  const userDietaryPreferences = userService.getUserDietaryPreferences()
-  if (userDietaryPreferences.length > 0 && filters.value.diets.length === 0 && !ignoreUserPreferences.value) {
-    filters.value.diets = userDietaryPreferences
+const applyUserPreferences = async () => {
+  if (!route.query.diets && !ignoreUserPreferences.value) {
+    if (userPreferencesStore.userDietaryPreferences.length > 0 && filters.value.diets.length === 0) {
+      filters.value.diets = userPreferencesStore.userDietaryPreferences
+    }
   }
 }
 
@@ -249,10 +249,14 @@ const loadMore = () => {
 // Intersection Observer pour détecter quand on arrive en bas
 const loadMoreTrigger = ref<HTMLElement>()
 
-onMounted(() => {
-  loadFromURL()
-  applyUserPreferences()
-  fetchPastries()
+onMounted(async () => {
+  await userPreferencesStore.initialize()
+  
+  await loadFromURL()
+  
+  await applyUserPreferences()
+  
+  await fetchPastries()
 })
 
 // Initialiser l'intersection observer après le rendu
@@ -352,14 +356,8 @@ watch(products, () => {
     <div class="col-12 lg:col-8 xl:col-9">
       <!-- Barre de recherche et contrôles -->
       <div class="flex flex-column gap-3 mb-4">
-        <div class="flex align-items-center gap-3">
-          <Button
-            icon="pi pi-filter"
-            severity="primary"
-            class="lg:hidden w-2"
-            @click="showFilters = true"
-          />
-          <div class="flex align-items-center w-full flex-grow-1">
+        <div class="flex flex-column lg:flex-row align-items-start lg:align-items-center gap-3">
+          <div class="flex align-items-center flex-grow-1 w-full">
             <InputText
               v-model="searchQuery"
               icon="pi pi-search"
@@ -384,6 +382,23 @@ watch(products, () => {
               style="margin-left: -3rem"
             />
           </div>
+          <div class="flex align-items-center gap-3 w-full lg:w-auto">
+            <Button
+              icon="pi pi-filter"
+              severity="primary"
+              class="lg:hidden w-4rem"
+              @click="showFilters = true"
+            />
+            <Select
+              v-model="sortBy"
+              :options="sortOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Trier par"
+              class="w-full lg:w-16rem"
+              :show-clear="true"
+            />
+          </div>
         </div>
 
         <div class="flex flex-column lg:flex-row justify-content-between align-items-start lg:align-items-center gap-3">
@@ -403,7 +418,7 @@ watch(products, () => {
             <!-- Message informatif pour les préférences appliquées -->
             <div
               v-if="
-                userService.getUserDietaryPreferences().length > 0 && filters.diets.length > 0 && !ignoreUserPreferences
+                userPreferencesStore.userDietaryPreferences.length > 0 && filters.diets.length > 0 && !ignoreUserPreferences
               "
               class="flex align-items-center gap-2 text-sm text-primary"
             >
@@ -419,24 +434,6 @@ watch(products, () => {
             </div>
           </div>
           <div class="flex-grow-1 lg:flex-grow-0"></div>
-          <div class="flex flex-column lg:flex-row align-items-start lg:align-items-center gap-2 w-full lg:w-auto">
-            <label
-              for="sort-select"
-              class="text-900"
-            >
-              Résultats triés par
-            </label>
-            <Select
-              id="sort-select"
-              v-model="sortBy"
-              :options="sortOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Trier par"
-              class="w-full lg:w-12rem"
-              :show-clear="true"
-            />
-          </div>
         </div>
       </div>
 

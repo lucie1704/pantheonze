@@ -91,6 +91,16 @@
       >
         <i class="pi pi-copyright"></i>
         <span class="text-sm lg:text-base">2025 PanthéOnze - Tous droits réservés</span>
+        <span class="text-sm lg:text-base">|</span>
+        <a
+          href="https://github.com/lucie1704/pantheonze"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-primary hover:text-primary-600 no-underline flex align-items-center gap-1"
+        >
+          <i class="pi pi-github"></i>
+          <span class="text-sm lg:text-base">Repo GitHub du projet</span>
+        </a>
       </div>
     </div>
   </footer>
