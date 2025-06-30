@@ -48,32 +48,24 @@ const PastryTheme = definePreset(Aura, {
       800: '#5a2d0e',
       900: '#4b250c',
       950: '#3d1e0a',
-    },
-    colorScheme: {
-      light: {
-        primary: {
-          color: '#8B4513',
-          contrastColor: '#ffffff',
-          hoverColor: '#A0522D',
-          activeColor: '#6B3410',
-        },
-        surface: {
-          0: '#ffffff',
-          50: '#f9f7f5',
-          100: '#f4efe9',
-          200: '#e4e1de',
-          300: '#d4c4b0',
-          400: '#bda388',
-          500: '#8B4513',
-          600: '#7a3c11',
-          700: '#6B3410',
-          800: '#5a2d0e',
-          900: '#4b3832',
-          950: '#3d1e0a',
-        },
-      },
-    },
+    }
   },
+  primitive: {
+    // Définir tes couleurs grises comme couleurs primitives
+    gray: {
+      50: '#fafafa',
+      100: '#f5f5f5',
+      200: '#e5e5e5',
+      300: '#d4d4d4',
+      400: '#a3a3a3',
+      500: '#737373',
+      600: '#525252',
+      700: '#404040',
+      800: '#262626',
+      900: '#171717',
+      950: '#0a0a0a',
+    }
+  }
 })
 
 const app = createApp(App)

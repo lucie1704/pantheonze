@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { authService } from '@/services'
 import Button from 'primevue/button'
+import Avatar from 'primevue/avatar'
+import Drawer from 'primevue/drawer'
+import Divider from 'primevue/divider'
 import { useToast } from 'primevue/usetoast'
 import { RouterLink } from 'vue-router'
 
@@ -10,37 +13,38 @@ const router = useRouter()
 const route = useRoute()
 const toast = useToast()
 
+const visible = ref(false)
+const isDesktop = ref(window.innerWidth >= 1024)
+
 const currentUser = computed(() => authService.getUser())
 
 // Menu de navigation admin
 const menuItems = [
   {
     label: 'Tableau de bord',
+    icon: 'pi pi-home',
     to: '/admin',
-    pathPattern: '/admin',
-    command: () => router.push('/admin')
+    pathPattern: '/admin'
   },
   {
     label: 'Produits',
+    icon: 'pi pi-box',
     to: '/admin/pastries',
-    pathPattern: '/admin/pastries',
-    command: () => router.push('/admin/pastries')
+    pathPattern: '/admin/pastries'
   },
   {
     label: 'Commandes',
+    icon: 'pi pi-shopping-cart',
     to: '/admin/orders',
-    pathPattern: '/admin/orders',
-    command: () => router.push('/admin/orders')
+    pathPattern: '/admin/orders'
   }
 ]
 
 // Fonction pour vérifier si un lien est actif
 const isActive = (pathPattern: string) => {
-  // Pour le tableau de bord, on vérifie une correspondance exacte
   if (pathPattern === '/admin') {
     return route.path === '/admin'
   }
-  // Pour les autres pages, on vérifie si le chemin commence par le pattern
   return route.path.startsWith(pathPattern)
 }
 
@@ -53,210 +57,82 @@ const handleLogout = () => {
     life: 3000,
   })
   router.push('/login')
+  visible.value = false
 }
+
+const navigateTo = (path: string) => {
+  router.push(path)
+  visible.value = false
+}
+
+const getRoleLabel = (role: string | undefined) => {
+  switch (role) {
+    case 'ADMIN':
+      return 'Administrateur'
+    case 'STOREKEEPER':
+      return 'Gestionnaire'
+    default:
+      return 'Utilisateur'
+  }
+}
+
+const handleResize = () => {
+  isDesktop.value = window.innerWidth >= 1024
+  if (isDesktop.value) {
+    visible.value = false
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <template>
-  <div class="admin-sidebar">
-    <!-- Logo -->
-    <div class="sidebar-header">
-      <div class="logo-container">
-        <RouterLink to="/" class="logo-link">
-          <img src="/Logo-white.svg" alt="PanthéOnze Admin" class="logo" />
-        </RouterLink>
-      </div>
-    </div>
+  <Drawer
+    v-model:visible="visible"
+    :modal="false"
+    :show-close-icon="false"
+    class="bg-gray-900 border-none"
+  >
+    <template #header>
+      <RouterLink to="/" class="w-full">
+        <img src="/Logo-white.svg" alt="PanthéOnze Admin" class="h-3rem -ml-2 -mb-2" />
+      </RouterLink>    
+    </template>
 
-    <!-- User info et logout -->
-    <div class="sidebar-user">
-      <div class="flex justify-content-between align-items-center">
-        <div class="flex flex-column">
-          <span class="font-bold">{{ currentUser?.name || 'Utilisateur' }}</span>
-          <span class="text-sm text-gray-500">{{ currentUser?.role === 'ADMIN' ? 'Administrateur' : currentUser?.role === 'STOREKEEPER' ? 'Gestionnaire' : 'Utilisateur' }}</span>
-        </div>
-        <Button
-          icon="pi pi-sign-out"
-          text
-          @click="handleLogout"
-          class="logout-btn-icon"
-          v-tooltip.right="{ value: 'Se déconnecter' }"
-        />
-      </div>
+    <!-- Infos utilisateur -->
+    <div class="flex flex-column bg-gray-800 p-4 border-round mb-4">
+      <span class="font-medium text-lg text-white">{{ currentUser?.name }}</span>
+      <span class="text-sm text-gray-400">{{ getRoleLabel(currentUser?.role) }}</span>
     </div>
 
     <!-- Navigation -->
-    <nav class="sidebar-nav">
-      <ul class="nav-list">
-        <li
-          v-for="item in menuItems"
-          :key="item.label"
-          class="nav-item"
-        >
-          <div
-            class="nav-link"
-            :class="{ active: isActive(item.pathPattern) }"
-            @click="item.command"
-          >
-            <span>{{ item.label }}</span>
-          </div>
-        </li>
-      </ul>
-    </nav>
-  </div>
+    <div class="flex flex-column">
+      <RouterLink 
+        v-for="item in menuItems" 
+        :key="item.to"
+        :to="item.to"
+        class="flex items-center px-4 py-3 mb-1 align-items-center text-gray-300 border-left-3 border-transparent hover:bg-gray-800 hover:text-white duration-150 transition-colors no-underline"
+        :class="{ 'border-gray-700 text-white': isActive(item.pathPattern) }"
+      >
+        <i :class="item.icon" class="mr-4"></i>
+        <span class="font-medium">{{ item.label }}</span>
+      </RouterLink>
+    </div>
+
+    <template #footer>
+      <Button
+        @click="handleLogout"
+        icon="pi pi-sign-out"
+        label="Se déconnecter"
+        class="w-full justify-start bg-transparent border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+        text
+      />
+    </template>
+  </Drawer>
 </template>
-
-<style scoped>
-.admin-sidebar {
-  width: 280px;
-  background: #2d2d2d;
-  color: #e0e0e0;
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  height: 100vh;
-  z-index: 1000;
-}
-
-.sidebar-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #404040;
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.logo-link {
-  text-decoration: none;
-  color: #e0e0e0;
-}
-
-.logo {
-  height: 2rem;
-  filter: brightness(0) invert(1);
-}
-
-.logo-text {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #e0e0e0;
-}
-
-/* Navigation */
-.sidebar-nav {
-  flex: 1;
-  padding: 1rem 0;
-  overflow-y: auto;
-}
-
-/* User info et logout */
-.sidebar-user {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #404040;
-  background: #1a1a1a;
-}
-
-.user-name {
-  font-weight: 600;
-  color: #e0e0e0;
-  font-size: 0.9rem;
-}
-
-.user-role {
-  color: #999999;
-  font-size: 0.8rem;
-  text-transform: capitalize;
-}
-
-.logout-btn-icon {
-  color: #ffffff;
-  width: auto;
-  height: auto;
-  padding: 0.5rem;
-}
-
-.logout-btn-icon:hover {
-  background: #404040;
-  color: #ffffff;
-}
-
-.nav-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-item {
-  margin: 0.25rem 0;
-}
-
-.nav-link {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  color: #b0b0b0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border-left: 3px solid transparent;
-}
-
-.nav-link:hover {
-  background: #404040;
-  color: #e0e0e0;
-}
-
-.nav-link.active {
-  background: #404040;
-  color: #ffffff;
-  border-left-color: #666666;
-}
-
-/* Groupes de navigation */
-.nav-group-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1.5rem;
-  color: #b0b0b0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.nav-group-header:hover {
-  background: #404040;
-  color: #e0e0e0;
-}
-
-.nav-arrow {
-  font-size: 0.8rem;
-  transition: transform 0.2s ease;
-}
-
-.nav-submenu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  background: #1a1a1a;
-  display: none;
-}
-
-.nav-group:hover .nav-submenu {
-  display: block;
-}
-
-.nav-subitem {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem 1.5rem 0.5rem 3rem;
-  color: #999999;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.nav-subitem:hover {
-  background: #404040;
-  color: #e0e0e0;
-}
-</style> 

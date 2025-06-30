@@ -689,10 +689,12 @@ onMounted(() => {
   border: 1px solid #e9ecef;
   border-radius: 0.375rem;
   overflow: hidden;
+  min-width: 0;
 }
 
 .pastries-table {
   width: 100%;
+  min-width: 800px;
 }
 
 .product-name {
@@ -732,6 +734,12 @@ onMounted(() => {
 }
 
 /* Responsive */
+@media (max-width: 1200px) {
+  .pastries-table {
+    min-width: 700px;
+  }
+}
+
 @media (max-width: 768px) {
   .page-header {
     flex-direction: column;
@@ -741,6 +749,17 @@ onMounted(() => {
   
   .filters-content {
     grid-template-columns: 1fr;
+  }
+  
+  .table-container {
+    margin: 0 -1rem;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .pastries-table {
+    min-width: 600px; /* Largeur minimale réduite sur mobile */
   }
 }
 
