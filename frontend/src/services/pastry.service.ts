@@ -2,10 +2,23 @@ import axios from 'axios'
 import type { Pastry } from '@/types/pastry'
 import { API_URL } from '@/constants/api.ts'
 
+// Type pour la réponse paginée
+export interface PaginatedResponse<T> {
+  data: T[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasNext: boolean
+    hasPrev: boolean
+  }
+}
+
 export const pastryService = {
-  getAllPastries: async (params?: URLSearchParams): Promise<Pastry[]> => {
+  getAllPastries: async (params?: URLSearchParams): Promise<PaginatedResponse<Pastry>> => {
     try {
-      const response = await axios.get<Pastry[]>(`${API_URL}/pastries`, {
+      const response = await axios.get<PaginatedResponse<Pastry>>(`${API_URL}/pastries`, {
         params,
       })
       return response.data

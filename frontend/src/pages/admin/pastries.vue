@@ -8,12 +8,13 @@ import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import Dialog from 'primevue/dialog'
 import { useToast } from 'primevue/usetoast'
-import { pastryService } from '@/services'
+import { pastryService, type PaginatedResponse } from '@/services'
 import type { Pastry } from '@/types'
 import DietIcon from '@/components/DietIcon.vue'
 import { DIET_CONFIG } from '@/constants/diets'
 import TieredMenu from 'primevue/tieredmenu'
 import Tag from 'primevue/tag'
+import Badge from 'primevue/badge'
 
 const router = useRouter()
 const route = useRoute()
@@ -97,7 +98,7 @@ const loadPastries = async () => {
       params.append('diets', filters.value.diets.value.value)
     }
     
-    const response: PaginatedResponse<Pastry> = await pastryService.getAllPastries(params)
+    const response = await pastryService.getAllPastries(params)
     pastries.value = response.data
     totalRecords.value = response.pagination.total
     paginationInfo.value = response.pagination
@@ -332,6 +333,12 @@ onMounted(() => {
       </div>
       <div class="flex gap-2">
         <Button
+          label="Réinitialiser les filtres"
+          icon="pi pi-refresh"
+          @click="resetFilters"
+          class="p-button-outlined"
+        />
+        <Button
           label="Ajouter un produit"
           icon="pi pi-plus"
           @click="handleAdd"
@@ -404,7 +411,6 @@ onMounted(() => {
         <Column
           field="category"
           header="Catégorie"
-          :sortable="true"
           :showFilterMenu="false"
           style="min-width: 150px"
         >
@@ -436,6 +442,25 @@ onMounted(() => {
           </template>
         </Column>
 
+        <!-- Stock -->
+        <Column
+          field="stockCount"
+          header="Stock"
+          :sortable="true"
+          style="min-width: 80px"
+          body-class="text-center"
+        >
+          <template #body="slotProps">
+            <Tag
+              :value="slotProps.data.stockCount.toString()"
+              :severity="
+                slotProps.data.stockCount > 10 ? 'success' :
+                slotProps.data.stockCount >= 3 ? 'warn' : 'danger'
+              "
+            />
+          </template>
+        </Column>
+
         <!-- Diets -->
         <Column
           field="diets"
@@ -460,7 +485,7 @@ onMounted(() => {
               @change="filterCallback()" 
               :options="filteredDietOptions" 
               option-label="label"
-              placeholder="Régime alimentaire..." 
+              placeholder="Régime..." 
               :show-clear="true"
               class="filter-select"
             />

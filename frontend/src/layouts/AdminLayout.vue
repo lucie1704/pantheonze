@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import Drawer from 'primevue/drawer'
 import { AdminSidebar } from '@/components'
+import { RouterLink } from 'vue-router'
 
 const sidebarVisible = ref(false)
 </script>
@@ -26,7 +27,9 @@ const sidebarVisible = ref(false)
     >
       <template #header>
         <div class="mobile-sidebar-header">
-          <img src="/Logo-white.svg" alt="PanthéOnze Admin" class="mobile-logo" />
+          <RouterLink to="/" class="mobile-logo-link">
+            <img src="/Logo-white.svg" alt="PanthéOnze Admin" class="mobile-logo" />
+          </RouterLink>
         </div>
       </template>
       
@@ -108,6 +111,11 @@ const sidebarVisible = ref(false)
 .mobile-logo {
   height: 2rem;
   filter: brightness(0) invert(1);
+}
+
+.mobile-logo-link {
+  text-decoration: none;
+  color: inherit;
 }
 
 /* Responsive */

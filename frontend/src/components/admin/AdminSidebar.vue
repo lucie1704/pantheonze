@@ -4,6 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { authService } from '@/services'
 import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
+import { RouterLink } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
@@ -60,7 +61,9 @@ const handleLogout = () => {
     <!-- Logo -->
     <div class="sidebar-header">
       <div class="logo-container">
-        <img src="/Logo-white.svg" alt="PanthéOnze Admin" class="logo" />
+        <RouterLink to="/" class="logo-link">
+          <img src="/Logo-white.svg" alt="PanthéOnze Admin" class="logo" />
+        </RouterLink>
       </div>
     </div>
 
@@ -123,6 +126,11 @@ const handleLogout = () => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+.logo-link {
+  text-decoration: none;
+  color: #e0e0e0;
 }
 
 .logo {

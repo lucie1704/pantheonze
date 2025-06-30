@@ -92,46 +92,69 @@ const menuItems = [
   },
 ]
 
-const userMenuItems = computed(() => [
-  {
-    label: currentUser.value?.name || 'Mon profil',
-    icon: 'pi pi-user',
-    command: () => router.push('/account'),
-    class: 'my-1',
-  },
-  {
-    label: 'Mes commandes',
-    icon: 'pi pi-shopping-bag',
-    command: () => router.push('/account/orders'),
-    class: 'my-1',
-  },
-  {
-    label: 'Paramètres',
-    icon: 'pi pi-cog',
-    command: () => router.push('/account/settings'),
-    class: 'my-1',
-  },
-  ...(authService.isAdminOrStorekeeper() ? [{
-    label: 'Backoffice',
-    icon: 'pi pi-cog',
-    command: () => router.push('/admin'),
-    class: 'my-1',
-  }] : []),
-  {
-    separator: true,
-    class: 'my-1',
-  },
-  {
-    label: 'Se déconnecter',
-    icon: 'pi pi-sign-out',
-    command: () => {
-      authService.logout()
-      updateAuthState()
-      router.push('/login')
+const userMenuItems = computed(() => {
+  // Menu simplifié pour les admins
+  if (authService.isAdminOrStorekeeper()) {
+    return [
+      {
+        label: 'Backoffice',
+        icon: 'pi pi-cog',
+        command: () => router.push('/admin'),
+        class: 'my-1',
+      },
+      {
+        separator: true,
+        class: 'my-1',
+      },
+      {
+        label: 'Se déconnecter',
+        icon: 'pi pi-sign-out',
+        command: () => {
+          authService.logout()
+          updateAuthState()
+          router.push('/login')
+        },
+        class: 'my-1',
+      },
+    ]
+  }
+
+  // Menu complet pour les utilisateurs normaux
+  return [
+    {
+      label: currentUser.value?.name || 'Mon profil',
+      icon: 'pi pi-user',
+      command: () => router.push('/account'),
+      class: 'my-1',
     },
-    class: 'my-1',
-  },
-])
+    {
+      label: 'Mes commandes',
+      icon: 'pi pi-shopping-bag',
+      command: () => router.push('/account/orders'),
+      class: 'my-1',
+    },
+    {
+      label: 'Paramètres',
+      icon: 'pi pi-cog',
+      command: () => router.push('/account/settings'),
+      class: 'my-1',
+    },
+    {
+      separator: true,
+      class: 'my-1',
+    },
+    {
+      label: 'Se déconnecter',
+      icon: 'pi pi-sign-out',
+      command: () => {
+        authService.logout()
+        updateAuthState()
+        router.push('/login')
+      },
+      class: 'my-1',
+    },
+  ]
+})
 
 const closeMobileMenu = () => {
   mobileMenu.value = false

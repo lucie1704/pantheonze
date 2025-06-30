@@ -213,7 +213,7 @@ const fetchPastries = async () => {
     params.append('page', '1')
     
     const response = hasFilters ? await pastryService.getAllPastries(params) : await pastryService.getAllPastries(params)
-    allProducts.value = response.data || response
+    allProducts.value = response.data
     products.value = allProducts.value.slice(0, limit)
     hasMore.value = allProducts.value.length > limit
   } catch {
