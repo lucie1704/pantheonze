@@ -13,7 +13,6 @@ import DietIcon from '@/components/DietIcon.vue'
 import { DIET_CONFIG } from '@/constants/diets'
 import Tag from 'primevue/tag'
 import { 
-  ViewPastryModal, 
   AddPastryModal, 
   EditPastryModal, 
   DeletePastryModal 
@@ -570,14 +569,7 @@ onMounted(() => {
         </template>
       </DataTable>
     </div>
-
-    <!-- Modals -->
-    <ViewPastryModal
-      v-model:visible="showViewModal"
-      :pastry="selectedPastry"
-      @edit="handleEdit"
-    />
-
+    
     <AddPastryModal
       v-model:visible="showAddModal"
     />

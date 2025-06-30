@@ -117,6 +117,14 @@ const isEditing = computed(() => {
   return Object.values(editingState).some(state => state)
 })
 
+// Ajuster le line-clamp de la description selon l'état d'édition
+const descriptionLineClamp = computed(() => {
+  const editingFields = ['name', 'price', 'stockCount', 'category']
+  const isEditingMainFields = editingFields.some(field => editingState[field as keyof typeof editingState])
+  
+  return isEditingMainFields ? 'line-clamp-6-custom' : 'line-clamp-7-custom'
+})
+
 // Initialiser les données éditables quand le pastry change
 const initializeEditableData = () => {
   if (props.pastry) {
@@ -188,10 +196,6 @@ const getTagSeverity = (tag: string) => {
     'featured': 'help'
   }
   return severityMap[tag] || 'none'
-}
-
-const handleClose = () => {
-  emit('update:visible', false)
 }
 
 const handleSave = () => {
@@ -267,9 +271,9 @@ const addIngredient = () => {
   >
     <div v-if="pastry && editableData" class="p-4">
       <!-- En-tête avec image et infos principales -->
-      <div class="flex gap-6">
+      <div class="flex gap-6 h-25rem mb-4">
         <!-- Image du produit -->
-        <div class="w-25rem h-25rem border-round overflow-hidden bg-gray-100 flex-shrink-0">
+        <div class="w-25rem border-round overflow-hidden bg-gray-100 flex-shrink-0">
           <img
             :src="pastry.images && pastry.images.length > 0 ? pastry.images[0] : '/no-image.svg'"
             :alt="pastry.name"
@@ -279,24 +283,24 @@ const addIngredient = () => {
         </div>
         
         <!-- Informations principales -->
-        <div class="flex-1">
+        <div class="flex-1 overflow-hidden flex flex-column">
           <!-- Nom du produit -->
           <div class="mb-4">
             <div v-if="!editingState.name" class="flex align-items-center gap-2">
-              <h2 class="text-3xl font-bold text-900 m-0">{{ pastry.name }}</h2>
+              <h2 class="text-3xl font-bold text-900 m-0 overflow-hidden text-ellipsis whitespace-nowrap">{{ pastry.name }}</h2>
               <Button
                 icon="pi pi-pencil"
                 text
                 size="small"
                 @click="startEditing('name')"
-                class="p-button-text"
+                class="p-button-text flex-shrink-0"
               />
             </div>
             <div v-else class="flex align-items-center gap-2">
               <InputText
                 :model-value="editableData.name"
                 @update:model-value="(value) => editableData.name = value"
-                class="text-3xl font-bold"
+                class="flex-1"
                 @keyup.enter="saveField('name')"
                 @keyup.esc="stopEditing('name')"
                 autofocus
@@ -307,13 +311,13 @@ const addIngredient = () => {
           <!-- Description -->
           <div class="mb-4">
             <div v-if="!editingState.description" class="flex align-items-start gap-2">
-              <p class="text-600 text-lg leading-relaxed m-0 flex-1">{{ pastry.description }}</p>
+              <p class="text-600 text-lg leading-relaxed m-0 flex-1 overflow-hidden text-ellipsis" :class="descriptionLineClamp">{{ pastry.description }}</p>
               <Button
                 icon="pi pi-pencil"
                 text
                 size="small"
                 @click="startEditing('description')"
-                class="p-button-text"
+                class="p-button-text flex-shrink-0"
               />
             </div>
             <div v-else class="flex align-items-start gap-2">
@@ -321,14 +325,17 @@ const addIngredient = () => {
                 :model-value="editableData.description"
                 @update:model-value="(value) => editableData.description = value"
                 class="flex-1"
-                rows="3"
+                rows="7"
                 @keyup.esc="stopEditing('description')"
                 autofocus
               />
             </div>
           </div>
           
-          <!-- Prix et stock -->
+          <!-- Spacer pour pousser les infos vers le bas -->
+          <div class="flex-1"></div>
+          
+          <!-- Prix, stock, catégorie -->
           <div class="flex flex-column gap-2">
             <!-- Prix -->
             <div class="flex align-items-center gap-2">
@@ -530,18 +537,19 @@ const addIngredient = () => {
             <div v-else class="flex align-items-start gap-2">
               <div class="flex-1">
                 <div class="flex gap-2 flex-wrap mb-3">
-                  <Tag
+                  <div 
                     v-for="(ingredient, index) in editableData.ingredients" 
                     :key="index"
-                    :value="ingredient"
-                    severity="secondary"
-                    removable
-                    @remove="() => {
+                    class="flex align-items-center gap-1 surface-100 border-round px-2 py-1 cursor-pointer hover:surface-200"
+                    @click="() => {
                       if (editableData.ingredients) {
                         editableData.ingredients = editableData.ingredients.filter((_, i) => i !== index)
                       }
                     }"
-                  />
+                  >
+                    <i class="pi pi-times text-500 text-sm"></i>
+                    <span class="text-600">{{ ingredient }}</span>
+                  </div>
                 </div>
                 <div class="flex gap-2">
                   <InputText
@@ -592,18 +600,19 @@ const addIngredient = () => {
             <div v-else class="flex align-items-start gap-2">
               <div class="flex-1">
                 <div class="flex gap-2 flex-wrap mb-3">
-                  <Tag
+                  <div 
                     v-for="(allergen, index) in editableData.nutrition?.allergens || []" 
                     :key="index"
-                    :value="allergen"
-                    severity="secondary"
-                    removable
-                    @remove="() => {
+                    class="flex align-items-center gap-1 surface-100 border-round px-2 py-1 cursor-pointer hover:surface-200"
+                    @click="() => {
                       if (editableData.nutrition) {
                         editableData.nutrition.allergens = editableData.nutrition.allergens.filter((_, i) => i !== index)
                       }
                     }"
-                  />
+                  >
+                    <i class="pi pi-times text-500 text-sm"></i>
+                    <span class="text-600">{{ allergen }}</span>
+                  </div>
                 </div>
                 <div class="flex gap-2">
                   <InputText
@@ -772,5 +781,23 @@ const addIngredient = () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.line-clamp-7-custom {
+  display: -webkit-box;
+  line-clamp: 7;
+  -webkit-line-clamp: 7;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.line-clamp-6-custom {
+  display: -webkit-box;
+  line-clamp: 6;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style> 
