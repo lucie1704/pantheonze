@@ -6,7 +6,6 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
-import Dialog from 'primevue/dialog'
 import { useToast } from 'primevue/usetoast'
 import { pastryService, type PaginatedResponse } from '@/services'
 import type { Pastry } from '@/types'
@@ -15,6 +14,12 @@ import { DIET_CONFIG } from '@/constants/diets'
 import TieredMenu from 'primevue/tieredmenu'
 import Tag from 'primevue/tag'
 import Badge from 'primevue/badge'
+import { 
+  ViewPastryModal, 
+  AddPastryModal, 
+  EditPastryModal, 
+  DeletePastryModal 
+} from '@/components/admin'
 
 const router = useRouter()
 const route = useRoute()
@@ -54,6 +59,7 @@ const tagOptions = ref([
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
+const showViewModal = ref(false)
 const selectedPastry = ref<Pastry | null>(null)
 
 // Menu actions
@@ -200,7 +206,8 @@ const confirmDelete = async () => {
 }
 
 const handleView = (pastry: Pastry) => {
-  router.push(`/pastries/${pastry.slug}`)
+  selectedPastry.value = pastry
+  showViewModal.value = true
 }
 
 const formatPrice = (price: number) => {
@@ -561,58 +568,27 @@ onMounted(() => {
       </DataTable>
     </div>
 
-    <!-- Modal Ajout -->
-    <Dialog
+    <!-- Modals -->
+    <ViewPastryModal
+      v-model:visible="showViewModal"
+      :pastry="selectedPastry"
+      @edit="handleEdit"
+    />
+
+    <AddPastryModal
       v-model:visible="showAddModal"
-      modal
-      header="Ajouter un produit"
-      :style="{ width: '50rem' }"
-      :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
-    >
-      <div class="p-4">
-        <p>Formulaire d'ajout de produit à implémenter...</p>
-      </div>
-      <template #footer>
-        <Button label="Annuler" text @click="showAddModal = false" />
-        <Button label="Ajouter" @click="showAddModal = false" />
-      </template>
-    </Dialog>
+    />
 
-    <!-- Modal Édition -->
-    <Dialog
+    <EditPastryModal
       v-model:visible="showEditModal"
-      modal
-      header="Modifier le produit"
-      :style="{ width: '50rem' }"
-      :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
-    >
-      <div class="p-4">
-        <p v-if="selectedPastry">Modification du produit "{{ selectedPastry.name }}" à implémenter...</p>
-      </div>
-      <template #footer>
-        <Button label="Annuler" text @click="showEditModal = false" />
-        <Button label="Modifier" @click="showEditModal = false" />
-      </template>
-    </Dialog>
+      :pastry="selectedPastry"
+    />
 
-    <!-- Modal Suppression -->
-    <Dialog
+    <DeletePastryModal
       v-model:visible="showDeleteModal"
-      modal
-      header="Confirmation de suppression"
-      :style="{ width: '25rem' }"
-    >
-      <div class="p-4">
-        <p v-if="selectedPastry">
-          Êtes-vous sûr de vouloir supprimer le produit <strong>"{{ selectedPastry.name }}"</strong> ?
-        </p>
-        <p class="text-sm text-gray-600 mt-2">Cette action est irréversible.</p>
-      </div>
-      <template #footer>
-        <Button label="Annuler" text @click="showDeleteModal = false" />
-        <Button label="Supprimer" severity="danger" @click="confirmDelete" />
-      </template>
-    </Dialog>
+      :pastry="selectedPastry"
+      @confirm="confirmDelete"
+    />
   </div>
 </template>
 

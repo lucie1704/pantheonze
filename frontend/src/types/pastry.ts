@@ -23,6 +23,7 @@ export interface Pastry {
     protein: number;
     carbs: number;
     fat: number;
+    allergens: string[];
   };
   inStock: boolean;
   stockCount: number;

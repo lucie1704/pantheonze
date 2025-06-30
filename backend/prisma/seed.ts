@@ -154,7 +154,7 @@ async function main() {
     prisma.pastry.create({
       data: {
         name: 'Brioche Artisanale',
-        description: 'Brioche traditionnelle française, moelleuse et dorée',
+        description: 'Notre brioche artisanale est préparée selon la tradition française avec une pâte enrichie au beurre de Charentes AOP. Sa texture est exceptionnellement moelleuse et aérée, avec une croûte dorée et brillante. Chaque bouchée révèle des notes de beurre noisette et une douceur incomparable. Idéale pour le petit-déjeuner ou le goûter, elle se déguste nature ou légèrement toastée avec du beurre et de la confiture.',
         price: 6.90,
         images: [PASTRIES_IMAGES.brioche1, PASTRIES_IMAGES.brioche2],
         category: { connect: { id: categories['Viennoiseries'] } },
@@ -177,7 +177,7 @@ async function main() {
     prisma.pastry.create({
       data: {
         name: 'Chouquettes',
-        description: 'Petits choux sucrés parsemés de grains de sucre perlé',
+        description: 'Ces délicates chouquettes sont préparées avec une pâte à choux légère et aérée, parsemées de grains de sucre perlé qui apportent un délicieux croquant. Chaque petite boule est cuite à la perfection pour obtenir une texture moelleuse à l\'intérieur et légèrement croustillante à l\'extérieur. Le sucre perlé fond délicatement en bouche, créant une expérience gustative unique. Parfaites pour accompagner un café ou un thé, elles sont un classique de la pâtisserie française.',
         price: 1.50,
         images: [PASTRIES_IMAGES.chouquette],
         category: { connect: { id: categories['Viennoiseries'] } },
@@ -200,7 +200,7 @@ async function main() {
     prisma.pastry.create({
       data: {
         name: 'Croissant au Beurre',
-        description: 'Croissant feuilleté au beurre français, croustillant et fondant',
+        description: 'Notre croissant au beurre est le fruit d\'un savoir-faire traditionnel français. La pâte feuilletée est réalisée avec du beurre français de qualité supérieure, créant des couches fines et croustillantes qui se détachent parfaitement. Chaque croissant est façonné à la main et cuit jusqu\'à obtenir une couleur dorée parfaite. L\'intérieur reste moelleux et fondant, tandis que l\'extérieur offre un croquant irrésistible. Un véritable régal pour commencer la journée.',
         price: 1.80,
         images: [PASTRIES_IMAGES.croissant],
         category: { connect: { id: categories['Viennoiseries'] } },
@@ -223,7 +223,7 @@ async function main() {
     prisma.pastry.create({
       data: {
         name: 'Éclair au Chocolat',
-        description: 'Éclair garni de crème pâtissière au chocolat noir et glaçage brillant',
+        description: 'Notre éclair au chocolat est une création raffinée qui allie tradition et modernité. La pâte à choux est cuite à la perfection pour obtenir une texture légère et aérée. L\'intérieur est généreusement garni d\'une crème pâtissière au chocolat noir de qualité supérieure, créant un contraste parfait entre la légèreté de la pâte et la richesse de la crème. Le glaçage au chocolat noir apporte une finition brillante et un goût intense qui séduit tous les amateurs de chocolat.',
         price: 4.50,
         images: [PASTRIES_IMAGES.eclairAuChocolat],
         category: { connect: { id: categories['Pâtisseries'] } },
@@ -246,7 +246,7 @@ async function main() {
     prisma.pastry.create({
       data: {
         name: 'Financier aux Amandes',
-        description: 'Petit gâteau moelleux aux amandes et beurre noisette',
+        description: 'Le financier aux amandes est un petit gâteau raffiné qui tire son nom de sa forme rectangulaire rappelant un lingot d\'or. Sa texture est exceptionnellement moelleuse grâce à la poudre d\'amandes et au beurre noisette qui lui confèrent une saveur incomparable. Chaque financier est cuit dans un moule traditionnel pour obtenir une croûte dorée et un intérieur fondant. Les notes de noisette et d\'amande se marient parfaitement pour créer une expérience gustative sophistiquée.',
         price: 2.80,
         images: [PASTRIES_IMAGES.financier],
         category: { connect: { id: categories['Petits gâteaux'] } },
@@ -269,7 +269,7 @@ async function main() {
     prisma.pastry.create({
       data: {
         name: 'Flan Pâtissier',
-        description: 'Flan parisien traditionnel sur pâte brisée, vanille bourbon',
+        description: 'Notre flan pâtissier est préparé selon la recette traditionnelle parisienne. La pâte brisée maison est garnie d\'une crème à la vanille bourbon de Madagascar, créant un équilibre parfait entre la texture croustillante de la pâte et la douceur onctueuse de la crème. La vanille bourbon apporte des notes chaudes et envoûtantes qui élèvent ce classique de la pâtisserie française. Chaque part est généreuse et se déguste à température ambiante pour révéler tous ses arômes.',
         price: 18.50,
         images: [PASTRIES_IMAGES.flanPatissier],
         category: { connect: { id: categories['Pâtisseries'] } },
@@ -292,7 +292,7 @@ async function main() {
     prisma.pastry.create({
       data: {
         name: 'Forêt Noire',
-        description: 'Gâteau au chocolat, cerises griottes et chantilly, kirsch',
+        description: 'La Forêt Noire est un gâteau d\'exception qui allie la richesse du chocolat noir à la fraîcheur des cerises griottes. Les couches de génoise au chocolat sont imbibées de kirsch et garnies de cerises griottes macérées, créant une harmonie parfaite entre l\'amertume du chocolat et l\'acidité des fruits. La chantilly fraîche apporte une légèreté qui équilibre l\'ensemble. Chaque part est décorée de copeaux de chocolat noir et d\'une cerise confite, pour une présentation aussi belle que délicieuse.',
         price: 32.90,
         images: [PASTRIES_IMAGES.foretNoire],
         category: { connect: { id: categories['Gâteaux'] } },
@@ -315,7 +315,7 @@ async function main() {
     prisma.pastry.create({
       data: {
         name: 'Fraisier',
-        description: 'Gâteau aux fraises fraîches, crème mousseline et génoise',
+        description: 'Le fraisier est un gâteau d\'exception qui célèbre la fraise dans toute sa splendeur. Les fraises fraîches de saison sont disposées avec soin entre deux couches de génoise légère, imbibée d\'un sirop parfumé. La crème mousseline à la vanille enveloppe délicatement les fruits, créant une texture onctueuse et aérienne. Le dessus est décoré d\'une pâte d\'amande verte et de fraises fraîches, pour une présentation aussi élégante que savoureuse. Un véritable hymne à la fraîcheur et à la délicatesse.',
         price: 28.90,
         images: [PASTRIES_IMAGES.fraisier],
         category: { connect: { id: categories['Gâteaux'] } },
@@ -338,7 +338,7 @@ async function main() {
     prisma.pastry.create({
       data: {
         name: 'Madeleines de Commercy',
-        description: 'Madeleines traditionnelles au citron et beurre de Charentes',
+        description: 'Nos madeleines de Commercy sont préparées selon la recette traditionnelle de cette ville lorraine. La pâte est enrichie au beurre de Charentes AOP et parfumée au citron frais, créant des notes acidulées qui réveillent les papilles. Chaque madeleine est cuite dans son moule traditionnel en forme de coquille pour obtenir une texture moelleuse à l\'intérieur et légèrement croustillante sur les bords. Le miel ajoute une douceur naturelle qui complète parfaitement l\'ensemble.',
         price: 8.90,
         images: [PASTRIES_IMAGES.madeleine],
         category: { connect: { id: categories['Petits gâteaux'] } },
@@ -360,7 +360,7 @@ async function main() {
     prisma.pastry.create({
       data: {
         name: 'Mille-feuille Vanille',
-        description: 'Feuilletage croustillant, crème pâtissière vanille, glaçage fondant',
+        description: 'Le mille-feuille vanille est un chef-d\'œuvre de la pâtisserie française qui allie technique et raffinement. Les couches de pâte feuilletée sont cuites à la perfection pour obtenir un feuilletage croustillant et doré. Entre chaque couche, une crème pâtissière à la vanille bourbon de Madagascar apporte une onctuosité incomparable. Le glaçage fondant sur le dessus est décoré de motifs traditionnels au chocolat noir. Chaque bouchée révèle une symphonie de textures et de saveurs qui font de ce gâteau un incontournable.',
         price: 5.90,
         images: [PASTRIES_IMAGES.milleFeuille],
         category: { connect: { id: categories['Gâteaux'] } },
@@ -382,7 +382,7 @@ async function main() {
     prisma.pastry.create({
       data: {
         name: 'Mont-Blanc aux Marrons',
-        description: 'Meringue, chantilly et crème de marrons de l\'Ardèche',
+        description: 'Le Mont-Blanc aux marrons est une création d\'exception qui évoque le sommet enneigé du massif alpin. La base est une meringue légère et croustillante, surmontée d\'une chantilly fraîche et aérienne. Le tout est recouvert de vermicelles de crème de marrons de l\'Ardèche, créant l\'effet visuel de la neige sur les pentes. Quelques marrons glacés décorent le sommet pour une touche de raffinement. Chaque bouchée révèle une harmonie parfaite entre la douceur des marrons et la légèreté de la meringue.',
         price: 7.50,
         images: [PASTRIES_IMAGES.montBlanc],
         category: { connect: { id: categories['Gâteaux'] } },
@@ -399,12 +399,11 @@ async function main() {
         slug: 'mont-blanc-marrons',
       }
     }),
-
     // Muffin
     prisma.pastry.create({
       data: {
         name: 'Muffin aux Myrtilles',
-        description: 'Muffin américain aux myrtilles sauvages et streusel',
+        description: 'Notre muffin aux myrtilles est inspiré des recettes américaines traditionnelles. La pâte moelleuse est enrichie de myrtilles sauvages fraîches qui éclatent en bouche, libérant leur saveur acidulée et leur jus naturel. Le dessus est parsemé d\'un streusel croustillant au beurre qui apporte une texture contrastée parfaite. Chaque muffin est cuit individuellement pour garantir une cuisson uniforme et une texture idéale. Un délicieux équilibre entre douceur et acidité qui séduit petits et grands.',
         price: 3.20,
         images: [PASTRIES_IMAGES.muffin],
         category: { connect: { id: categories['Pâtisseries'] } },

@@ -1,15 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-export const checkAuthentication = (request: Request, response: Response, next: NextFunction) => {
+export const checkAuthentication = (request: Request, response: Response, next: NextFunction): void => {
   try {
     const authHeader = request.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return response.status(401).json({ 
+      response.status(401).json({ 
         success: false, 
         message: 'Token d\'authentification manquant' 
       });
+      return;
     }
 
     const token = authHeader.substring(7); // Enlever "Bearer "
@@ -23,7 +24,7 @@ export const checkAuthentication = (request: Request, response: Response, next: 
     next();
   } catch (error) {
     console.error('Erreur d\'authentification:', error);
-    return response.status(401).json({ 
+    response.status(401).json({ 
       success: false, 
       message: 'Token d\'authentification invalide' 
     });

@@ -4,7 +4,7 @@ import { UserService } from '@/services'
 const userService = new UserService()
 
 export class UserController {
-  static async getUserDietaryPreferences(req: Request, res: Response) {
+  static async getUserDietaryPreferences(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.user?.id || req.user?.userId;
       if (!userId) {
@@ -20,7 +20,7 @@ export class UserController {
     }
   }
 
-  static async updateUserDietaryPreferences(req: Request, res: Response) {
+  static async updateUserDietaryPreferences(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.user?.id || req.user?.userId;
       if (!userId) {
@@ -42,7 +42,7 @@ export class UserController {
     }
   }
 
-  static async addDietaryPreference(req: Request, res: Response) {
+  static async addDietaryPreference(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.user?.id || req.user?.userId;
       if (!userId) {
@@ -64,7 +64,7 @@ export class UserController {
     }
   }
 
-  static async removeDietaryPreference(req: Request, res: Response) {
+  static async removeDietaryPreference(req: Request, res: Response): Promise<void> {
     try {
       const userId = req.user?.id || req.user?.userId;
       if (!userId) {
@@ -86,7 +86,7 @@ export class UserController {
     }
   }
 
-  static async getAvailableDiets(req: Request, res: Response) {
+  static async getAvailableDiets(req: Request, res: Response): Promise<void> {
     try {
       const diets = await userService.getAvailableDiets()
       res.json(diets)
