@@ -324,12 +324,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="pastries-admin">
+  <div class="p-0">
     <!-- Header -->
-    <div class="page-header">
-      <div class="header-content">
-        <h1 class="page-title">Gestion des Produits</h1>
-        <p class="page-subtitle">Administrez vos produits de pâtisserie</p>
+    <div class="flex justify-content-between align-items-center mb-4 pb-3 border-bottom-1 surface-border">
+      <div class="flex-1">
+        <h1 class="text-3xl font-bold text-900 mb-2">Gestion des Produits</h1>
+        <p class="text-600 m-0">Administrez vos produits de pâtisserie</p>
       </div>
       <div class="flex gap-2">
         <Button
@@ -342,13 +342,13 @@ onMounted(() => {
           label="Ajouter un produit"
           icon="pi pi-plus"
           @click="handleAdd"
-          class="add-btn"
+          class="bg-gray-900 border-gray-900 text-white hover:bg-gray-800 hover:border-gray-800"
         />
       </div>
     </div>
     
     <!-- DataTable -->
-    <div class="table-container">
+    <div class="bg-white border-1 surface-border border-round overflow-hidden min-w-0">
       <DataTable
         v-model:filters="filters"
         :value="pastries"
@@ -363,7 +363,7 @@ onMounted(() => {
         paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
         current-page-report-template="Affichage de {first} à {last} sur {totalRecords} produits"
         responsive-layout="scroll"
-        class="pastries-table"
+        class="w-full min-w-800"
         @page="onPage"
         @sort="onSort"
         @filter="onFilter"
@@ -372,11 +372,11 @@ onMounted(() => {
         <!-- Image -->
         <Column field="image" header="Image" :sortable="false" style="width: 80px">
           <template #body="slotProps">
-            <div class="image-container">
+            <div class="w-3rem h-3rem border-round overflow-hidden bg-gray-100">
               <img
                 :src="slotProps.data.images && slotProps.data.images.length > 0 ? slotProps.data.images[0] : '/no-image.svg'"
                 :alt="slotProps.data.name"
-                class="product-image"
+                class="w-full h-full object-cover"
                 @error="(e) => (e.target as HTMLImageElement).src = '/no-image.svg'"
               />
             </div>
@@ -392,8 +392,8 @@ onMounted(() => {
           style="min-width: 200px"
         >
           <template #body="slotProps">
-            <div class="product-name-cell">
-              <span class="font-medium product-name-text" :title="slotProps.data.name">{{ slotProps.data.name }}</span>
+            <div class="max-w-200 overflow-hidden">
+              <span class="font-medium block text-ellipsis overflow-hidden whitespace-nowrap" :title="slotProps.data.name">{{ slotProps.data.name }}</span>
             </div>
           </template>
           <template #filter="{ filterModel, filterCallback }">
@@ -402,7 +402,7 @@ onMounted(() => {
               type="text" 
               @input="filterCallback()" 
               placeholder="Rechercher par nom..." 
-              class="filter-input"
+              class="w-full"
             />
           </template>
         </Column>
@@ -425,7 +425,7 @@ onMounted(() => {
               option-label="name" 
               placeholder="Catégorie..." 
               :show-clear="true"
-              class="filter-select"
+              class="w-full"
             />
           </template>
         </Column>
@@ -487,7 +487,7 @@ onMounted(() => {
               option-label="label"
               placeholder="Régime..." 
               :show-clear="true"
-              class="filter-select"
+              class="w-full"
             />
           </template>
         </Column>
@@ -518,7 +518,7 @@ onMounted(() => {
               option-label="label" 
               placeholder="Tag..." 
               :show-clear="true"
-              class="filter-select"
+              class="w-full"
             />
           </template>
         </Column>
@@ -532,7 +532,7 @@ onMounted(() => {
           style="width: 60px"
         >
           <template #body="slotProps">
-            <div class="action-menu-wrapper">
+            <div class="flex justify-content-center align-items-center">
               <Button
                 icon="pi pi-ellipsis-v"
                 text
@@ -617,220 +617,34 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.pastries-admin {
-  padding: 0;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.header-content {
-  flex: 1;
-}
-
-.page-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #212529;
-  margin: 0 0 0.5rem 0;
-}
-
-.page-subtitle {
-  color: #6c757d;
-  margin: 0;
-}
-
-.add-btn {
-  background: #2d2d2d;
-  border-color: #2d2d2d;
-  color: #ffffff;
-}
-
-.add-btn:hover {
-  background: #404040;
-  border-color: #404040;
-  color: #ffffff;
-}
-
-.filters-section {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 0.375rem;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.filters-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-}
-
-.filter-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.filter-item label {
-  font-weight: 600;
-  color: #495057;
-  font-size: 0.875rem;
-}
-
-.table-container {
-  background: white;
-  border: 1px solid #e9ecef;
-  border-radius: 0.375rem;
-  overflow: hidden;
-  min-width: 0;
-}
-
-.pastries-table {
-  width: 100%;
-  min-width: 800px;
-}
-
-.product-name {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-/* Tags styles */
-.tag {
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-}
-
-.tag-popular {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.tag-new {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.tag-sale {
-  background: #fecaca;
-  color: #dc2626;
-}
-
-.tag-featured {
-  background: #c7d2fe;
-  color: #3730a3;
-}
-
-/* Responsive */
+/* CSS minimal nécessaire pour les cas spécifiques */
 @media (max-width: 1200px) {
-  .pastries-table {
+  .min-w-800 {
     min-width: 700px;
   }
 }
 
 @media (max-width: 768px) {
-  .page-header {
+  .flex.justify-content-between {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
   
-  .filters-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .table-container {
+  .bg-white.border-1 {
     margin: 0 -1rem;
     border-radius: 0;
     border-left: none;
     border-right: none;
   }
   
-  .pastries-table {
-    min-width: 600px; /* Largeur minimale réduite sur mobile */
+  .min-w-800 {
+    min-width: 600px;
   }
 }
 
-.diet-chip {
-  display: inline-flex;
-  align-items: center;
-  background: #f4efe9;
-  color: #8B4513;
-  border-radius: 999px;
-  padding: 0.15rem 0.5rem 0.15rem 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  margin-right: 0.25rem;
-  margin-bottom: 0.15rem;
-  gap: 0.25rem;
-}
-
-.diet-label {
-  font-size: 0.75rem;
-  color: #8B4513;
-}
-
-.results-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  gap: 1rem;
-}
-
-.image-container {
-  width: 50px;
-  height: 50px;
-  border-radius: 0.375rem;
-  overflow: hidden;
-  background-color: #f8f9fa;
-}
-
-.product-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.action-menu-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.product-name-cell {
-  max-width: 200px;
-  overflow: hidden;
-}
-
-.product-name-text {
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.filter-input {
-  width: 100%;
-}
-
-.filter-select {
-  width: 100%;
-}
-
-.filter-select :deep(.p-dropdown-trigger) {
+/* Masquer le trigger des dropdowns dans les filtres */
+:deep(.p-dropdown-trigger) {
   display: none;
 }
 </style> 
