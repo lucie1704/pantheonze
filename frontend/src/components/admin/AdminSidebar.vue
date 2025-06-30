@@ -16,17 +16,32 @@ const menuItems = [
   {
     label: 'Tableau de bord',
     to: '/admin',
+    pathPattern: '/admin',
     command: () => router.push('/admin')
   },
   {
     label: 'Produits',
+    to: '/admin/pastries',
+    pathPattern: '/admin/pastries',
     command: () => router.push('/admin/pastries')
   },
   {
     label: 'Commandes',
+    to: '/admin/orders',
+    pathPattern: '/admin/orders',
     command: () => router.push('/admin/orders')
   }
 ]
+
+// Fonction pour vérifier si un lien est actif
+const isActive = (pathPattern: string) => {
+  // Pour le tableau de bord, on vérifie une correspondance exacte
+  if (pathPattern === '/admin') {
+    return route.path === '/admin'
+  }
+  // Pour les autres pages, on vérifie si le chemin commence par le pattern
+  return route.path.startsWith(pathPattern)
+}
 
 const handleLogout = () => {
   authService.logout()
@@ -76,7 +91,7 @@ const handleLogout = () => {
         >
           <div
             class="nav-link"
-            :class="{ active: route.path === item.to }"
+            :class="{ active: isActive(item.pathPattern) }"
             @click="item.command"
           >
             <span>{{ item.label }}</span>

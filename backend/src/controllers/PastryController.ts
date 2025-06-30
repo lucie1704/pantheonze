@@ -22,15 +22,40 @@ export class PastryController {
     // Get all pastries with optional category and diet filters
     static getAllPastries = async (req: Request, res: Response) => {
       try {
-        const { query, categories, diets, minPrice, maxPrice, availability, order, sortBy } = req.query;
+        const { 
+          query, 
+          categories, 
+          diets, 
+          minPrice, 
+          maxPrice, 
+          availability, 
+          order, 
+          sortBy,
+          page = 1,
+          limit = 10,
+          name,
+          tags
+        } = req.query;
+
+        const pageNumber = parseInt(String(page));
+        const limitNumber = parseInt(String(limit));
+        const skip = (pageNumber - 1) * limitNumber;
 
         const where: any = {};
+        
+        // Filtre par nom (recherche globale)
         if (query) {
           where.name = { contains: String(query), mode: "insensitive" };
         }
+        
+        // Filtre spécifique par nom
+        if (name) {
+          where.name = { equals: String(name), mode: "insensitive" };
+        }
+        
+        // Filtre par catégories
         if (categories) {
           const categoryNames = String(categories).split(",");
-
           const categoryIds = categoryNames
             .map(name => categoryService.getCategoryIdByName(name.trim()))
             .filter(id => id !== undefined);
@@ -39,9 +64,10 @@ export class PastryController {
             where.categoryId = { in: categoryIds };
           }
         }
+        
+        // Filtre par régimes alimentaires
         if (diets) {
           const dietNames = String(diets).split(",");
-
           const dietIds = dietNames
             .map(name => dietService.getDietIdByName(name.trim()))
             .filter(id => id !== undefined);
@@ -50,14 +76,26 @@ export class PastryController {
             where.dietIds = { hasSome: dietIds };
           }
         }
+        
+        // Filtre par tags
+        if (tags) {
+          where.tags = { has: String(tags) };
+        }
+        
+        // Filtre par prix
         if (minPrice || maxPrice) {
           where.price = {};
           if (minPrice) where.price.gte = Number(minPrice);
           if (maxPrice) where.price.lte = Number(maxPrice);
         }
+        
+        // Filtre par disponibilité
         if (availability) {
           where.stockCount = { gt: 0 };
         }
+
+        // Compter le total pour la pagination
+        const totalCount = await prismaClient.pastry.count({ where });
 
         // Fonction helper pour trier par tag
         const sortByTag = async (tagName: string) => {
@@ -66,7 +104,9 @@ export class PastryController {
             orderBy: { createdAt: "desc" },
             include: {
               category: true
-            }
+            },
+            skip,
+            take: limitNumber
           });
 
           const pastriesWithoutTag = await prismaClient.pastry.findMany({
@@ -74,7 +114,9 @@ export class PastryController {
             orderBy: { createdAt: "desc" },
             include: {
               category: true
-            }
+            },
+            skip: Math.max(0, skip - pastriesWithTag.length),
+            take: limitNumber - pastriesWithTag.length
           });
 
           return [...pastriesWithTag, ...pastriesWithoutTag];
@@ -95,7 +137,9 @@ export class PastryController {
             orderBy,
             include: {
               category: true
-            }
+            },
+            skip,
+            take: limitNumber
           });
 
           // Enrichir avec les diets
@@ -110,7 +154,18 @@ export class PastryController {
           }
         }
 
-        res.json(pastries);
+        // Retourner avec les métadonnées de pagination
+        res.json({
+          data: pastries,
+          pagination: {
+            page: pageNumber,
+            limit: limitNumber,
+            total: totalCount,
+            totalPages: Math.ceil(totalCount / limitNumber),
+            hasNext: pageNumber < Math.ceil(totalCount / limitNumber),
+            hasPrev: pageNumber > 1
+          }
+        });
       } catch (error) {
           res.status(500).json(error);
       }

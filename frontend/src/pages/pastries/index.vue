@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import { ProductCard } from '@/components'
@@ -42,6 +42,11 @@ const sortOptions = [
 ]
 
 const products = ref<Pastry[]>([])
+const allProducts = ref<Pastry[]>([]) // Tous les produits chargés
+const currentPage = ref(1)
+const hasMore = ref(true)
+const loadingMore = ref(false)
+const limit = 10 // Nombre de produits par page
 
 // Fonction pour mettre à jour l'URL avec les paramètres de recherche
 const updateURL = () => {
@@ -203,7 +208,14 @@ const fetchPastries = async () => {
       hasFilters = true
     }
 
-    products.value = hasFilters ? await pastryService.getAllPastries(params) : await pastryService.getAllPastries()
+    // Charger tous les produits sans limite pour l'infinite scroll
+    params.append('limit', '1000') // Limite élevée pour charger tout
+    params.append('page', '1')
+    
+    const response = hasFilters ? await pastryService.getAllPastries(params) : await pastryService.getAllPastries(params)
+    allProducts.value = response.data || response
+    products.value = allProducts.value.slice(0, limit)
+    hasMore.value = allProducts.value.length > limit
   } catch {
     error.value = 'Erreur lors du chargement des pâtisseries'
     toast.add({
@@ -217,11 +229,51 @@ const fetchPastries = async () => {
   }
 }
 
+// Fonction pour charger plus de produits
+const loadMore = () => {
+  if (loadingMore.value || !hasMore.value) return
+  
+  loadingMore.value = true
+  
+  setTimeout(() => {
+    const start = products.value.length
+    const end = start + limit
+    const newProducts = allProducts.value.slice(start, end)
+    
+    products.value.push(...newProducts)
+    hasMore.value = end < allProducts.value.length
+    loadingMore.value = false
+  }, 300) // Petit délai pour l'animation
+}
+
+// Intersection Observer pour détecter quand on arrive en bas
+const loadMoreTrigger = ref<HTMLElement>()
+
 onMounted(() => {
   loadFromURL()
   applyUserPreferences()
   fetchPastries()
 })
+
+// Initialiser l'intersection observer après le rendu
+const initIntersectionObserver = () => {
+  nextTick(() => {
+    if (loadMoreTrigger.value) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && hasMore.value && !loadingMore.value) {
+              loadMore()
+            }
+          })
+        },
+        { threshold: 0.1 }
+      )
+      
+      observer.observe(loadMoreTrigger.value)
+    }
+  })
+}
 
 // Watcher pour les changements dans l'URL
 watch(
@@ -252,6 +304,11 @@ watch(
 watch(sortBy, () => {
   updateURL()
 })
+
+// Watcher pour initialiser l'intersection observer quand les produits changent
+watch(products, () => {
+  initIntersectionObserver()
+}, { deep: true })
 </script>
 
 <template>
@@ -334,13 +391,13 @@ watch(sortBy, () => {
             <span
               v-if="searchQuery"
               class="text-500"
-              ><strong>"{{ searchQuery }}"</strong> {{ products.length }} résultats</span
+              ><strong>"{{ searchQuery }}"</strong> {{ allProducts.length }} résultats</span
             >
 
             <span
               v-else
               class="text-500"
-              >{{ products.length }} résultats</span
+              >{{ allProducts.length }} résultats</span
             >
 
             <!-- Message informatif pour les préférences appliquées -->
@@ -443,6 +500,23 @@ watch(sortBy, () => {
             class="h-full"
           />
         </div>
+      </div>
+
+      <!-- Trigger pour l'infinite scroll -->
+      <div
+        v-if="hasMore"
+        ref="loadMoreTrigger"
+        class="flex justify-content-center mt-4"
+      >
+        <div v-if="loadingMore" class="flex align-items-center gap-2">
+          <ProgressSpinner style="width: 20px; height: 20px" />
+          <span class="text-sm">Chargement...</span>
+        </div>
+      </div>
+
+      <!-- Message fin de liste -->
+      <div v-else-if="products.length > 0" class="flex justify-content-center mt-4">
+        <span class="text-sm text-500">Tous les produits ont été chargés</span>
       </div>
     </div>
   </div>

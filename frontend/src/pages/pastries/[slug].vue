@@ -144,7 +144,7 @@ const handleAddToCartFromCarousel = (cartData: any) => {
               <DietIcon
                 v-for="diet in pastry.diets"
                 :key="diet.id"
-                :icon-path="DIET_CONFIG[diet.name]?.iconPath"
+                :diet-name="DIET_CONFIG[diet.name]?.dietName"
                 :label="DIET_CONFIG[diet.name]?.label"
                 :icon-only="false"
               />

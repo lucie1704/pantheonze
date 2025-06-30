@@ -25,28 +25,22 @@ const props = withDefaults(defineProps<Props>(), {
 
 const route = useRoute()
 
-// Configuration de la bannière pour la page d'accueil
 const homeBannerConfig = {
   imageUrl: '/banner.jpg',
   imageAlt: 'Boulangerie artisanale',
-  logoUrl: '/Logo-white.svg', // Utilisez un logo blanc dédié
+  logoUrl: '/Logo-white.svg',
   logoAlt: 'Panthéonze Logo',
   subtitle: 'Pâtisserie moderne & créative du 11e',
 }
 
-// Détermine si on doit afficher la bannière
 const shouldShowBanner = computed(() => {
-  // Si showBanner est explicitement défini, on l'utilise
   if (props.showBanner !== false && (props.bannerImageUrl || route.path === '/')) {
     return true
   }
-  // Sinon, on affiche la bannière seulement sur la page d'accueil
   return route.path === '/'
 })
 
-// Configuration de la bannière à utiliser
 const bannerConfig = computed(() => {
-  // Si des props sont fournies, on les utilise
   if (props.bannerImageUrl) {
     return {
       imageUrl: props.bannerImageUrl,
@@ -56,17 +50,14 @@ const bannerConfig = computed(() => {
       subtitle: props.bannerSubtitle,
     }
   }
-  // Sinon, on utilise la config de la page d'accueil
   return homeBannerConfig
 })
 
-// Utiliser le service d'authentification avec réactivité forcée
 const authState = ref({
   isLoggedIn: authService.isAuthenticated(),
   user: authService.getUser()
 })
 
-// Forcer la réactivité en écoutant les changements
 const updateAuthState = () => {
   authState.value = {
     isLoggedIn: authService.isAuthenticated(),
@@ -74,7 +65,6 @@ const updateAuthState = () => {
   }
 }
 
-// Écouter les changements d'authentification
 window.addEventListener('auth-change', updateAuthState)
 
 const isLoggedIn = computed(() => authState.value.isLoggedIn)
@@ -121,7 +111,6 @@ const userMenuItems = computed(() => [
     command: () => router.push('/account/settings'),
     class: 'my-1',
   },
-  // Bouton backoffice pour admin/storekeeper
   ...(authService.isAdminOrStorekeeper() ? [{
     label: 'Backoffice',
     icon: 'pi pi-cog',
@@ -137,7 +126,7 @@ const userMenuItems = computed(() => [
     icon: 'pi pi-sign-out',
     command: () => {
       authService.logout()
-      updateAuthState() // Forcer la mise à jour
+      updateAuthState()
       router.push('/login')
     },
     class: 'my-1',
@@ -148,7 +137,6 @@ const closeMobileMenu = () => {
   mobileMenu.value = false
 }
 
-// Mettre à jour l'état d'auth au montage du composant
 updateAuthState()
 </script>
 

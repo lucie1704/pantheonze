@@ -21,6 +21,8 @@ import Checkbox from 'primevue/checkbox'
 import Tooltip from 'primevue/tooltip'
 import Select from 'primevue/select'
 import Drawer from 'primevue/drawer'
+import Dropdown from 'primevue/dropdown'
+import Menu from 'primevue/menu'
 
 import App from './App.vue'
 import { router } from './router'
@@ -101,6 +103,8 @@ app.component('Checkbox', Checkbox)
 app.component('Toast', Toast)
 app.component('Select', Select)
 app.component('Drawer', Drawer)
+app.component('Dropdown', Dropdown)
+app.component('Menu', Menu)
 
 // Register directives
 app.directive('tooltip', Tooltip)
