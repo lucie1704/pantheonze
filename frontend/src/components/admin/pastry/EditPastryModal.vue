@@ -243,15 +243,11 @@ const handleSave = async () => {
       description: editableData.value.description || props.pastry.description,
       price: editableData.value.price || props.pastry.price,
       stockCount: editableData.value.stockCount || props.pastry.stockCount,
-      category: editableData.value.category ? 
-        categories.value.find(cat => cat.value === editableData.value.category)?.label || props.pastry.category.name :
-        props.pastry.category,
+      categoryId: editableData.value.category || props.pastry.category.id,
       tags: editableData.value.tags || props.pastry.tags,
       ingredients: editableData.value.ingredients || props.pastry.ingredients,
       nutrition: editableData.value.nutrition || props.pastry.nutrition,
-      diets: editableData.value.diets ? 
-        availableDiets.value.filter(diet => editableData.value.diets?.includes(diet.value)) :
-        props.pastry.diets
+      dietIds: editableData.value.diets || props.pastry.diets?.map(diet => diet.id) || []
     }
     
     emit('save', updatedPastry as Pastry)
