@@ -182,7 +182,7 @@ const confirmDelete = async () => {
   if (!selectedPastry.value) return
   
   try {
-    // await pastryService.deletePastry(selectedPastry.value.id)
+    await pastryService.deletePastry(selectedPastry.value.id)
     toast.add({
       severity: 'success',
       summary: 'Succès',
@@ -228,16 +228,6 @@ const formatTags = (tags: string[]) => {
     value: tag,
     label: tagMap[tag] || tag
   }))
-}
-
-const getTagSeverity = (tag: string) => {
-  const severityMap: { [key: string]: string } = {
-    'popular': 'success',
-    'new': 'info',
-    'sale': 'warning',
-    'featured': 'help'
-  }
-  return severityMap[tag] || 'none'
 }
 
 const openActionMenu = (event: Event, pastry: Pastry) => {
@@ -325,6 +315,41 @@ onMounted(() => {
   loadPastries()
   loadCategories()
 })
+
+// Fonction pour gérer la sauvegarde d'un pastry
+const handleSavePastry = async (pastry: Pastry) => {
+  try {
+    await pastryService.updatePastry(pastry)
+    await loadPastries()
+    
+    // Mettre à jour selectedPastry avec les nouvelles données
+    const updatedPastry = pastries.value.find(p => p.id === pastry.id)
+    if (updatedPastry) {
+      selectedPastry.value = updatedPastry
+    }
+    
+    toast.add({
+      severity: 'success',
+      summary: 'Succès',
+      detail: 'Produit mis à jour avec succès',
+      life: 3000,
+    })
+  } catch (error) {
+    console.error('Erreur lors de la sauvegarde:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Erreur',
+      detail: 'Impossible de mettre à jour le produit',
+      life: 5000,
+    })
+  }
+}
+
+// Fonction appelée quand la sauvegarde est terminée dans le modal
+const handleSaveComplete = () => {
+  // Optionnel : actions supplémentaires après la sauvegarde
+  console.log('Sauvegarde terminée')
+}
 </script>
 
 <template>
@@ -510,7 +535,6 @@ onMounted(() => {
                 v-for="tag in formatTags(slotProps.data.tags)"
                 :key="tag.value"
                 :value="tag.label"
-                :severity="getTagSeverity(tag.value)"
               />
             </div>
           </template>
@@ -577,6 +601,8 @@ onMounted(() => {
     <EditPastryModal
       v-model:visible="showEditModal"
       :pastry="selectedPastry"
+      @save="handleSavePastry"
+      @save-complete="handleSaveComplete"
     />
 
     <DeletePastryModal

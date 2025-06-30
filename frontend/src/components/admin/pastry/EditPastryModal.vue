@@ -26,10 +26,14 @@ interface Props {
 interface Emits {
   (e: 'update:visible', value: boolean): void
   (e: 'save', pastry: Pastry): void
+  (e: 'save-complete'): void
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
+
+// État de loading pour la sauvegarde
+const isSaving = ref(false)
 
 // État d'édition pour chaque champ
 const editingState = reactive({
@@ -229,19 +233,10 @@ const formatTags = (tags: string[]) => {
   }))
 }
 
-const getTagSeverity = (tag: string) => {
-  const severityMap: { [key: string]: string } = {
-    'popular': 'success',
-    'new': 'info',
-    'sale': 'warning',
-    'featured': 'help'
-  }
-  return severityMap[tag] || 'none'
-}
-
-const handleSave = () => {
+const handleSave = async () => {
   if (props.pastry && editableData.value) {
-    // Préparer les données modifiées
+    isSaving.value = true
+    
     const updatedPastry = {
       ...props.pastry,
       name: editableData.value.name || props.pastry.name,
@@ -259,40 +254,37 @@ const handleSave = () => {
         props.pastry.diets
     }
     
-    // Émettre l'événement avec les données mises à jour
     emit('save', updatedPastry as Pastry)
-    emit('update:visible', false)
     
-    // Réinitialiser les états d'édition
+    emit('save-complete')
+    
     Object.keys(editingState).forEach(key => {
       editingState[key as keyof typeof editingState] = false
     })
+    
+    isSaving.value = false
   }
 }
 
 const handleCancel = () => {
   initializeEditableData()
-  // Réinitialiser tous les états d'édition
   Object.keys(editingState).forEach(key => {
     editingState[key as keyof typeof editingState] = false
   })
 }
 
-// Initialiser les données quand le modal s'ouvre
 watch(() => props.visible, (newVisible) => {
   if (newVisible && props.pastry) {
     initializeEditableData()
   }
 })
 
-// Initialiser les données quand le pastry change
 watch(() => props.pastry, (newPastry) => {
   if (newPastry) {
     initializeEditableData()
   }
 }, { immediate: true })
 
-// Fonction pour ajouter un allergène
 const addAllergen = () => {
   if (newAllergen.value.trim() && editableData.value.nutrition) {
     editableData.value.nutrition.allergens.push(newAllergen.value.trim())
@@ -300,7 +292,6 @@ const addAllergen = () => {
   }
 }
 
-// Fonction pour ajouter un ingrédient
 const addIngredient = () => {
   if (newIngredient.value.trim() && editableData.value.ingredients) {
     editableData.value.ingredients.push(newIngredient.value.trim())
@@ -546,7 +537,6 @@ const addIngredient = () => {
                   v-for="tag in formatTags(pastry.tags)"
                   :key="tag.value"
                   :value="tag.label"
-                  :severity="getTagSeverity(tag.value)"
                 />
               </div>
               <div v-else class="flex align-items-center gap-2">
@@ -836,6 +826,8 @@ const addIngredient = () => {
         label="Enregistrer" 
         icon="pi pi-save" 
         class="mt-3"
+        :loading="isSaving"
+        :disabled="isSaving"
         @click="handleSave"
         v-if="isEditing"
       />

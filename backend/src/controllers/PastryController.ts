@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { prismaClient, categoryService, dietService } from "@/services";
 import { ValidatedRequest } from "@/middlewares";
-import { CreatePastryContractType } from "@/contracts/pastry";
+import { CreatePastryContractType, UpdatePastryContractType } from "@/contracts/pastry";
 
 export class PastryController {
     // Create a new pastry
@@ -269,26 +269,21 @@ export class PastryController {
 
     // Update a pastry
     static updatePastry = async (req: Request, res: Response) => {
-       /* try {
+        const validatedRequest = req as ValidatedRequest<UpdatePastryContractType>;
+
+        try {
             const { id } = req.params;
-            const { name, description, price, images, category, ingredients } = req.body;
+            const pastryData = validatedRequest.validated.body;
 
             const pastry = await prismaClient.pastry.update({
                 where: { id },
-                data: {
-                    name,
-                    description,
-                    price: Number(price),
-                    images: Array.isArray(images) ? images : [],
-                    category,
-                    ingredients: Array.isArray(ingredients) ? ingredients : []
-                }
+                data: pastryData
             });
 
-            res.status(200).send();
+            res.json(pastry);
         } catch (error) {
             res.status(500).json({ error: "Failed to update pastry" });
-        }*/
+        }
     };
 
     // Delete a pastry

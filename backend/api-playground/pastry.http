@@ -4,6 +4,10 @@
 GET {{BASE_URL}}/pastries
 Content-Type: application/json
 
+### Get pastries with pagination
+GET {{BASE_URL}}/pastries?page=1&limit=10
+Content-Type: application/json
+
 ### Get pastries by category
 GET {{BASE_URL}}/pastries?category=cake
 Content-Type: application/json
@@ -12,31 +16,95 @@ Content-Type: application/json
 GET {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
 Content-Type: application/json
 
+### Get pastry by slug
+GET {{BASE_URL}}/pastries/slug/eclair-au-chocolat
+Content-Type: application/json
+
+### Get popular pastries
+GET {{BASE_URL}}/pastries/popular?limit=5
+Content-Type: application/json
+
 ### Create pastry
 POST {{BASE_URL}}/pastries
 Content-Type: application/json
 
 {
     "name": "Éclair au chocolat",
-    "description": "Pâte à choux garnie de crème pâtissière au chocolat",
+    "description": "Pâte à choux garnie de crème pâtissière au chocolat noir, recouverte d'un glaçage brillant",
     "price": 4.50,
-    "imageUrl": "https://example.com/eclair.jpg",
-    "category": "choux",
-    "ingredients": ["farine", "oeufs", "chocolat", "crème"]
+    "stockCount": 15,
+    "categoryId": "1",
+    "tags": ["popular", "new"],
+    "ingredients": ["farine", "oeufs", "chocolat noir", "crème pâtissière", "beurre"],
+    "nutrition": {
+        "calories": 280,
+        "protein": 6,
+        "carbs": 32,
+        "fat": 15,
+        "allergens": ["gluten", "oeufs", "lait"]
+    },
+    "dietIds": ["1", "2"]
 }
 
-### Update pastry
-PUT {{BASE_URL}}/pastries/20d718db-3b0b-468f-a5d8-72ba02d25907
+### Update pastry - Test complet
+PUT {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
 Content-Type: application/json
 
 {
-    "name": "Éclair au café",
-    "description": "Pâte à choux garnie de crème pâtissière au café",
-    "price": 4.50,
-    "imageUrl": "https://example.com/eclair-cafe.jpg",
-    "category": "choux",
-    "ingredients": ["farine", "oeufs", "café", "crème"]
+    "name": "Éclair au café modifié",
+    "description": "Pâte à choux garnie de crème pâtissière au café arabica, recouverte d'un glaçage au café",
+    "price": 5.20,
+    "stockCount": 8,
+    "categoryId": "1",
+    "tags": ["popular"],
+    "ingredients": ["farine", "oeufs", "café arabica", "crème pâtissière", "beurre", "sucre"],
+    "nutrition": {
+        "calories": 295,
+        "protein": 7,
+        "carbs": 35,
+        "fat": 16,
+        "allergens": ["gluten", "oeufs", "lait"]
+    },
+    "dietIds": ["1"]
+}
+
+### Update pastry - Test minimal (juste le nom)
+PUT {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
+Content-Type: application/json
+
+{
+    "name": "Éclair au chocolat premium"
+}
+
+### Update pastry - Test prix et stock
+PUT {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
+Content-Type: application/json
+
+{
+    "price": 6.50,
+    "stockCount": 3
+}
+
+### Update pastry - Test description
+PUT {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
+Content-Type: application/json
+
+{
+    "description": "Un éclair exceptionnel avec une crème pâtissière onctueuse et un glaçage brillant au chocolat noir de qualité supérieure"
 }
 
 ### Delete pastry
-DELETE {{BASE_URL}}/pastries/123e4567-e89b-12d3-a456-426614174000
+DELETE {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
+Content-Type: application/json
+
+### Test avec un ID inexistant
+PUT {{BASE_URL}}/pastries/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+    "name": "Test inexistant"
+}
+
+### Test suppression avec un ID inexistant
+DELETE {{BASE_URL}}/pastries/00000000-0000-0000-0000-000000000000
+Content-Type: application/json

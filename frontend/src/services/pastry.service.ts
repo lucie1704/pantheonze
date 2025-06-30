@@ -60,4 +60,23 @@ export const pastryService = {
       throw error
     }
   },
+
+  updatePastry: async (pastry: Partial<Pastry> & { id: string }): Promise<Pastry> => {
+    try {
+      const response = await axios.put<Pastry>(`${API_URL}/pastries/${pastry.id}`, pastry)
+      return response.data
+    } catch (error) {
+      console.error('Error updating pastry:', error)
+      throw error
+    }
+  },
+
+  deletePastry: async (id: string): Promise<void> => {
+    try {
+      await axios.delete(`${API_URL}/pastries/${id}`)
+    } catch (error) {
+      console.error('Error deleting pastry:', error)
+      throw error
+    }
+  },
 }
