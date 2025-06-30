@@ -2,7 +2,7 @@ import express, { Express, Router } from "express";
 import dotenv from "dotenv";
 import cors from 'cors'
 import { categoryService, dietService } from "@/services";
-import { authRoutes, adminRoutes, pastryRoutes, categoryRoutes, dietRoutes } from "@/routes";
+import { authRoutes, adminRoutes, pastryRoutes, categoryRoutes, dietRoutes, userRoutes } from "@/routes";
 
 import RouteLoader from "./RouteLoader.ts";
 
@@ -36,6 +36,7 @@ app.use('/api/categories', categoryRoutes(pastryRouter))
 app.use('/api/diets', dietRoutes(pastryRouter))
 app.use('/api/auth', authRoutes(pastryRouter))
 app.use('/api/admin', adminRoutes(pastryRouter))
+app.use('/api/user', userRoutes(pastryRouter))
 
 // Start cache
 await categoryService.init();

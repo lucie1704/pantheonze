@@ -7,7 +7,7 @@ model User {
   addresses   String[]
   role        UserRole   @default(CLIENT)
   cart        Cart?      @relation("UserCart")
-  preferences Json? // { favoriteCategories: [], dietaryRestrictions: [], etc. }
+  userDiets   UserDiet[] @relation("UserDietaryPreferences")
   isActive    Boolean   @default(true)
   lastLogin   DateTime?
   createdAt   DateTime  @default(now())

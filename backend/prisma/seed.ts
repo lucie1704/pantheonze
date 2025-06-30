@@ -16,7 +16,7 @@ const PASTRIES_IMAGES = {
   milleFeuille: 'https://adc-dev-images-recipes.s3.eu-west-1.amazonaws.com/lv_23790_millefeuilles_bd.jpg',
   montBlanc: 'https://cache.marieclaire.fr/data/photo/w1000_ci/1pe/recette-mont-blanc-marrons.jpg',
   muffin: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm-NwO0zqR2rGOTU4y0AlDM-q0x5ejL6jsrQ&s',
-  muffinSansSucre: 'https://www.cuisineactuelle.fr/imgre/fit/~1~cac~2025~01~20~25e03ebc-a66f-4d13-bec9-fe481228f412.jpg/750x562/quality/80/crop-from/center/cr/wqkgR2V0dHkgSW1hZ2VzL2lTdG9ja3Bob3RvIGJhcm1hbGluaSAvIEN1aXNpbmUgQWN0dWVsbGU%3D/focus-point/1006%2C666/muffin-aux-pommes.jpeg',
+  muffinSansSucre: 'https://mariefoodtips.com/wp-content/uploads/2023/01/muffins-aux-pommes.jpg',
   opera: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNVm8vqk2lvAW0CxulbWa8Am-OFM3xTBqB-A&s',
   painAuChocolat: 'https://images.unsplash.com/photo-1681218424681-b4f8228ecea9?q=80&w=1548&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   painAuRaisin: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTXn968tFc6p5SON5Ke9tBmmHnMX6x0j337g&s',
@@ -49,41 +49,6 @@ async function main() {
 
   console.log('✅ Base de données nettoyée')
 
-  // Créer les utilisateurs de test
-  const hashedPassword = await hash('password123', 10)
-
-  const admin = await prisma.user.create({
-    data: {
-      email: 'lucie.godard@demo.com',
-      password: hashedPassword,
-      name: 'Lucie GODARD',
-      phone: '0123456789',
-      role: 'ADMIN',
-    }
-  })
-
-  const storekeeper = await prisma.user.create({
-    data: {
-      email: 'andree.faire@demo.com',
-      password: hashedPassword,
-      name: 'Andrée FAIRE',
-      phone: '0987654321',
-      role: 'STOREKEEPER',
-    }
-  })
-
-  const client = await prisma.user.create({
-    data: {
-      email: 'paulo.carpee@demo.com',
-      password: hashedPassword,
-      name: 'Paulo CARPEE',
-      phone: '0555666777',
-      role: 'CLIENT',
-    }
-  })
-
-  console.log('✅ Utilisateurs créés')
-
   const categoriesData = [
     { name: 'Viennoiseries' },
     { name: 'Pâtisseries' },
@@ -113,6 +78,75 @@ async function main() {
   }
 
   console.log('✅ Diets créés')
+
+  // Créer les utilisateurs de test
+  const hashedPassword = await hash('P@nt3h0nz3_2025!', 10)
+
+  const adminJeromeBouchet = await prisma.user.create({
+    data: {
+      email: 'admin@demo.com',
+      password: hashedPassword,
+      name: 'Jérôme BOUCHET',
+      phone: '0123456789',
+      role: 'ADMIN',
+    }
+  })
+
+  const storeKeeperAndreeFaire = await prisma.user.create({
+    data: {
+      email: 'andree.faire@demo.com',
+      password: hashedPassword,
+      name: 'Andrée FAIRE',
+      phone: '0987654321',
+      role: 'STOREKEEPER',
+    }
+  })
+
+
+  // Créer des comptes clients avec différentes préférences alimentaires
+  const clientMarieJacques = await prisma.user.create({
+    data: {
+      email: 'marie.jacques@demo.com',
+      password: hashedPassword,
+      name: 'Marie JACQUES',
+      phone: '0111222333',
+      role: 'CLIENT',
+      userDiets: {
+        create: [
+          { dietId: diets['Vegan'] },
+          { dietId: diets['Sans Gluten'] }
+        ]
+      }
+    }
+  })
+
+  const clientPierreLaroche = await prisma.user.create({
+    data: {
+      email: 'pierre.laroche@demo.com',
+      password: hashedPassword,
+      name: 'Pierre LAROCHE',
+      phone: '0444555666',
+      role: 'CLIENT',
+      userDiets: {
+        create: [
+          { dietId: diets['Sans Sucre'] },
+          { dietId: diets['Sans Lactose'] }
+        ]
+      }
+    }
+  })
+
+  const clientSophieOlivier = await prisma.user.create({
+    data: {
+      email: 'sophie.olivier@demo.com',
+      password: hashedPassword,
+      name: 'Sophie OLIVIER',
+      phone: '0777888999',
+      role: 'CLIENT',
+    }
+  })
+
+  console.log('✅ Utilisateurs créés')
 
   // Créer toutes les pâtisseries
   const pastries = await Promise.all([

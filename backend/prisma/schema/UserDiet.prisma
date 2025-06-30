@@ -1,0 +1,11 @@
+model UserDiet {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  dietId String @db.ObjectId
+  user   User   @relation("UserDietaryPreferences", fields: [userId], references: [id], onDelete: Cascade)
+  diet   Diet   @relation("UserDietaryPreferences", fields: [dietId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dietId])
+  @@index([userId])
+  @@index([dietId])
+} 

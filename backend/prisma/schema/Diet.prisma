@@ -1,4 +1,5 @@
 model Diet {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String   @unique
+  userDiets   UserDiet[] @relation("UserDietaryPreferences")
 } 
