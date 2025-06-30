@@ -13,6 +13,7 @@ import InputNumber from 'primevue/inputnumber'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
 import Select from 'primevue/select'
+import Tooltip from 'primevue/tooltip'
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { pastryService } from '@/services/pastry.service'
 import { API_URL } from '@/constants/api'
@@ -135,7 +136,9 @@ const initializeEditableData = () => {
       price: props.pastry.price,
       stockCount: props.pastry.stockCount,
       category: props.pastry.category.id,
-      tags: [...(props.pastry.tags || [])],
+      tags: (props.pastry.tags || []).filter(
+        tag => typeof tag === 'string' && tagOptions.value.some(opt => opt.value === tag)
+      ),
       ingredients: [...(props.pastry.ingredients || [])],
       nutrition: props.pastry.nutrition ? { ...props.pastry.nutrition } : undefined,
       diets: props.pastry.diets?.map(diet => diet.id) || []
@@ -273,12 +276,16 @@ const addIngredient = () => {
       <!-- En-tête avec image et infos principales -->
       <div class="flex gap-6 h-25rem mb-4">
         <!-- Image du produit -->
-        <div class="w-25rem border-round overflow-hidden bg-gray-100 flex-shrink-0">
+        <div class="w-25rem border-round overflow-hidden bg-gray-100 flex-shrink-0 relative">
           <img
             :src="pastry.images && pastry.images.length > 0 ? pastry.images[0] : '/no-image.svg'"
             :alt="pastry.name"
             class="modal-product-image"
             @error="(e) => (e.target as HTMLImageElement).src = '/no-image.svg'"
+          />
+          <Button
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-sm p-button-secondary absolute top-2 right-2 z-10 shadow-2"
           />
         </div>
         
@@ -418,7 +425,6 @@ const addIngredient = () => {
                   option-value="value"
                   placeholder="Sélectionner une catégorie"
                   class="w-12rem"
-                  @change="saveField('category')"
                   @keyup.esc="stopEditing('category')"
                   autofocus
                 />
@@ -462,7 +468,6 @@ const addIngredient = () => {
                 option-value="value"
                 placeholder="Sélectionner les régimes"
                 class="flex-1"
-                @change="saveField('diets')"
                 @keyup.esc="stopEditing('diets')"
                 autofocus
               />
@@ -471,7 +476,7 @@ const addIngredient = () => {
         </AccordionTab>
 
         <!-- Tags -->
-        <AccordionTab value="1" v-if="editableData.tags && editableData.tags.length > 0">
+        <AccordionTab value="1">
           <template #header>
             <div class="flex align-items-center justify-content-between w-full">
               <span>Tags</span>
@@ -495,14 +500,13 @@ const addIngredient = () => {
               />
             </div>
             <div v-else class="flex align-items-center gap-2">
-              <Select
+              <MultiSelect
                 v-model="editableData.tags"
                 :options="tagOptions"
                 option-label="label"
                 option-value="value"
-                placeholder="Sélectionner un tag"
+                placeholder="Sélectionner un ou plusieurs tags"
                 class="flex-1"
-                @change="saveField('tags')"
                 @keyup.esc="stopEditing('tags')"
                 autofocus
               />
@@ -745,13 +749,17 @@ const addIngredient = () => {
           <div 
             v-for="(image, index) in pastry.images.slice(1)" 
             :key="index"
-            class="w-8rem h-8rem border-round overflow-hidden bg-gray-100 flex-shrink-0"
+            class="w-8rem h-8rem border-round overflow-hidden bg-gray-100 flex-shrink-0 relative"
           >
             <img
               :src="image"
               :alt="`${pastry.name} - Image ${index + 2}`"
               class="w-full h-full object-cover"
               @error="(e) => (e.target as HTMLImageElement).src = '/no-image.svg'"
+            />
+            <Button
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-sm p-button-secondary absolute top-2 right-2 z-10 shadow-2"
             />
           </div>
         </div>
@@ -763,12 +771,14 @@ const addIngredient = () => {
         label="Annuler" 
         icon="pi pi-times" 
         text
+        class="mt-3"
         @click="handleCancel"
         v-if="isEditing"
       />
       <Button 
         label="Enregistrer" 
-        icon="pi pi-check" 
+        icon="pi pi-save" 
+        class="mt-3"
         @click="handleSave"
         v-if="isEditing"
       />
