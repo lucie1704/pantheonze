@@ -433,7 +433,8 @@ watch(products, () => {
               optionLabel="label"
               optionValue="value"
               placeholder="Trier par"
-              class="w-full lg:w-10rem"
+              class="w-full lg:w-12rem"
+              :show-clear="true"
             />
           </div>
         </div>
