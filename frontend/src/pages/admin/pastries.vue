@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -7,13 +7,11 @@ import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import { useToast } from 'primevue/usetoast'
-import { pastryService, type PaginatedResponse } from '@/services'
+import { pastryService } from '@/services'
 import type { Pastry } from '@/types'
 import DietIcon from '@/components/DietIcon.vue'
 import { DIET_CONFIG } from '@/constants/diets'
-import TieredMenu from 'primevue/tieredmenu'
 import Tag from 'primevue/tag'
-import Badge from 'primevue/badge'
 import { 
   ViewPastryModal, 
   AddPastryModal, 
@@ -536,22 +534,27 @@ onMounted(() => {
           :exportable="false"
           class="text-center"
           body-class="actions-cell"
-          style="width: 60px"
+          style="width: 120px"
         >
           <template #body="slotProps">
-            <div class="flex justify-content-center align-items-center">
+            <div class="flex justify-content-center align-items-center gap-2">
               <Button
-                icon="pi pi-ellipsis-v"
+                icon="pi pi-pencil"
                 text
                 rounded
-                aria-label="Actions"
-                @click="(e) => openActionMenu(e, slotProps.data)"
+                size="small"
+                aria-label="Modifier"
+                @click="handleEdit(slotProps.data)"
+                class="p-button-outlined"
               />
-              <TieredMenu
-                ref="actionMenu"
-                :model="getActionItems"
-                :popup="true"
-                class="p-2"
+              <Button
+                icon="pi pi-trash"
+                text
+                rounded
+                size="small"
+                aria-label="Supprimer"
+                @click="handleDelete(slotProps.data)"
+                class="p-button-outlined p-button-danger"
               />
             </div>
           </template>
