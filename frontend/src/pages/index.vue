@@ -10,10 +10,9 @@ import Carousel from 'primevue/carousel'
 import ProgressSpinner from 'primevue/progressspinner'
 import { ProductCard } from '@/components'
 import { pastryService } from '@/services'
-import { useUserPreferencesStore } from '@/stores/userPreferences'
 import { useCartStore } from '@/stores/cart'
 import type { Pastry } from '@/types/pastry'
-import Message from 'primevue/message'
+import { CartSuccessToast } from '@/components'
 
 const router = useRouter()
 const toast = useToast()
@@ -58,7 +57,9 @@ const handleAddToCart = async (data: { pastryId: string; quantity: number }) => 
         severity: 'success',
         summary: 'Ajouté au panier',
         detail: `${pastry.name} (${data.quantity}) a été ajouté au panier`,
-        life: 3000,
+        life: 5000,
+        closable: true,
+        group: 'cart'
       })
     }
   } catch (error) {
@@ -279,6 +280,8 @@ onMounted(() => {
       </div>
     </section>
   </div>
+
+  <CartSuccessToast />
 </template>
 
 <style scoped>

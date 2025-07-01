@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import TieredMenu from 'primevue/tieredmenu'
 import Button from 'primevue/button'
 import Drawer from 'primevue/drawer'
+import Badge from 'primevue/badge'
 import { useRouter, useRoute } from 'vue-router'
 import { Banner } from '@/components'
 import { authService } from '@/services'
@@ -262,13 +263,12 @@ updateAuthState()
                 <i class="pi pi-shopping-cart text-900 text-xl hover:text-primary"></i>
               </Button>
               <!-- Badge du panier -->
-              <div
+              <Badge
                 v-if="cartStore.itemCount > 0"
-                class="absolute top-0 right-0 bg-primary text-white text-xs font-bold rounded-full w-1.5rem h-1.5rem flex align-items-center justify-content-center"
-                style="transform: translate(25%, -25%);"
-              >
-                {{ cartStore.itemCount > 99 ? '99+' : cartStore.itemCount }}
-              </div>
+                :value="cartStore.itemCount > 99 ? '99+' : cartStore.itemCount"
+                class="absolute top-0 right-0"
+                style="transform: translate(25%, -25%); z-index: 10;"
+              />
             </div>
 
             <Button
@@ -300,6 +300,7 @@ updateAuthState()
                 :model="userMenuItems"
                 :popup="true"
                 class="p-2"
+                style="z-index: 9999;"
               />
             </div>
           </div>

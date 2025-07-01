@@ -1,11 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { cartService, type Cart, type CartItem, type CartTotal } from '@/services'
-import { useToast } from 'primevue/usetoast'
 
 export const useCartStore = defineStore('cart', () => {
-  const toast = useToast()
-  
   // État réactif
   const cart = ref<Cart | null>(null)
   const loading = ref(false)
@@ -24,13 +21,7 @@ export const useCartStore = defineStore('cart', () => {
       cart.value = await cartService.getCart()
       await fetchCartTotal()
     } catch (error) {
-      console.error('Error fetching cart:', error)
-      toast.add({
-        severity: 'error',
-        summary: 'Erreur',
-        detail: 'Impossible de charger le panier',
-        life: 3000,
-      })
+      console.error('🛒 [CART STORE] Error fetching cart:', error)
     } finally {
       loading.value = false
     }
@@ -47,36 +38,11 @@ export const useCartStore = defineStore('cart', () => {
   const addToCart = async (pastryId: string, quantity: number = 1) => {
     loading.value = true
     try {
-      const newItem = await cartService.addItemToCart(pastryId, quantity)
-      
-      // Mettre à jour le panier local
-      if (cart.value) {
-        const existingItemIndex = cart.value.items.findIndex(item => item.pastryId === pastryId)
-        if (existingItemIndex >= 0) {
-          // Mettre à jour l'item existant
-          cart.value.items[existingItemIndex] = newItem
-        } else {
-          // Ajouter le nouvel item
-          cart.value.items.push(newItem)
-        }
-      }
-      
-      await fetchCartTotal()
-      
-      toast.add({
-        severity: 'success',
-        summary: 'Succès',
-        detail: 'Produit ajouté au panier',
-        life: 3000,
-      })
+      await cartService.addItemToCart(pastryId, quantity)
+      await fetchCart()
     } catch (error) {
-      console.error('Error adding to cart:', error)
-      toast.add({
-        severity: 'error',
-        summary: 'Erreur',
-        detail: 'Impossible d\'ajouter au panier',
-        life: 3000,
-      })
+      console.error('🛒 [CART STORE] Error adding to cart:', error)
+      throw error
     } finally {
       loading.value = false
     }
@@ -102,21 +68,9 @@ export const useCartStore = defineStore('cart', () => {
       }
       
       await fetchCartTotal()
-      
-      toast.add({
-        severity: 'success',
-        summary: 'Succès',
-        detail: 'Quantité mise à jour',
-        life: 2000,
-      })
     } catch (error) {
       console.error('Error updating quantity:', error)
-      toast.add({
-        severity: 'error',
-        summary: 'Erreur',
-        detail: 'Impossible de mettre à jour la quantité',
-        life: 3000,
-      })
+      throw error
     } finally {
       loading.value = false
     }
@@ -136,21 +90,9 @@ export const useCartStore = defineStore('cart', () => {
       }
       
       await fetchCartTotal()
-      
-      toast.add({
-        severity: 'success',
-        summary: 'Succès',
-        detail: 'Produit retiré du panier',
-        life: 3000,
-      })
     } catch (error) {
       console.error('Error removing from cart:', error)
-      toast.add({
-        severity: 'error',
-        summary: 'Erreur',
-        detail: 'Impossible de retirer du panier',
-        life: 3000,
-      })
+      throw error
     } finally {
       loading.value = false
     }
@@ -166,21 +108,9 @@ export const useCartStore = defineStore('cart', () => {
         cart.value.items = []
       }
       cartTotal.value = null
-      
-      toast.add({
-        severity: 'success',
-        summary: 'Succès',
-        detail: 'Panier vidé',
-        life: 3000,
-      })
     } catch (error) {
       console.error('Error clearing cart:', error)
-      toast.add({
-        severity: 'error',
-        summary: 'Erreur',
-        detail: 'Impossible de vider le panier',
-        life: 3000,
-      })
+      throw error
     } finally {
       loading.value = false
     }

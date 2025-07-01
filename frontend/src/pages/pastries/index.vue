@@ -3,22 +3,19 @@ import { ref, onMounted, watch, computed, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import { ProductCard } from '@/components'
-import Drawer from 'primevue/drawer'
 import FiltersPanel from '@/components/FiltersPanel.vue'
 import { pastryService } from '@/services'
 import { useUserPreferencesStore } from '@/stores/userPreferences'
+import { useCartStore } from '@/stores/cart'
 import type { Pastry } from '@/types/pastry'
-import ProgressSpinner from 'primevue/progressspinner'
-import Message from 'primevue/message'
-import Select from 'primevue/select'
-import InputText from 'primevue/inputtext'
 import type { Filter } from '@/types'
-import Button from 'primevue/button'
+import { CartSuccessToast } from '@/components'
 
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
 const userPreferencesStore = useUserPreferencesStore()
+const cartStore = useCartStore()
 const showFilters = ref(false)
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -126,15 +123,28 @@ const applyUserPreferences = async () => {
   }
 }
 
-const handleAddToCart = ({ pastryId, quantity }: { pastryId: string; quantity: number }) => {
+const handleAddToCart = async ({ pastryId, quantity }: { pastryId: string; quantity: number }) => {
   const pastry = products.value.find((pastry) => pastry.id === pastryId)
   if (pastry) {
-    toast.add({
-      severity: 'success',
-      summary: 'Produit ajouté',
-      detail: `${quantity} × ${pastry.name} ajouté(s) au panier`,
-      life: 3000,
-    })
+    try {
+      await cartStore.addToCart(pastryId, quantity)
+      toast.add({
+        severity: 'success',
+        summary: 'Produit ajouté',
+        detail: `${quantity} × ${pastry.name} ajouté(s) au panier`,
+        life: 5000,
+        closable: true,
+        group: 'cart'
+      })
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout au panier:', error)
+      toast.add({
+        severity: 'error',
+        summary: 'Erreur',
+        detail: 'Impossible d\'ajouter le produit au panier',
+        life: 3000,
+      })
+    }
   }
 }
 
@@ -518,4 +528,6 @@ watch(products, () => {
       </div>
     </div>
   </div>
+
+  <CartSuccessToast />
 </template>

@@ -36,40 +36,46 @@ export interface CartTotal {
 
 class CartService {
   async getCart(): Promise<Cart> {
-    try {
-      const response = await fetch(`${API_URL}/cart`, {
-        headers: {
-          'Authorization': `Bearer ${authService.getToken()}`
-        }
-      })
-      if (!response.ok) {
-        throw new Error('Failed to fetch cart')
-      }
-      return await response.json()
-    } catch (error) {
-      console.error('Error fetching cart:', error)
-      throw error
+    const token = authService.getToken()
+    if (!token) {
+      throw new Error('Token non trouvé')
     }
+
+    const response = await fetch(`${API_URL}/cart`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`Erreur ${response.status}: ${response.statusText}`)
+    }
+
+    const cartData = await response.json()
+    return cartData.data
   }
 
   async addItemToCart(pastryId: string, quantity: number = 1): Promise<CartItem> {
-    try {
-      const response = await fetch(`${API_URL}/cart/items`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authService.getToken()}`
-        },
-        body: JSON.stringify({ pastryId, quantity })
-      })
-      if (!response.ok) {
-        throw new Error('Failed to add item to cart')
-      }
-      return await response.json()
-    } catch (error) {
-      console.error('Error adding item to cart:', error)
-      throw error
+    const token = authService.getToken()
+    if (!token) {
+      throw new Error('Token non trouvé')
     }
+
+    const response = await fetch(`${API_URL}/cart/items`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ pastryId, quantity }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`Erreur ${response.status}: ${response.statusText}`)
+    }
+
+    const itemData = await response.json()
+    return itemData.data
   }
 
   async updateItemQuantity(itemId: string, quantity: number): Promise<CartItem> {

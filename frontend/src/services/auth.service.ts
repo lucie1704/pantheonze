@@ -92,7 +92,9 @@ class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey)
+    const token = localStorage.getItem(this.tokenKey)
+    console.log('🔐 [AUTH SERVICE] Getting token:', token ? 'Token exists' : 'No token')
+    return token
   }
 
   setToken(token: string): void {

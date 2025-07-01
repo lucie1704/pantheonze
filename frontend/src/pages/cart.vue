@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
@@ -8,6 +8,7 @@ import { useCartStore } from '@/stores/cart'
 import { useToast } from 'primevue/usetoast'
 
 const router = useRouter()
+const route = useRoute()
 const toast = useToast()
 const cartStore = useCartStore()
 
@@ -18,6 +19,13 @@ const promoDiscount = ref(0)
 // Charger le panier au montage
 onMounted(() => {
   cartStore.fetchCart()
+})
+
+// Recharger le panier quand on navigue vers cette page
+watch(() => route.path, (newPath) => {
+  if (newPath === '/cart') {
+    cartStore.fetchCart()
+  }
 })
 
 // Calculs

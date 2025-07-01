@@ -12,9 +12,14 @@ import AccordionContent from 'primevue/accordioncontent'
 import Tag from 'primevue/tag'
 import ProgressSpinner from 'primevue/progressspinner'
 import Button from 'primevue/button'
+import { useCartStore } from '@/stores/cart'
+import { useToast } from 'primevue/usetoast'
+import { CartSuccessToast }  from '@/components'
 
 const route = useRoute()
 const router = useRouter()
+const cartStore = useCartStore()
+const toast = useToast()
 const quantity = ref(1)
 const pastry = ref<any>(null)
 const similarPastries = ref<any[]>([])
@@ -48,20 +53,50 @@ watch(() => route.params.slug, () => {
   loadPastryData()
 })
 
-const addToCart = () => {
-  // Logique d'ajout au panier
-  console.log('Ajout au panier:', {
-    productSlug: route.params.slug,
-    quantity: quantity.value,
-  })
+const addToCart = async () => {
+  if (!pastry.value) return
+  
+  try {
+    await cartStore.addToCart(pastry.value.id, quantity.value)
+    toast.add({
+      severity: 'success',
+      summary: 'Produit ajouté',
+      detail: `${quantity.value} × ${pastry.value.name} ajouté(s) au panier`,
+      life: 5000,
+      closable: true,
+      group: 'cart'
+    })
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout au panier:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Erreur',
+      detail: 'Impossible d\'ajouter le produit au panier',
+      life: 3000,
+    })
+  }
 }
 
-const handleAddToCart = (pastryData: any) => {
-  // Logique d'ajout au panier sans navigation
-  console.log('Ajout au panier:', {
-    productSlug: pastryData.slug,
-    quantity: 1,
-  })
+const handleAddToCart = async (pastryData: any) => {
+  try {
+    await cartStore.addToCart(pastryData.id, 1)
+    toast.add({
+      severity: 'success',
+      summary: 'Produit ajouté',
+      detail: `${pastryData.name} ajouté au panier`,
+      life: 5000,
+      closable: true,
+      group: 'cart'
+    })
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout au panier:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Erreur',
+      detail: 'Impossible d\'ajouter le produit au panier',
+      life: 3000,
+    })
+  }
 }
 
 const increaseQuantity = () => {
@@ -92,9 +127,29 @@ const navigateToProduct = (slug: string) => {
   router.push(`/pastries/${slug}`)
 }
 
-const handleAddToCartFromCarousel = (cartData: any) => {
-  // Empêcher la navigation et juste ajouter au panier
-  console.log('Ajout au panier depuis carousel:', cartData)
+const handleAddToCartFromCarousel = async (cartData: any) => {
+  try {
+    await cartStore.addToCart(cartData.pastryId, cartData.quantity)
+    const pastry = similarPastries.value.find(p => p.id === cartData.pastryId)
+    if (pastry) {
+      toast.add({
+        severity: 'success',
+        summary: 'Produit ajouté',
+        detail: `${cartData.quantity} × ${pastry.name} ajouté(s) au panier`,
+        life: 5000,
+        closable: true,
+        group: 'cart'
+      })
+    }
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout au panier:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Erreur',
+      detail: 'Impossible d\'ajouter le produit au panier',
+      life: 3000,
+    })
+  }
 }
 </script>
 
@@ -286,6 +341,7 @@ const handleAddToCartFromCarousel = (cartData: any) => {
         </template>
       </Carousel>
     </div>
+    <CartSuccessToast />
   </div>
 </template>
 

@@ -32,7 +32,7 @@ export const CreatePastryContract: ContractSkeletonType<CreatePastryContractInpu
         description: z.string({
             required_error: "La description est requise",
             invalid_type_error: "La description doit être une chaîne de caractères"
-        }).min(10, "La description doit contenir au moins 10 caractères"),
+        }).min(10, "La description doit contenir au moins 10 caractères").max(300, "La description ne peut pas dépasser 300 caractères"),
 
         price: z.number({
             required_error: "Le prix est requis",

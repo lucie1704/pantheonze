@@ -7,7 +7,7 @@ type UpdatePastryContract = Prisma.PastryUpdateInput;
 export const UpdatePastryContract: ContractSkeletonType<UpdatePastryContract> = z.object({
     body: z.object({
         name: z.string().min(1).optional(),
-        description: z.string().min(1).optional(),
+        description: z.string().min(1).max(300, "La description ne peut pas dépasser 300 caractères").optional(),
         price: z.number().min(0).optional(),
         images: z.array(z.string()).optional(),
         categoryId: z.string().min(1).optional(),
