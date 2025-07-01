@@ -17,6 +17,7 @@ import MultiSelect from 'primevue/multiselect'
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { API_URL } from '@/constants/api'
 import axios from 'axios'
+import { RouterLink } from 'vue-router'
 
 interface Props {
   visible: boolean
@@ -336,6 +337,22 @@ const addIngredient = () => {
                 @click="startEditing('name')"
                 class="p-button-text flex-shrink-0"
               />
+              
+              <div class="flex-1"></div>
+
+              <div class="mt-2">
+                <RouterLink
+                  :to="`/pastries/${pastry.slug}`"
+                  target="_blank"
+                  class="no-underline"
+                >
+                  <Button
+                    label="Voir sur le site"
+                    icon="pi pi-external-link"
+                    class="p-button-outlined p-button-sm"
+                  />
+                </RouterLink>
+              </div>
             </div>
             <div v-else class="flex align-items-center gap-2">
               <InputText
