@@ -5,13 +5,15 @@ export const checkAuthentication = (request: Request, response: Response, next: 
   const authorizationHeader = request.headers.authorization;
 
   if (!authorizationHeader) {
-    return response.status(401).json({ message: 'Authorization header required' });
+    response.status(401).json({ message: 'Authorization header required' });
+    return;
   }
 
   const token = authorizationHeader.split(' ')[1];
 
   if (!token) {
-    return response.status(401).json({ message: 'Token required' });
+    response.status(401).json({ message: 'Token required' });
+    return;
   }
 
   try {
@@ -19,6 +21,6 @@ export const checkAuthentication = (request: Request, response: Response, next: 
     (request as any).user = decoded;
     next();
   } catch (error) {
-    return response.status(401).json({ message: 'Invalid token' });
+    response.status(401).json({ message: 'Invalid token' });
   }
 };
