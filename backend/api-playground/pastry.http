@@ -108,3 +108,83 @@ Content-Type: application/json
 ### Test suppression avec un ID inexistant
 DELETE {{BASE_URL}}/pastries/00000000-0000-0000-0000-000000000000
 Content-Type: application/json
+
+### Delete pastry - Test
+DELETE {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
+
+### Delete pastry - Test avec ID inexistant
+DELETE {{BASE_URL}}/pastries/000000000000000000000000
+
+### Delete pastry - Test avec ID invalide
+DELETE {{BASE_URL}}/pastries/invalid-id
+
+### Create pastry - Test complet
+POST {{BASE_URL}}/pastries
+Content-Type: application/json
+
+{
+    "name": "Nouveau Éclair au Chocolat",
+    "description": "Un éclair délicieux garni de crème pâtissière au chocolat noir, recouvert d'un glaçage chocolat brillant",
+    "price": 4.50,
+    "stockCount": 15,
+    "categoryId": "65c8f1a2b3c4d5e6f7a8b9c0",
+    "tags": ["Nouveau", "Populaire"],
+    "ingredients": ["Pâte à choux", "Crème pâtissière", "Chocolat noir", "Beurre", "Œufs", "Farine"],
+    "nutrition": {
+        "calories": 280,
+        "protein": 6.5,
+        "carbs": 32.0,
+        "fat": 15.2,
+        "allergens": ["Gluten", "Lactose", "Œufs"]
+    },
+    "dietIds": ["65c8f1a2b3c4d5e6f7a8b9c1"],
+    "images": []
+}
+
+### Create pastry - Test minimal
+POST {{BASE_URL}}/pastries
+Content-Type: application/json
+
+{
+    "name": "Croissant Simple",
+    "description": "Un croissant classique au beurre",
+    "price": 2.80,
+    "categoryId": "65c8f1a2b3c4d5e6f7a8b9c0"
+}
+
+### Create pastry - Test avec données invalides
+POST {{BASE_URL}}/pastries
+Content-Type: application/json
+
+{
+    "name": "",
+    "description": "",
+    "price": -5,
+    "categoryId": ""
+}
+
+### Vérifier si la catégorie existe
+GET {{BASE_URL}}/categories
+
+### Create pastry - Test avec payload utilisateur
+POST {{BASE_URL}}/pastries
+Content-Type: application/json
+
+{
+    "name": "Cannelés",
+    "description": "Le cannelé est une spécialité bordelaise",
+    "price": 4.5,
+    "stockCount": 0,
+    "categoryId": "6862f675763b91b46a10c453",
+    "dietIds": [],
+    "images": [],
+    "ingredients": ["sucre"],
+    "nutrition": {
+        "calories": 0,
+        "protein": 0,
+        "carbs": 0,
+        "fat": 0,
+        "allergens": []
+    },
+    "tags": []
+}

@@ -2,9 +2,27 @@ import { Prisma } from "@/prisma";
 import { z } from "zod";
 import { ContractSkeletonType } from "../ContractSkeleton";
 
-type CreatePastryContract = Prisma.PastryCreateInput;
+// Define the contract input type to match our schema
+type CreatePastryContractInput = {
+    name: string;
+    description: string;
+    price: number;
+    stockCount?: number;
+    categoryId: string;
+    tags?: string[];
+    ingredients: string[];
+    nutrition?: {
+        calories: number;
+        protein: number;
+        carbs: number;
+        fat: number;
+        allergens: string[];
+    };
+    dietIds?: string[];
+    images?: string[];
+};
 
-export const CreatePastryContract: ContractSkeletonType<CreatePastryContract> = z.object({
+export const CreatePastryContract: ContractSkeletonType<CreatePastryContractInput> = z.object({
     body: z.object({
         name: z.string({
             required_error: "Le nom de la pâtisserie est requis",
@@ -22,20 +40,32 @@ export const CreatePastryContract: ContractSkeletonType<CreatePastryContract> = 
         }).min(0, "Le prix ne peut pas être négatif")
           .max(1000, "Le prix ne peut pas dépasser 1000€"),
 
-        imageUrl: z.string({
-            invalid_type_error: "L'URL doit être une chaîne de caractères"
-        }).url("L'URL de l'image n'est pas valide").optional(),
+        stockCount: z.number().min(0, "Le stock ne peut pas être négatif").optional(),
 
-        category: z.string({
+        categoryId: z.string({
             required_error: "La catégorie est requise",
             invalid_type_error: "La catégorie doit être une chaîne de caractères"
         }).min(1, "La catégorie ne peut pas être vide"),
+
+        tags: z.array(z.string()).optional(),
 
         ingredients: z.array(
             z.string({
                 invalid_type_error: "Les ingrédients doivent être des chaînes de caractères"
             }).min(1, "Un ingrédient ne peut pas être vide")
-        ).min(1, "Au moins un ingrédient est requis").optional(),
+        ).min(1, "Au moins un ingrédient est requis"),
+
+        nutrition: z.object({
+            calories: z.number().min(0),
+            protein: z.number().min(0),
+            carbs: z.number().min(0),
+            fat: z.number().min(0),
+            allergens: z.array(z.string())
+        }).optional(),
+
+        dietIds: z.array(z.string()).optional(),
+
+        images: z.array(z.string()).optional(),
     }),
     query: z.object({}),
     params: z.object({}),

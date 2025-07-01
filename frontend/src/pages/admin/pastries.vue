@@ -63,6 +63,9 @@ const selectedPastry = ref<Pastry | null>(null)
 const actionMenu = ref()
 const selectedPastryForMenu = ref<Pastry | null>(null)
 
+// Références aux modals
+const addModalRef = ref()
+
 // Computed
 const dietOptions = computed(() => Object.keys(DIET_CONFIG).map(key => ({ label: key, value: key })))
 
@@ -334,21 +337,53 @@ const handleSavePastry = async (pastry: Pastry) => {
       detail: 'Produit mis à jour avec succès',
       life: 3000,
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erreur lors de la sauvegarde:', error)
+    
+    // Récupérer le message d'erreur du backend
+    const errorMessage = error.response?.data?.error || 'Impossible de mettre à jour le produit'
+    
     toast.add({
       severity: 'error',
       summary: 'Erreur',
-      detail: 'Impossible de mettre à jour le produit',
+      detail: errorMessage,
       life: 5000,
     })
+    
+    // Ne pas fermer le modal en cas d'erreur, laisser l'utilisateur corriger
   }
 }
 
-// Fonction appelée quand la sauvegarde est terminée dans le modal
-const handleSaveComplete = () => {
-  // Optionnel : actions supplémentaires après la sauvegarde
-  console.log('Sauvegarde terminée')
+// Fonction pour gérer la création d'un pastry
+const handleCreatePastry = async (pastry: Partial<Pastry>) => {
+  try {
+    await pastryService.createPastry(pastry)
+    await loadPastries()
+    
+    toast.add({
+      severity: 'success',
+      summary: 'Succès',
+      detail: 'Produit créé avec succès',
+      life: 3000,
+    })
+    
+    addModalRef.value?.resetForm()
+    showAddModal.value = false
+  } catch (error: any) {
+    console.error('Erreur lors de la création:', error)
+    
+    // Récupérer le message d'erreur du backend
+    const errorMessage = error.response?.data?.error || 'Impossible de créer le produit'
+    
+    toast.add({
+      severity: 'error',
+      summary: 'Erreur',
+      detail: errorMessage,
+      life: 5000,
+    })
+    
+    // Ne pas fermer le modal en cas d'erreur, laisser l'utilisateur corriger
+  }
 }
 </script>
 
@@ -595,14 +630,15 @@ const handleSaveComplete = () => {
     </div>
 
     <AddPastryModal
+      ref="addModalRef"
       v-model:visible="showAddModal"
+      @save="handleCreatePastry"
     />
 
     <EditPastryModal
       v-model:visible="showEditModal"
       :pastry="selectedPastry"
       @save="handleSavePastry"
-      @save-complete="handleSaveComplete"
     />
 
     <DeletePastryModal
@@ -614,7 +650,6 @@ const handleSaveComplete = () => {
 </template>
 
 <style scoped>
-/* CSS minimal nécessaire pour les cas spécifiques */
 @media (max-width: 1200px) {
   .min-w-800 {
     min-width: 700px;
@@ -640,7 +675,6 @@ const handleSaveComplete = () => {
   }
 }
 
-/* Masquer le trigger des dropdowns dans les filtres */
 :deep(.p-dropdown-trigger) {
   display: none;
 }

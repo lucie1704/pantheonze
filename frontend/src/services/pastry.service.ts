@@ -71,6 +71,16 @@ export const pastryService = {
     }
   },
 
+  createPastry: async (pastry: Partial<Pastry>): Promise<Pastry> => {
+    try {
+      const response = await axios.post<Pastry>(`${API_URL}/pastries`, pastry)
+      return response.data
+    } catch (error) {
+      console.error('Error creating pastry:', error)
+      throw error
+    }
+  },
+
   deletePastry: async (id: string): Promise<void> => {
     try {
       await axios.delete(`${API_URL}/pastries/${id}`)

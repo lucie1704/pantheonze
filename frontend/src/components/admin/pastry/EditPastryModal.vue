@@ -829,7 +829,7 @@ const addIngredient = () => {
       />
     </template>
   </Dialog>
-</template>
+</template> 
 
 <style scoped>
 .modal-product-image {

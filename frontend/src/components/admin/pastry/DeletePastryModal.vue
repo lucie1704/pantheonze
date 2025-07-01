@@ -39,7 +39,6 @@ const handleConfirm = () => {
       <p v-if="pastry">
         Êtes-vous sûr de vouloir supprimer le produit <strong>"{{ pastry.name }}"</strong> ?
       </p>
-      <p class="text-sm text-gray-600 mt-2">Cette action est irréversible.</p>
     </div>
     <template #footer>
       <Button label="Annuler" text @click="handleClose" />

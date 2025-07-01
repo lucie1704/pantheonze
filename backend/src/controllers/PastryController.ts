@@ -10,10 +10,54 @@ export class PastryController {
 
         try {
             const pastry = validatedRequest.validated.body;
-            await prismaClient.pastry.create({
-                data: pastry
+            
+            // Générer le slug
+            const slug = pastry.name
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim();
+            
+            // Vérifier si un produit avec le même slug existe déjà
+            const existingPastry = await prismaClient.pastry.findUnique({
+                where: { slug }
             });
-            res.status(201).send();
+            
+            if (existingPastry) {
+                return res.status(409).json({ 
+                    error: "Un produit avec ce nom existe déjà. Veuillez choisir un nom différent." 
+                });
+            }
+            
+            let nutrition = undefined;
+            if (pastry.nutrition) {
+                nutrition = {
+                    calories: pastry.nutrition.calories || 0,
+                    protein: pastry.nutrition.protein || 0,
+                    carbs: pastry.nutrition.carbs || 0,
+                    fat: pastry.nutrition.fat || 0,
+                    allergens: pastry.nutrition.allergens || []
+                };
+            }
+            
+            const pastryData = {
+                ...pastry,
+                slug,
+                nutrition,
+                inStock: true,
+                isOnSale: false,
+                totalReviews: 0,
+                totalOrdered: 0
+            };
+            
+            const createdPastry = await prismaClient.pastry.create({
+                data: pastryData
+            });
+            
+            res.status(201).json(createdPastry);
         } catch (error) {
             res.status(500).json({ error: "Failed to create pastry" });
         }
@@ -274,6 +318,35 @@ export class PastryController {
         try {
             const { id } = req.params;
             const pastryData = validatedRequest.validated.body;
+
+            // Si le nom change, vérifier l'unicité et régénérer le slug
+            if (pastryData.name && typeof pastryData.name === 'string') {
+                // Générer le nouveau slug
+                const slug = pastryData.name
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .trim();
+                
+                // Vérifier si un autre produit avec le même slug existe déjà
+                const existingPastry = await prismaClient.pastry.findFirst({
+                    where: { 
+                        slug,
+                        id: { not: id } // Exclure le pastry actuel
+                    }
+                });
+                
+                if (existingPastry) {
+                    return res.status(409).json({ 
+                        error: "Un produit avec ce nom existe déjà. Veuillez choisir un nom différent." 
+                    });
+                }
+                
+                pastryData.slug = slug;
+            }
 
             const pastry = await prismaClient.pastry.update({
                 where: { id },
