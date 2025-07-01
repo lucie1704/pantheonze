@@ -2,33 +2,33 @@ import { Router } from "express";
 import { CartController } from "@/controllers";
 import { checkAuthentication } from "@/middlewares";
 
-export default function cartRoutes(router: Router) {
+export default function (router: Router) {
   router.get(
-    "/", 
+    "/cart", 
     checkAuthentication,
     CartController.getCart
   );
 
   router.post(
-    "/items", 
+    "/cart/items", 
     checkAuthentication,
     CartController.addItemToCart
   );
 
   router.put(
-    "/items/:itemId", 
+    "/cart/items/:itemId", 
     checkAuthentication,
     CartController.updateItemQuantity
   );
 
   router.delete(
-    "/items/:itemId", 
+    "/cart/items/:itemId", 
     checkAuthentication,
     CartController.removeItemFromCart
   );
 
   router.delete(
-    "/", 
+    "/cart", 
     checkAuthentication,
     CartController.clearCart
   );
