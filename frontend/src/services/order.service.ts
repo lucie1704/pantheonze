@@ -35,13 +35,6 @@ export interface Order {
   discount: number
   total: number
   status: string
-  delivery?: {
-    address: string
-    phone?: string
-    deliveryDate?: string
-    timeSlot?: string
-    instructions?: string
-  }
   customerName: string
   customerEmail: string
   customerPhone?: string
@@ -51,7 +44,7 @@ export interface Order {
   notes?: string
   estimatedReady?: string
   readyAt?: string
-  deliveredAt?: string
+  pickedUpAt?: string
   createdAt: string
   updatedAt: string
 }

@@ -1,26 +1,24 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { userService } from '@/services'
-import axios from 'axios'
-import { API_URL } from '@/constants/api'
+import { userService, type Diet, authService } from '@/services'
 
 export const useUserPreferencesStore = defineStore('userPreferences', () => {
   // State
-  const userDietaryPreferences = ref<string[]>([])
-  const availableDiets = ref<{ id: string; name: string }[]>([])
+  const userDietaryPreferences = ref<Diet[]>([])
+  const availableDiets = ref<Diet[]>([])
   const isLoading = ref(false)
   const isLoaded = ref(false)
 
   // Getters
   const hasPreferences = computed(() => userDietaryPreferences.value.length > 0)
-  const preferenceNames = computed(() => userDietaryPreferences.value)
+  const preferenceNames = computed(() => userDietaryPreferences.value.map(diet => diet.name))
 
   // Actions
   const loadAvailableDiets = async () => {
     try {
       isLoading.value = true
-      const response = await axios.get(`${API_URL}/diets`)
-      availableDiets.value = response.data
+      const diets = await userService.getAvailableDiets()
+      availableDiets.value = diets
     } catch (error) {
       console.error('Erreur lors du chargement des régimes disponibles:', error)
     } finally {
@@ -29,6 +27,12 @@ export const useUserPreferencesStore = defineStore('userPreferences', () => {
   }
 
   const loadUserPreferences = async () => {
+    if (!authService.isAuthenticated()) {
+      userDietaryPreferences.value = []
+      isLoaded.value = true
+      return
+    }
+
     try {
       isLoading.value = true
       const preferences = await userService.getUserDietaryPreferences()
@@ -36,19 +40,25 @@ export const useUserPreferencesStore = defineStore('userPreferences', () => {
       isLoaded.value = true
     } catch (error) {
       console.error('Erreur lors du chargement des préférences:', error)
+      // Si erreur 401, reset les préférences
+      if (error instanceof Error && error.message.includes('401')) {
+        userDietaryPreferences.value = []
+        isLoaded.value = true
+      }
     } finally {
       isLoading.value = false
     }
   }
 
-  const updatePreferences = async (dietNames: string[]) => {
+  const updatePreferences = async (dietIds: string[]) => {
+    if (!authService.isAuthenticated()) return false
+    
     try {
       isLoading.value = true
-      const success = await userService.setUserDietaryPreferences(dietNames)
-      if (success) {
-        userDietaryPreferences.value = dietNames
-      }
-      return success
+      await userService.updateUserDietaryPreferences(dietIds)
+      // Reload preferences after update
+      await loadUserPreferences()
+      return true
     } catch (error) {
       console.error('Erreur lors de la mise à jour des préférences:', error)
       return false
@@ -57,16 +67,15 @@ export const useUserPreferencesStore = defineStore('userPreferences', () => {
     }
   }
 
-  const addPreference = async (dietName: string) => {
+  const addPreference = async (diet: Diet) => {
+    if (!authService.isAuthenticated()) return false
+    
     try {
       isLoading.value = true
-      const success = await userService.addDietaryPreference(dietName)
-      if (success) {
-        if (!userDietaryPreferences.value.includes(dietName)) {
-          userDietaryPreferences.value.push(dietName)
-        }
-      }
-      return success
+      await userService.addDietaryPreference(diet)
+      // Reload preferences after adding
+      await loadUserPreferences()
+      return true
     } catch (error) {
       console.error('Erreur lors de l\'ajout de la préférence:', error)
       return false
@@ -75,14 +84,15 @@ export const useUserPreferencesStore = defineStore('userPreferences', () => {
     }
   }
 
-  const removePreference = async (dietName: string) => {
+  const removePreference = async (diet: Diet) => {
+    if (!authService.isAuthenticated()) return false
+    
     try {
       isLoading.value = true
-      const success = await userService.removeDietaryPreference(dietName)
-      if (success) {
-        userDietaryPreferences.value = userDietaryPreferences.value.filter(name => name !== dietName)
-      }
-      return success
+      await userService.removeDietaryPreference(diet)
+      // Reload preferences after removing
+      await loadUserPreferences()
+      return true
     } catch (error) {
       console.error('Erreur lors de la suppression de la préférence:', error)
       return false
@@ -92,13 +102,13 @@ export const useUserPreferencesStore = defineStore('userPreferences', () => {
   }
 
   const clearPreferences = async () => {
+    if (!authService.isAuthenticated()) return false
+    
     try {
       isLoading.value = true
-      const success = await userService.setUserDietaryPreferences([])
-      if (success) {
-        userDietaryPreferences.value = []
-      }
-      return success
+      await userService.updateUserDietaryPreferences([])
+      userDietaryPreferences.value = []
+      return true
     } catch (error) {
       console.error('Erreur lors de la suppression des préférences:', error)
       return false

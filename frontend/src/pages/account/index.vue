@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
 import Divider from 'primevue/divider'
-
-const router = useRouter()
+import { useToast } from 'primevue'
 
 const user = ref({
   firstName: 'Jean',
@@ -35,18 +33,38 @@ const passwordForm = ref({
   confirm: '',
 })
 
-const savePersonalInfo = () => {
-  console.log('Sauvegarde des informations personnelles', user.value)
-  alert('Informations personnelles sauvegardées avec succès !')
+const toast = useToast()
+
+const isLoading = ref(false)
+
+const handleSave = async () => {
+  // Logique de sauvegarde des informations personnelles
+  isLoading.value = true
+  
+  try {
+    // Simulation d'une sauvegarde réussie
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    toast.add({
+      severity: 'success',
+      summary: 'Succès',
+      detail: 'Informations sauvegardées avec succès',
+      life: 3000,
+    })
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Erreur',
+      detail: 'Erreur lors de la sauvegarde',
+      life: 3000,
+    })
+  } finally {
+    isLoading.value = false
+  }
 }
 
-const changePassword = () => {
-  if (passwordForm.value.new !== passwordForm.value.confirm) {
-    alert('Les mots de passe ne correspondent pas')
-    return
-  }
-  console.log('Changement de mot de passe')
-  passwordForm.value = { current: '', new: '', confirm: '' }
+const handlePasswordChange = () => {
+  // Logique de changement de mot de passe
 }
 </script>
 
@@ -113,22 +131,9 @@ const changePassword = () => {
             label="Enregistrer les modifications"
             icon="pi pi-save"
             class="align-self-start w-full sm:w-auto"
-            @click="savePersonalInfo"
+            @click="handleSave"
           />
         </div>
-      </div>
-
-      <Divider />
-
-      <div class="surface-card p-3 sm:p-4 border-round mb-4">
-        <h2 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Historique des commandes</h2>
-        <p class="text-500 mb-3">Consultez l'historique de vos commandes passées</p>
-        <Button
-          label="Voir l'historique"
-          icon="pi pi-shopping-bag"
-          outlined
-          @click="router.push('/account/orders')"
-        />
       </div>
 
       <Divider />
@@ -181,7 +186,7 @@ const changePassword = () => {
             label="Changer le mot de passe"
             icon="pi pi-save"
             class="align-self-start w-full sm:w-auto"
-            @click="changePassword"
+            @click="handlePasswordChange"
           />
         </div>
       </div>

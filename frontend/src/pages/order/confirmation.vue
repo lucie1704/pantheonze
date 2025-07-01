@@ -20,7 +20,7 @@ onMounted(() => {
   if (pickupData) pickupInfo.value = JSON.parse(pickupData)
 
   // Envoi de l'email de confirmation (simulation)
-  sendConfirmationEmail()
+  handleEmailConfirmation()
 
   // Nettoyage du localStorage
   localStorage.removeItem('cart')
@@ -29,14 +29,12 @@ onMounted(() => {
   localStorage.removeItem('orderNumber')
 })
 
-const sendConfirmationEmail = async () => {
-  // Simulation d'envoi d'email
-  console.log('Email de confirmation envoyé')
+const handleEmailConfirmation = () => {
+  // Logique pour renvoyer l'email de confirmation
 }
 
-const downloadInvoice = () => {
-  // Simulation de téléchargement de facture
-  console.log('Téléchargement de la facture')
+const handleDownloadInvoice = () => {
+  // Logique pour télécharger la facture
 }
 
 const returnToHome = () => {
@@ -118,7 +116,7 @@ const returnToHome = () => {
           label="Télécharger la facture"
           icon="pi pi-download"
           outlined
-          @click="downloadInvoice"
+          @click="handleDownloadInvoice"
         />
 
         <Button

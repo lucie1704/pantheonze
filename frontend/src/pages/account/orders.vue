@@ -165,9 +165,6 @@ const getItemCount = (order: Order) => {
               </div>
               <p class="text-500 mb-1">{{ formatDate(order.createdAt) }}</p>
               <p class="text-500 mb-2">{{ getItemCount(order) }} article(s) • {{ order.total.toFixed(2) }}€</p>
-              <p v-if="order.delivery?.address" class="text-sm text-500">
-                📍 {{ order.delivery.address }}
-              </p>
             </div>
 
             <!-- Bouton voir détails -->
@@ -200,49 +197,38 @@ const getItemCount = (order: Order) => {
                 <Tag
                   :value="getStatusLabel(selectedOrder.status)"
                   :severity="getStatusSeverity(selectedOrder.status)"
-                  class="ml-2"
                 />
               </p>
               <p><strong>Total :</strong> {{ selectedOrder.total.toFixed(2) }}€</p>
             </div>
             <div class="col-12 md:col-6">
-              <p><strong>Méthode de paiement :</strong> {{ selectedOrder.paymentMethod || 'Non spécifiée' }}</p>
-              <p><strong>Statut paiement :</strong> {{ selectedOrder.paymentStatus }}</p>
-              <p v-if="selectedOrder.notes"><strong>Notes :</strong> {{ selectedOrder.notes }}</p>
+              <p><strong>Nom :</strong> {{ selectedOrder.customerName }}</p>
+              <p><strong>Email :</strong> {{ selectedOrder.customerEmail }}</p>
+              <p v-if="selectedOrder.customerPhone"><strong>Téléphone :</strong> {{ selectedOrder.customerPhone }}</p>
             </div>
           </div>
         </div>
 
-        <!-- Adresse de livraison -->
-        <div v-if="selectedOrder.delivery" class="surface-card p-4 border-round">
-          <h3 class="text-xl font-bold mb-3">Adresse de livraison</h3>
-          <p><strong>Adresse :</strong> {{ selectedOrder.delivery.address }}</p>
-          <p v-if="selectedOrder.delivery.phone"><strong>Téléphone :</strong> {{ selectedOrder.delivery.phone }}</p>
-          <p v-if="selectedOrder.delivery.timeSlot"><strong>Créneau :</strong> {{ selectedOrder.delivery.timeSlot }}</p>
-          <p v-if="selectedOrder.delivery.instructions"><strong>Instructions :</strong> {{ selectedOrder.delivery.instructions }}</p>
-        </div>
-
-        <!-- Produits commandés -->
+        <!-- Articles -->
         <div class="surface-card p-4 border-round">
-          <h3 class="text-xl font-bold mb-3">Produits commandés</h3>
+          <h3 class="text-xl font-bold mb-3">Articles commandés</h3>
           <div class="space-y-3">
             <div
               v-for="item in selectedOrder.items"
               :key="item.id"
               class="flex align-items-center gap-3 p-3 border-1 surface-border border-round"
             >
-              <div class="w-4rem h-4rem border-round overflow-hidden bg-gray-100 flex-shrink-0">
-                <img
-                  :src="item.pastry.images[0] || '/no-image.svg'"
-                  :alt="item.pastry.name"
-                  class="w-full h-full object-cover"
-                />
-              </div>
+              <img
+                :src="item.pastry.images[0] || '/no-image.svg'"
+                :alt="item.pastry.name"
+                class="w-4rem h-4rem object-cover border-round"
+              />
               <div class="flex-1">
-                <h4 class="font-semibold mb-1">{{ item.pastry.name }}</h4>
+                <h4 class="text-lg font-semibold mb-1">{{ item.pastry.name }}</h4>
+                <p class="text-500 mb-1">{{ item.pastry.category.name }}</p>
                 <div 
                   v-if="item.pastry.diets && item.pastry.diets.length > 0"
-                  class="flex gap-1 mb-1"
+                  class="flex gap-1 mb-1" 
                 >
                   <DietIcon
                     v-for="diet in item.pastry.diets"
@@ -251,57 +237,22 @@ const getItemCount = (order: Order) => {
                     :label="DIET_CONFIG[diet.name]?.label"
                   />
                 </div>
-                <p class="text-sm text-500">{{ item.pastry.category.name }}</p>
+                <p class="text-sm text-500">{{ item.pastry.description }}</p>
               </div>
               <div class="text-right">
-                <p class="font-semibold">{{ item.quantity }}x</p>
-                <p class="text-500">{{ (item.price * item.quantity).toFixed(2) }}€</p>
+                <p class="font-semibold">{{ item.quantity }} × {{ item.price.toFixed(2) }}€</p>
+                <p class="text-lg font-bold">{{ (item.quantity * item.price).toFixed(2) }}€</p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Détails du prix -->
-        <div class="surface-card p-4 border-round">
-          <h3 class="text-xl font-bold mb-3">Détails du prix</h3>
-          <div class="space-y-2">
-            <div class="flex justify-content-between">
-              <span>Sous-total</span>
-              <span>{{ selectedOrder.subtotal.toFixed(2) }}€</span>
-            </div>
-            <div v-if="selectedOrder.taxAmount > 0" class="flex justify-content-between">
-              <span>TVA</span>
-              <span>{{ selectedOrder.taxAmount.toFixed(2) }}€</span>
-            </div>
-            <div v-if="selectedOrder.deliveryFee > 0" class="flex justify-content-between">
-              <span>Frais de livraison</span>
-              <span>{{ selectedOrder.deliveryFee.toFixed(2) }}€</span>
-            </div>
-            <div v-if="selectedOrder.discount > 0" class="flex justify-content-between text-success">
-              <span>Réduction</span>
-              <span>-{{ selectedOrder.discount.toFixed(2) }}€</span>
-            </div>
-            <div class="flex justify-content-between font-bold text-lg border-top-1 surface-border pt-2">
-              <span>Total</span>
-              <span>{{ selectedOrder.total.toFixed(2) }}€</span>
-            </div>
-          </div>
+        <!-- Notes -->
+        <div v-if="selectedOrder.notes" class="surface-card p-4 border-round">
+          <h3 class="text-xl font-bold mb-3">Notes</h3>
+          <p>{{ selectedOrder.notes }}</p>
         </div>
       </div>
     </Dialog>
   </div>
 </template>
-
-<style scoped>
-.space-y-4 > * + * {
-  margin-top: 1rem;
-}
-
-.space-y-3 > * + * {
-  margin-top: 0.75rem;
-}
-
-.space-y-2 > * + * {
-  margin-top: 0.5rem;
-}
-</style>

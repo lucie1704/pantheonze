@@ -157,14 +157,13 @@ const proceedToCheckout = () => {
                         <h3 class="text-xl mb-0 mt-0">{{ item.pastry.name }}</h3>
                         <div 
                           v-if="item.pastry.diets && item.pastry.diets.length > 0"
-                          class="" 
+                          class="flex gap-1" 
                         >
                           <DietIcon
-                            v-for="(diet, index) in item.pastry.diets"
+                            v-for="diet in item.pastry.diets"
                             :key="diet.id"
                             :diet-name="DIET_CONFIG[diet.name]?.dietName"
                             :label="DIET_CONFIG[diet.name]?.label"
-                            :class="index < item.pastry.diets.length - 1 ? 'mb-1' : ''"
                           />
                         </div>
                       </div>
@@ -237,14 +236,13 @@ const proceedToCheckout = () => {
                   <h3 class="text-lg mb-0 mt-0">{{ item.pastry.name }}</h3>
                   <div 
                     v-if="item.pastry.diets && item.pastry.diets.length > 0"
-                    class="" 
+                    class="flex gap-1" 
                   >
                     <DietIcon
-                      v-for="(diet, index) in item.pastry.diets"
+                      v-for="diet in item.pastry.diets"
                       :key="diet.id"
                       :diet-name="DIET_CONFIG[diet.name]?.dietName"
                       :label="DIET_CONFIG[diet.name]?.label"
-                      :class="index < item.pastry.diets.length - 1 ? 'mb-1' : ''"
                     />
                   </div>
                 </div>

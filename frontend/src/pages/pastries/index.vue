@@ -118,7 +118,7 @@ const loadFromURL = async () => {
 const applyUserPreferences = async () => {
   if (!route.query.diets && !ignoreUserPreferences.value) {
     if (userPreferencesStore.userDietaryPreferences.length > 0 && filters.value.diets.length === 0) {
-      filters.value.diets = userPreferencesStore.userDietaryPreferences
+      filters.value.diets = userPreferencesStore.userDietaryPreferences.map(diet => diet.id)
     }
   }
 }
@@ -137,7 +137,6 @@ const handleAddToCart = async ({ pastryId, quantity }: { pastryId: string; quant
         group: 'cart'
       })
     } catch (error) {
-      console.error('Erreur lors de l\'ajout au panier:', error)
       toast.add({
         severity: 'error',
         summary: 'Erreur',

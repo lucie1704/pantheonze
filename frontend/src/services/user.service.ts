@@ -2,167 +2,144 @@ import axios from 'axios'
 import { API_URL } from '@/constants/api'
 import { authService } from './auth.service'
 
-export interface UserPreferences {
-  favoriteCategories: string[]
-  dietaryRestrictions: string[]
-}
-
 export interface User {
   id: string
   email: string
   name: string
   phone?: string
-  addresses: string[]
-  preferences?: UserPreferences
-  isActive: boolean
-  lastLogin?: Date
-  createdAt: Date
-  updatedAt: Date
+  role: string
+  createdAt: string
+  updatedAt: string
 }
 
-export const userService = {
-  getCurrentUser: async (): Promise<User> => {
-    try {
-      const response = await axios.get<User>(`${API_URL}/user/profile`)
-      return response.data
-    } catch (error) {
-      console.error('Error fetching user profile:', error)
-      throw error
-    }
-  },
+export interface UserPreferences {
+  dietaryRestrictions: string[]
+  allergens: string[]
+  favoriteCategories: string[]
+}
 
-  updateUserPreferences: async (preferences: UserPreferences): Promise<void> => {
-    try {
-      await axios.patch(`${API_URL}/user/preferences`, { preferences })
-    } catch (error) {
-      console.error('Error updating user preferences:', error)
-      throw error
-    }
-  },
+export interface Diet {
+  id: string
+  name: string
+}
 
-  getUserDietaryPreferences: async (): Promise<string[]> => {
+class UserService {
+  async getUserProfile(): Promise<User> {
+    const response = await axios.get<User>(`${API_URL}/users/profile`)
+    return response.data
+  }
+
+  async updateUserPreferences(preferences: UserPreferences): Promise<void> {
+    await axios.patch(`${API_URL}/users/preferences`, { preferences })
+  }
+
+  async getAvailableDiets(): Promise<Diet[]> {
     try {
-      const token = authService.getToken()
-      if (!token) {
-        return []
+      const response = await fetch(`${API_URL}/users/available-diets`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch available diets')
       }
+      return await response.json()
+    } catch (error) {
+      console.error('Error fetching available diets:', error)
+      throw error
+    }
+  }
 
-      const response = await fetch(`${API_URL}/user/dietary-preferences`, {
+  async getUserDietaryPreferences(): Promise<Diet[]> {
+    try {
+      const response = await fetch(`${API_URL}/users/dietary-preferences`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${authService.getToken()}`
         }
       })
-
-      if (response.ok) {
-        const preferences = await response.json()
-        return preferences.map((pref: { name: string }) => pref.name)
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Non autorisé')
+        }
+        throw new Error('Erreur lors de la récupération des préférences')
       }
       
-      return []
+      return await response.json()
     } catch (error) {
-      console.error('Erreur lors de la récupération des préférences:', error)
-      return []
+      console.error('Error fetching user dietary preferences:', error)
+      throw error
     }
-  },
+  }
 
-  setUserDietaryPreferences: async (dietNames: string[]): Promise<boolean> => {
+  async updateUserDietaryPreferences(dietIds: string[]): Promise<void> {
     try {
-      const token = authService.getToken()
-      if (!token) {
-        return false
-      }
-
-      const dietsResponse = await fetch(`${API_URL}/diets`)
-      if (!dietsResponse.ok) {
-        return false
-      }
-
-      const availableDiets = await dietsResponse.json()
-      const dietIds = dietNames
-        .map(name => availableDiets.find((diet: { name: string }) => diet.name === name)?.id)
-        .filter(id => id !== undefined)
-
-      const response = await fetch(`${API_URL}/user/dietary-preferences`, {
+      const response = await fetch(`${API_URL}/users/dietary-preferences`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authService.getToken()}`
         },
         body: JSON.stringify({ dietIds })
       })
-
-      return response.ok
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour des préférences:', error)
-      return false
-    }
-  },
-
-  addDietaryPreference: async (dietName: string): Promise<boolean> => {
-    try {
-      const token = authService.getToken()
-      if (!token) {
-        return false
-      }
-
-      const dietsResponse = await fetch(`${API_URL}/diets`)
-      if (!dietsResponse.ok) {
-        return false
-      }
-
-      const availableDiets = await dietsResponse.json()
-      const diet = availableDiets.find((d: { name: string }) => d.name === dietName)
-      if (!diet) {
-        return false
-      }
-
-      const response = await fetch(`${API_URL}/user/dietary-preferences`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ dietId: diet.id })
-      })
-
-      return response.ok
-    } catch (error) {
-      console.error('Erreur lors de l\'ajout de la préférence:', error)
-      return false
-    }
-  },
-
-  removeDietaryPreference: async (dietName: string): Promise<boolean> => {
-    try {
-      const token = authService.getToken()
-      if (!token) {
-        return false
-      }
-
-      const dietsResponse = await fetch(`${API_URL}/diets`)
-      if (!dietsResponse.ok) {
-        return false
-      }
-
-      const availableDiets = await dietsResponse.json()
-      const diet = availableDiets.find((d: { name: string }) => d.name === dietName)
-      if (!diet) {
-        return false
-      }
-
-      const response = await fetch(`${API_URL}/user/dietary-preferences/${diet.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Non autorisé')
         }
-      })
-
-      return response.ok
+        throw new Error('Erreur lors de la mise à jour des préférences')
+      }
     } catch (error) {
-      console.error('Erreur lors de la suppression de la préférence:', error)
-      return false
+      console.error('Error updating user dietary preferences:', error)
+      throw error
     }
   }
-} 
+
+  async addDietaryPreference(diet: Diet): Promise<void> {
+    try {
+      const response = await fetch(`${API_URL}/users/dietary-preferences`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authService.getToken()}`
+        },
+        body: JSON.stringify({
+          dietId: diet.id,
+          dietName: diet.name
+        })
+      })
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Non autorisé')
+        }
+        if (response.status === 409) {
+          throw new Error('Cette préférence alimentaire est déjà ajoutée')
+        }
+        throw new Error('Erreur lors de l\'ajout de la préférence')
+      }
+    } catch (error) {
+      console.error('Error adding dietary preference:', error)
+      throw error
+    }
+  }
+
+  async removeDietaryPreference(diet: Diet): Promise<void> {
+    try {
+      const response = await fetch(`${API_URL}/users/dietary-preferences/${diet.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${authService.getToken()}`
+        }
+      })
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Non autorisé')
+        }
+        throw new Error('Erreur lors de la suppression de la préférence')
+      }
+    } catch (error) {
+      console.error('Error removing dietary preference:', error)
+      throw error
+    }
+  }
+}
+
+export const userService = new UserService() 

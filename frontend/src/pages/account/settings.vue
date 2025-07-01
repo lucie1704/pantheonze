@@ -74,14 +74,13 @@ const resetSettings = async () => {
 }
 
 watch(() => userPreferencesStore.userDietaryPreferences, (newPreferences) => {
-  settings.value.dietaryRestrictions = [...newPreferences]
+  settings.value.dietaryRestrictions = newPreferences.map(diet => diet.name)
 }, { immediate: true })
 
 onMounted(async () => {
   try {
     await userPreferencesStore.initialize()
   } catch (error) {
-    console.error('Erreur lors de l\'initialisation:', error)
     toast.add({
       severity: 'error',
       summary: 'Erreur',
