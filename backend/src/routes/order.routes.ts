@@ -4,26 +4,26 @@ import { checkAuthentication, checkRole } from "@/middlewares";
 
 export default function orderRoutes(router: Router) {  
   router.get(
-    "/order", 
+    "/orders", 
     checkAuthentication, 
     OrderController.getUserOrders
   );
   
   router.get(
-    "/:orderId", 
+    "/orders/:orderId", 
     checkAuthentication, 
     OrderController.getOrderById
   );
 
   router.get(
-    "/admin/all", 
+    "/orders/admin/all", 
     checkAuthentication, 
     checkRole(['ADMIN', 'STOREKEEPER']), 
     OrderController.getAllOrders
   );
 
   router.put(
-    "/admin/:orderId/status", 
+    "/orders/admin/:orderId/status", 
     checkAuthentication, 
     checkRole(['ADMIN', 'STOREKEEPER']), 
     OrderController.updateOrderStatus

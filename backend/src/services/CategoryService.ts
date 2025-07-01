@@ -18,7 +18,6 @@ class CategoryService {
     });
 
     this.isInitialized = true;
-    console.log(`Cache initialized with ${categories.length} categories`);
   }
 
   getCategoryIdByName(name: string) {

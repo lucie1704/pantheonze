@@ -18,7 +18,6 @@ class DietService {
     });
 
     this.isInitialized = true;
-    console.log(`Cache initialized with ${diets.length} diets`);
   }
 
   getDietIdByName(name: string) {
