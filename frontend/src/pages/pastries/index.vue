@@ -118,7 +118,7 @@ const loadFromURL = async () => {
 const applyUserPreferences = async () => {
   if (!route.query.diets && !ignoreUserPreferences.value) {
     if (userPreferencesStore.userDietaryPreferences.length > 0 && filters.value.diets.length === 0) {
-      filters.value.diets = userPreferencesStore.userDietaryPreferences.map(diet => diet.id)
+      filters.value.diets = userPreferencesStore.userDietaryPreferences.map(diet => diet.name)
     }
   }
 }

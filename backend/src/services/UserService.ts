@@ -14,7 +14,19 @@ export class UserService {
     return userDiets.map((ud: any) => ud.diet)
   }
 
-  async updateUserDietaryPreferences(userId: string, dietIds: string[]): Promise<{ id: string; name: string }[]> {
+  async updateUserDietaryPreferences(userId: string, dietNames: string[]): Promise<{ id: string; name: string }[]> {
+    // Récupérer les IDs des régimes à partir des noms
+    let dietIds: string[] = []
+    if (dietNames.length > 0) {
+      const diets = await prismaClient.diet.findMany({
+        where: {
+          name: { in: dietNames }
+        },
+        select: { id: true }
+      })
+      dietIds = diets.map(diet => diet.id)
+    }
+
     // Supprimer toutes les préférences existantes
     await prismaClient.userDiet.deleteMany({
       where: { userId }
