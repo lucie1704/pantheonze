@@ -678,4 +678,20 @@ const handleCreatePastry = async (pastry: Partial<Pastry>) => {
 :deep(.p-dropdown-trigger) {
   display: none;
 }
+
+/* Styles pour les images du tableau */
+:deep(.p-datatable .p-datatable-tbody img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Conteneur des images */
+:deep(.p-datatable .p-datatable-tbody .w-3rem.h-3rem) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
 </style> 

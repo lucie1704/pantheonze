@@ -117,20 +117,17 @@ onMounted(() => {
   loadDiets()
 })
 
-// Vérifier si on est en mode édition
 const isEditing = computed(() => {
   return Object.values(editingState).some(state => state)
 })
 
-// Ajuster le line-clamp de la description selon l'état d'édition
 const descriptionLineClamp = computed(() => {
   const editingFields = ['name', 'price', 'stockCount', 'category']
   const isEditingMainFields = editingFields.some(field => editingState[field as keyof typeof editingState])
   
-  return isEditingMainFields ? 'line-clamp-6-custom' : 'line-clamp-7-custom'
+  return isEditingMainFields ? 'line-clamp-6-custom' : 'line-clamp-6-custom'
 })
 
-// Initialiser les données éditables quand le pastry change
 const initializeEditableData = () => {
   if (props.pastry) {
     editableData.value = {
@@ -590,7 +587,7 @@ const addIngredient = () => {
                   v-for="(ingredient, index) in pastry.ingredients" 
                   :key="index"
                   :value="ingredient"
-                  severity="secondary"
+                  class="bg-gray-200 text-gray-700 "
                 />
               </div>
               <div v-else class="flex align-items-start gap-2">
@@ -599,15 +596,15 @@ const addIngredient = () => {
                     <div 
                       v-for="(ingredient, index) in editableData.ingredients" 
                       :key="index"
-                      class="flex align-items-center gap-1 surface-100 border-round px-2 py-1 cursor-pointer hover:surface-200"
+                      class="flex align-items-center gap-1 bg-gray-100 border-round px-2 py-1 cursor-pointer hover:bg-gray-200"
                       @click="() => {
                         if (editableData.ingredients) {
                           editableData.ingredients = editableData.ingredients.filter((_, i) => i !== index)
                         }
                       }"
                     >
-                      <i class="pi pi-times text-500 text-sm"></i>
-                      <span class="text-600">{{ ingredient }}</span>
+                      <i class="pi pi-times text-500 text-gray-700 text-sm"></i>
+                      <span class="text-gray-700 text-600">{{ ingredient }}</span>
                     </div>
                   </div>
                   <div class="flex gap-2">
@@ -652,7 +649,7 @@ const addIngredient = () => {
                   v-for="(allergen, index) in pastry.nutrition?.allergens || []" 
                   :key="index"
                   :value="allergen"
-                  severity="secondary"
+                  class="bg-gray-200 text-gray-700"
                 />
                 <div v-if="!pastry.nutrition?.allergens || pastry.nutrition.allergens.length === 0" class="text-500 italic">
                   Aucun allergène déclaré
@@ -664,15 +661,15 @@ const addIngredient = () => {
                     <div 
                       v-for="(allergen, index) in editableData.nutrition?.allergens || []" 
                       :key="index"
-                      class="flex align-items-center gap-1 surface-100 border-round px-2 py-1 cursor-pointer hover:surface-200"
+                      class="flex align-items-center gap-1 bg-gray-100 border-round px-2 py-1 cursor-pointer hover:bg-gray-200"
                       @click="() => {
                         if (editableData.nutrition) {
                           editableData.nutrition.allergens = editableData.nutrition.allergens.filter((_, i) => i !== index)
                         }
                       }"
                     >
-                      <i class="pi pi-times text-500 text-sm"></i>
-                      <span class="text-600">{{ allergen }}</span>
+                      <i class="pi pi-times text-500 text-gray-700 text-sm"></i>
+                      <span class="text-gray-700 text-600">{{ allergen }}</span>
                     </div>
                   </div>
                   <div class="flex gap-2">
@@ -855,19 +852,19 @@ const addIngredient = () => {
   object-fit: cover;
 }
 
-.line-clamp-7-custom {
+.line-clamp-6-custom {
   display: -webkit-box;
-  line-clamp: 7;
-  -webkit-line-clamp: 7;
+  line-clamp: 6;
+  -webkit-line-clamp: 6;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.line-clamp-6-custom {
+.line-clamp-5-custom {
   display: -webkit-box;
-  line-clamp: 6;
-  -webkit-line-clamp: 6;
+  line-clamp: 5;
+  -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
