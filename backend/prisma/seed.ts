@@ -1,5 +1,6 @@
 import { prismaClient as prisma } from '@/services'
 import { hash } from 'bcrypt'
+import { OrderStatus } from '@prisma/client'
 
 const PASTRIES_IMAGES = {
   brioche1: 'https://images.unsplash.com/photo-1552056413-b8b5eed0170b?q=80&w=858&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -62,7 +63,7 @@ async function main() {
     categories[cat.name] = created.id
   }
 
-  console.log('✅ Catégories créées')
+  console.log('✅ Catégories')
 
   const dietsData = [
     { name: 'Végétarien' },
@@ -77,7 +78,7 @@ async function main() {
     diets[diet.name] = created.id
   }
 
-  console.log('✅ Diets créés')
+  console.log('✅ Régimes alimentaires')
 
   // Créer les utilisateurs de test
   const hashedPassword = await hash('P@nt3h0nz3_2025!', 10)
@@ -146,7 +147,7 @@ async function main() {
     }
   })
 
-  console.log('✅ Utilisateurs créés')
+  console.log('✅ Utilisateurs')
 
   // Créer toutes les pâtisseries
   const pastries = await Promise.all([
@@ -810,10 +811,7 @@ async function main() {
     }),
   ])
 
-  console.log('✅ Pâtisseries créées')
-
-  // Créer des commandes pour les utilisateurs
-  console.log('📦 Création des commandes...')
+  console.log('✅ Pâtisseries')
 
   // Récupérer des pâtisseries spécifiques pour les commandes
   const brioche = await prisma.pastry.findFirst({ where: { slug: 'brioche-artisanale' } })
@@ -826,7 +824,7 @@ async function main() {
   const muffinSansSucre = await prisma.pastry.findFirst({ where: { slug: 'muffin-pomme-cannelle-sans-sucre' } })
 
   if (brioche && chouquettes && croissant && painAuChocolat && eclair && tarteCitron && brownieVegan && muffinSansSucre) {
-    // Commande 1 pour Marie Jacques (vegan + sans gluten) - commande livrée
+    // Commande 1 pour Marie Jacques (vegan + sans gluten) - commande récupérée
     const order1Marie = await prisma.order.create({
       data: {
         userId: clientMarieJacques.id,
@@ -837,11 +835,12 @@ async function main() {
         taxAmount: 2.76,
         discount: 0,
         total: 16.56,
-        status: 'DELIVERED',
+        status: 'PICKED_UP' as any,
         paymentMethod: 'Carte bancaire',
         paymentStatus: 'PAID',
         estimatedReady: new Date(Date.now() - 2 * 60 * 60 * 1000), // +2h
         readyAt: new Date(Date.now() - 1.5 * 60 * 60 * 1000), // +1.5h
+        pickedUpAt: new Date(Date.now() - 1 * 60 * 60 * 1000), // -1h
         createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // -7 jours
       }
     })
@@ -877,7 +876,7 @@ async function main() {
         taxAmount: 0.90,
         discount: 0,
         total: 5.40,
-        status: 'PENDING',
+        status: OrderStatus.PENDING,
         paymentMethod: 'Espèces',
         paymentStatus: 'PENDING',
         estimatedReady: new Date(Date.now() + 3 * 60 * 60 * 1000), // +3h
@@ -896,7 +895,7 @@ async function main() {
         taxAmount: 3.12,
         discount: 0,
         total: 18.72,
-        status: 'PREPARING',
+        status: OrderStatus.PREPARING,
         paymentMethod: 'Carte bancaire',
         paymentStatus: 'PAID',
         estimatedReady: new Date(Date.now() + 1.5 * 60 * 60 * 1000), // +1.5h
@@ -924,7 +923,7 @@ async function main() {
       ]
     })
 
-    // Commande 2 pour Pierre Laroche - commande livrée
+    // Commande 2 pour Pierre Laroche - commande récupérée
     const order2Pierre = await prisma.order.create({
       data: {
         userId: clientPierreLaroche.id,
@@ -935,11 +934,12 @@ async function main() {
         taxAmount: 4.50,
         discount: 2.50,
         total: 24.50,
-        status: 'DELIVERED',
+        status: 'PICKED_UP' as any,
         paymentMethod: 'Carte bancaire',
         paymentStatus: 'PAID',
         estimatedReady: new Date(Date.now() - 4 * 60 * 60 * 1000), // -4h
         readyAt: new Date(Date.now() - 3.5 * 60 * 60 * 1000), // -3.5h
+        pickedUpAt: new Date(Date.now() - 3 * 60 * 60 * 1000), // -3h
         createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // -5 jours
       }
     })
@@ -971,7 +971,7 @@ async function main() {
       ]
     })
 
-    console.log('✅ Commandes et OrderItems créés avec succès')
+    console.log('✅ Commandes')
   }
 
   console.log('✅ Base de données initialisée avec succès !')

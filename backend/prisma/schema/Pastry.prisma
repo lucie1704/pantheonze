@@ -6,7 +6,7 @@ model Pastry {
   images          String[]
   categoryId      String    @db.ObjectId
   category        Category  @relation(fields: [categoryId], references: [id])
-  dietIds         String[]  @db.ObjectId    
+  dietIds         String[]  @db.ObjectId
   tags            String[]
   ingredients     String[]
   nutrition       PastryNutrition?

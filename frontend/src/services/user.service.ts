@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { API_URL } from '@/constants/api'
-import { authService } from './auth.service'
+import { authService } from '@/services'
 
 export interface User {
   id: string
@@ -101,7 +101,7 @@ class UserService {
         },
         body: JSON.stringify({
           dietId: diet.id,
-          dietName: diet.name
+          name: diet.name
         })
       })
       

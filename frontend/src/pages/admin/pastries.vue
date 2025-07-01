@@ -513,8 +513,8 @@ const handleCreatePastry = async (pastry: Partial<Pastry>) => {
             <div class="flex gap-1 flex-wrap">
               <DietIcon
                 v-for="diet in slotProps.data.diets"
-                :diet-name="DIET_CONFIG[diet.name]?.dietName"
                 :key="diet.id"
+                :name="DIET_CONFIG[diet.name]?.name"
                 :label="diet.name"
               />
             </div>

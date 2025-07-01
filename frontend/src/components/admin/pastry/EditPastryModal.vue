@@ -504,7 +504,7 @@ const addIngredient = () => {
               <div v-if="!editingState.diets" class="flex gap-2 flex-wrap">
                 <DietIcon
                   v-for="diet in pastry.diets"
-                  :diet-name="DIET_CONFIG[diet.name]?.dietName"
+                  :name="DIET_CONFIG[diet.name]?.name"
                   :key="diet.id"
                   :label="diet.name"
                 />

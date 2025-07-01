@@ -31,7 +31,6 @@ export interface Order {
   items: OrderItem[]
   subtotal: number
   taxAmount: number
-  deliveryFee: number
   discount: number
   total: number
   status: string

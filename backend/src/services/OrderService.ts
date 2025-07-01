@@ -26,6 +26,24 @@ export class OrderService {
         }
       });
 
+      // Manually fetch diets for each pastry in each order
+      for (const order of orders) {
+        for (const item of order.items) {
+          if (item.pastry.dietIds && item.pastry.dietIds.length > 0) {
+            const diets = await prismaClient.diet.findMany({
+              where: {
+                id: { in: item.pastry.dietIds }
+              },
+              select: {
+                id: true,
+                name: true
+              }
+            });
+            (item.pastry as any).diets = diets;
+          }
+        }
+      }
+
       return orders;
     } catch (error) {
       console.error('Error getting user orders:', error);
@@ -57,6 +75,24 @@ export class OrderService {
           }
         }
       });
+
+      if (order) {
+        // Manually fetch diets for each pastry
+        for (const item of order.items) {
+          if (item.pastry.dietIds && item.pastry.dietIds.length > 0) {
+            const diets = await prismaClient.diet.findMany({
+              where: {
+                id: { in: item.pastry.dietIds }
+              },
+              select: {
+                id: true,
+                name: true
+              }
+            });
+            (item.pastry as any).diets = diets;
+          }
+        }
+      }
 
       return order;
     } catch (error) {

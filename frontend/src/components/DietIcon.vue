@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import Tag from 'primevue/tag'
 
 const props = defineProps<{
-  dietName: string
+  name: string
   label: string
   iconOnly?: boolean
 }>()
@@ -19,7 +19,7 @@ const dietIcons = {
 
 // Computed pour obtenir le SVG correspondant
 const svgContent = computed(() => {
-  return dietIcons[props.dietName as keyof typeof dietIcons] || ''
+  return dietIcons[props.name as keyof typeof dietIcons] || ''
 })
 </script>
 

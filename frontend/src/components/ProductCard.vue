@@ -87,7 +87,7 @@ const incrementQuantity = () => {
               <DietIcon
                 v-for="diet in pastry.diets"
                 :key="diet.id"
-                :diet-name="DIET_CONFIG[diet.name]?.dietName"
+                :name="DIET_CONFIG[diet.name]?.name"
                 :label="DIET_CONFIG[diet.name]?.label"
                 :icon-only="true"
               />

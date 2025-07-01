@@ -1,22 +1,22 @@
-export const DIET_CONFIG: Record<string, { dietName: string; label: string }> = {
+export const DIET_CONFIG: Record<string, { name: string; label: string }> = {
   Végétarien: {
-    dietName: 'vegetarian',
+    name: 'vegetarian',
     label: 'Végétarien',
   },
   Vegan: {
-    dietName: 'vegan',
+    name: 'vegan',
     label: 'Vegan',
   },
   'Sans Gluten': {
-    dietName: 'gluten-free',
+    name: 'gluten-free',
     label: 'Sans Gluten',
   },
   'Sans Lactose': {
-    dietName: 'lactose-free',
+    name: 'lactose-free',
     label: 'Sans Lactose',
   },
   'Sans Sucre': {
-    dietName: 'sugar-free',
+    name: 'sugar-free',
     label: 'Sans Sucre',
   },
 } 
