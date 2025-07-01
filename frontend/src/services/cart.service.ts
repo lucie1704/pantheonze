@@ -18,6 +18,10 @@ export interface CartItem {
       id: string
       name: string
     }
+    diets?: Array<{
+      id: string
+      name: string
+    }>
   }
 }
 
@@ -52,7 +56,8 @@ class CartService {
     }
 
     const cartData = await response.json()
-    return cartData.data
+    
+    return cartData.data || cartData
   }
 
   async addItemToCart(pastryId: string, quantity: number = 1): Promise<CartItem> {

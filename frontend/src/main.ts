@@ -23,6 +23,7 @@ import Select from 'primevue/select'
 import Drawer from 'primevue/drawer'
 import Dropdown from 'primevue/dropdown'
 import Menu from 'primevue/menu'
+import ProgressSpinner from 'primevue/progressspinner'
 
 import App from './App.vue'
 import { router } from './router'
@@ -121,6 +122,7 @@ app.component('Select', Select)
 app.component('Drawer', Drawer)
 app.component('Dropdown', Dropdown)
 app.component('Menu', Menu)
+app.component('ProgressSpinner', ProgressSpinner)
 
 // Register directives
 app.directive('tooltip', Tooltip)

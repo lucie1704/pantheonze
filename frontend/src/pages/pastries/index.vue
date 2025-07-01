@@ -462,7 +462,7 @@ watch(products, () => {
         v-else-if="error"
         class="flex justify-content-center"
       >
-        <Message
+        <Toast
           severity="error"
           :text="error"
         />

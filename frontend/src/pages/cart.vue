@@ -6,6 +6,8 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import { useCartStore } from '@/stores/cart'
 import { useToast } from 'primevue/usetoast'
+import DietIcon from '@/components/DietIcon.vue'
+import { DIET_CONFIG } from '@/constants/diets'
 
 const router = useRouter()
 const route = useRoute()
@@ -16,29 +18,22 @@ const promoCode = ref('')
 const promoApplied = ref(false)
 const promoDiscount = ref(0)
 
-// Charger le panier au montage
 onMounted(() => {
   cartStore.fetchCart()
 })
 
-// Recharger le panier quand on navigue vers cette page
 watch(() => route.path, (newPath) => {
   if (newPath === '/cart') {
     cartStore.fetchCart()
   }
 })
 
-// Calculs
 const subtotal = computed(() => {
   return cartStore.items.reduce((total, item) => total + (item.price * item.quantity), 0)
 })
 
-const preparationFees = computed(() => {
-  return subtotal.value > 50 ? 0 : 5
-})
-
 const total = computed(() => {
-  return subtotal.value + preparationFees.value - promoDiscount.value
+  return subtotal.value - promoDiscount.value
 })
 
 // Actions
@@ -110,7 +105,7 @@ const proceedToCheckout = () => {
 
     <!-- Panier vide -->
     <div
-      v-if="cartStore.isEmpty && !cartStore.loading"
+      v-if="!cartStore.loading && cartStore.isEmpty"
       class="text-center py-8"
     >
       <i class="pi pi-shopping-cart text-6xl text-400 mb-4"></i>
@@ -125,62 +120,170 @@ const proceedToCheckout = () => {
 
     <!-- Panier avec articles -->
     <div
-      v-else-if="cartStore.items.length > 0"
+      v-else-if="!cartStore.loading && !cartStore.isEmpty"
       class="grid"
     >
       <!-- Liste des produits -->
       <div class="col-12 lg:col-8">
+
         <div class="surface-card p-4 border-round mb-4">
-          <!-- En-tête -->
-          <div class="flex justify-content-between border-bottom-1 surface-border pb-3 mb-3">
-            <span class="font-bold">Produit</span>
-            <div class="flex gap-4">
-              <span class="font-bold">Quantité</span>
-              <span class="font-bold">Prix</span>
-            </div>
+          <!-- Version Desktop -->
+          <div class="hidden md:block">
+            <table class="w-full">
+              <thead>
+                <tr class="border-bottom-2 surface-border pb-3 mb-3">
+                  <th class="text-left font-bold pb-3 border-bottom-1 surface-border" style="width: 30%;">Produit</th>
+                  <th class="text-center font-bold pb-3 border-bottom-1 surface-border">Quantité</th>
+                  <th class="text-center font-bold pb-3 border-bottom-1 surface-border">Prix</th>
+                  <th class="text-center font-bold pb-3 border-bottom-1 surface-border w-3rem"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="item in cartStore.items"
+                  :key="item.id"
+                >
+                  <!-- Produit -->
+                  <td class="py-4 w-6 border-bottom-1 surface-border">
+                    <div class="flex align-items-center">
+                      <div class="w-6rem h-6rem border-round overflow-hidden bg-gray-100 flex-shrink-0 relative mr-3">
+                        <img
+                          :src="item.pastry.images[0] || '/no-image.svg'"
+                          :alt="item.pastry.name"
+                          class="cart-product-image"
+                        />
+                      </div>
+                      <div class="flex flex-column gap-2">
+                        <h3 class="text-xl mb-0 mt-0">{{ item.pastry.name }}</h3>
+                        <div 
+                          v-if="item.pastry.diets && item.pastry.diets.length > 0"
+                          class="flex gap-1" 
+                        >
+                          <DietIcon
+                            v-for="diet in item.pastry.diets"
+                            :key="diet.id"
+                            :diet-name="DIET_CONFIG[diet.name]?.dietName"
+                            :label="DIET_CONFIG[diet.name]?.label"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- Quantité -->
+                  <td class="py-4 text-center border-bottom-1 surface-border">
+                    <div
+                      class="quantity-control flex align-items-center justify-content-between border-1 surface-border border-round mx-auto"
+                      style="max-width: 8rem;"
+                    >
+                      <Button
+                        icon="pi pi-minus"
+                        text
+                        @click="updateQuantity(item.id, item.quantity - 1)"
+                        :disabled="item.quantity <= 1"
+                        class="quantity-button flex-none"
+                      />
+                      <input
+                        v-model="item.quantity"
+                        min="1"
+                        class="quantity-input flex-none"
+                      />
+                      <Button
+                        icon="pi pi-plus"
+                        text
+                        @click="updateQuantity(item.id, item.quantity + 1)"
+                        class="quantity-button flex-none"
+                      />
+                    </div>
+                  </td>
+
+                  <!-- Prix -->
+                  <td class="py-4 text-center border-bottom-1 surface-border">
+                    <span class="font-medium text-lg">{{ (item.price * item.quantity).toFixed(2) }}€</span>
+                  </td>
+
+                  <!-- Actions -->
+                  <td class="py-4 text-center border-bottom-1 surface-border">
+                    <Button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      text
+                      @click="removeItem(item.id)"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <!-- Articles -->
-          <div
-            v-for="item in cartStore.items"
-            :key="item.id"
-            class="flex align-items-center py-3 border-bottom-1 surface-border"
-          >
-            <!-- Image et infos -->
-            <div class="flex align-items-center flex-grow-1">
-              <img
-                :src="item.pastry.images[0] || '/no-image.svg'"
-                :alt="item.pastry.name"
-                class="w-8rem h-6rem object-cover border-round mr-3"
-              />
-              <div>
-                <h3 class="text-xl mb-2">{{ item.pastry.name }}</h3>
-                <p class="text-500 mb-2">{{ item.pastry.category.name }}</p>
-                <p class="text-500 mb-2">{{ item.pastry.description }}</p>
+          <!-- Version Mobile -->
+          <div class="md:hidden">
+            <div
+              v-for="item in cartStore.items"
+              :key="item.id"
+              class="surface-card p-4 border-round mb-3 border-1 surface-border"
+            >
+              <!-- Produit -->
+              <div class="flex align-items-start mb-3">
+                <div class="w-5rem h-5rem border-round overflow-hidden bg-gray-100 flex-shrink-0 relative mr-3">
+                  <img
+                    :src="item.pastry.images[0] || '/no-image.svg'"
+                    :alt="item.pastry.name"
+                    class="cart-product-image"
+                  />
+                </div>
+                <div class="flex-1 flex flex-column gap-2">
+                  <h3 class="text-lg mb-0 mt-0">{{ item.pastry.name }}</h3>
+                  <div 
+                    v-if="item.pastry.diets && item.pastry.diets.length > 0"
+                    class="flex gap-1" 
+                  >
+                    <DietIcon
+                      v-for="diet in item.pastry.diets"
+                      :key="diet.id"
+                      :diet-name="DIET_CONFIG[diet.name]?.dietName"
+                      :label="DIET_CONFIG[diet.name]?.label"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <!-- Quantité et prix -->
-            <div class="flex align-items-center gap-4">
-              <InputNumber
-                v-model="item.quantity"
-                :min="1"
-                :max="10"
-                showButtons
-                @change="updateQuantity(item.id, $event)"
-                class="w-8rem"
-              />
-              <div
-                class="text-right"
-                style="width: 100px"
-              >
-                {{ (item.price * item.quantity).toFixed(2) }}€
+              <!-- Quantité et Prix -->
+              <div class="flex align-items-center justify-content-between mb-3">
+                <div
+                  class="quantity-control flex align-items-center justify-content-between border-1 surface-border border-round"
+                  style="width: 8rem;"
+                >
+                  <Button
+                    icon="pi pi-minus"
+                    text
+                    @click="updateQuantity(item.id, item.quantity - 1)"
+                    :disabled="item.quantity <= 1"
+                    class="quantity-button flex-none"
+                  />
+                  <input
+                    v-model="item.quantity"
+                    min="1"
+                    class="quantity-input flex-none"
+                  />
+                  <Button
+                    icon="pi pi-plus"
+                    text
+                    @click="updateQuantity(item.id, item.quantity + 1)"
+                    class="quantity-button flex-none"
+                  />
+                </div>
+                <span class="font-medium text-lg">{{ (item.price * item.quantity).toFixed(2) }}€</span>
               </div>
+
+              <!-- Bouton supprimer -->
               <Button
+                label="Supprimer"
                 icon="pi pi-trash"
                 severity="danger"
-                text
+                outlined
                 @click="removeItem(item.id)"
+                class="w-full"
               />
             </div>
           </div>
@@ -220,11 +323,6 @@ const proceedToCheckout = () => {
             <span>{{ subtotal.toFixed(2) }}€</span>
           </div>
 
-          <div class="flex justify-content-between mb-3">
-            <span>Frais de préparation</span>
-            <span>{{ preparationFees.toFixed(2) }}€</span>
-          </div>
-
           <div
             v-if="promoDiscount > 0"
             class="flex justify-content-between mb-3 text-success"
@@ -240,8 +338,7 @@ const proceedToCheckout = () => {
 
           <div class="flex flex-column gap-2 mt-4">
             <Button
-              label="Passer la commande"
-              icon="pi pi-arrow-right"
+              label="Commander"
               @click="proceedToCheckout"
               :loading="cartStore.loading"
             />
@@ -268,3 +365,46 @@ const proceedToCheckout = () => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.cart-product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 8rem;
+}
+
+.quantity-button {
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  flex: none;
+}
+
+.quantity-input {
+  width: 2rem;
+  border: none;
+  text-align: center;
+  background: transparent;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  appearance: textfield;
+  -moz-appearance: textfield;
+  flex: none;
+}
+
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.quantity-input:focus {
+  outline: none;
+}
+</style>

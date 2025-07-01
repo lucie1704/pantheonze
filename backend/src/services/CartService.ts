@@ -39,6 +39,19 @@ export class CartService {
         });
       }
 
+      // Enrichir avec les régimes alimentaires
+      if (cart && cart.items) {
+        for (const item of cart.items) {
+          if (item.pastry.dietIds && item.pastry.dietIds.length > 0) {
+            (item.pastry as any).diets = await prismaClient.diet.findMany({
+              where: { id: { in: item.pastry.dietIds } }
+            });
+          } else {
+            (item.pastry as any).diets = [];
+          }
+        }
+      }
+
       return cart;
     } catch (error) {
       console.error('Error getting cart:', error);
@@ -94,6 +107,15 @@ export class CartService {
           }
         });
 
+        // Enrichir avec les régimes alimentaires
+        if (updatedItem.pastry.dietIds && updatedItem.pastry.dietIds.length > 0) {
+          (updatedItem.pastry as any).diets = await prismaClient.diet.findMany({
+            where: { id: { in: updatedItem.pastry.dietIds } }
+          });
+        } else {
+          (updatedItem.pastry as any).diets = [];
+        }
+
         return updatedItem;
       } else {
         // Ajouter un nouvel item
@@ -112,6 +134,15 @@ export class CartService {
             }
           }
         });
+
+        // Enrichir avec les régimes alimentaires
+        if (newItem.pastry.dietIds && newItem.pastry.dietIds.length > 0) {
+          (newItem.pastry as any).diets = await prismaClient.diet.findMany({
+            where: { id: { in: newItem.pastry.dietIds } }
+          });
+        } else {
+          (newItem.pastry as any).diets = [];
+        }
 
         return newItem;
       }
@@ -155,6 +186,15 @@ export class CartService {
           }
         }
       });
+
+      // Enrichir avec les régimes alimentaires
+      if (updatedItem.pastry.dietIds && updatedItem.pastry.dietIds.length > 0) {
+        (updatedItem.pastry as any).diets = await prismaClient.diet.findMany({
+          where: { id: { in: updatedItem.pastry.dietIds } }
+        });
+      } else {
+        (updatedItem.pastry as any).diets = [];
+      }
 
       return updatedItem;
     } catch (error) {

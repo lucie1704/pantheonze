@@ -358,7 +358,7 @@ const addIngredient = () => {
                 class="flex-1"
                 @keyup.enter="saveField('name')"
                 @keyup.esc="stopEditing('name')"
-                autofocus
+                ref="nameInputRef"
               />
             </div>
           </div>
@@ -382,7 +382,7 @@ const addIngredient = () => {
                 class="flex-1"
                 rows="7"
                 @keyup.esc="stopEditing('description')"
-                autofocus
+                ref="descriptionInputRef"
               />
             </div>
           </div>
@@ -414,7 +414,7 @@ const addIngredient = () => {
                   class="text-2xl font-bold"
                   @keyup.enter="saveField('price')"
                   @keyup.esc="stopEditing('price')"
-                  autofocus
+                  ref="priceInputRef"
                 />
               </div>
             </div>
@@ -446,7 +446,7 @@ const addIngredient = () => {
                   class="w-6rem"
                   @keyup.enter="saveField('stockCount')"
                   @keyup.esc="stopEditing('stockCount')"
-                  autofocus
+                  ref="stockInputRef"
                 />
                 <span>en stock</span>
               </div>
@@ -474,7 +474,7 @@ const addIngredient = () => {
                   placeholder="Sélectionner une catégorie"
                   class="w-12rem"
                   @keyup.esc="stopEditing('category')"
-                  autofocus
+                  ref="categoryInputRef"
                 />
               </div>
             </div>
@@ -518,7 +518,7 @@ const addIngredient = () => {
                   placeholder="Sélectionner les régimes"
                   class="flex-1"
                   @keyup.esc="stopEditing('diets')"
-                  autofocus
+                  ref="dietsInputRef"
                 />
               </div>
             </div>
@@ -760,7 +760,7 @@ const addIngredient = () => {
                           @update:model-value="(value) => editableData.nutrition && (editableData.nutrition.calories = value)"
                           class="w-full"
                           @keyup.esc="stopEditing('nutrition')"
-                          autofocus
+                          ref="nutritionCaloriesInputRef"
                         />
                       </div>
                       <div class="flex flex-column gap-2">
