@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -301,10 +301,13 @@ const handleSavePastry = async (pastry: Pastry) => {
     await pastryService.updatePastry(pastry)
     await loadPastries()
     
-    // Mettre à jour selectedPastry avec les nouvelles données
+    // Forcer la mise à jour de la modal en recréant l'objet selectedPastry
     const updatedPastry = pastries.value.find(p => p.id === pastry.id)
     if (updatedPastry) {
-      selectedPastry.value = updatedPastry
+      // Créer une nouvelle référence d'objet pour déclencher la réactivité
+      selectedPastry.value = null
+      await nextTick()
+      selectedPastry.value = { ...updatedPastry }
     }
     
     toast.add({
