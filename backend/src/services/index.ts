@@ -3,3 +3,4 @@ export * from "./CategoryService";
 export * from "./DietService";
 export * from "./AuthService";
 export * from "./UserService";
+export * from "./CartService";

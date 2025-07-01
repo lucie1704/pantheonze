@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import TieredMenu from 'primevue/tieredmenu'
 import Button from 'primevue/button'
 import Drawer from 'primevue/drawer'
 import { useRouter, useRoute } from 'vue-router'
 import { Banner } from '@/components'
 import { authService } from '@/services'
+import { useCartStore } from '@/stores/cart'
 
 interface Props {
   showBanner?: boolean
@@ -160,6 +161,27 @@ const closeMobileMenu = () => {
   mobileMenu.value = false
 }
 
+// Store du panier
+const cartStore = useCartStore()
+
+// Charger le panier au montage si l'utilisateur est connecté
+onMounted(() => {
+  if (isLoggedIn.value) {
+    cartStore.fetchCart()
+  }
+})
+
+// Recharger le panier quand l'utilisateur se connecte
+watch(isLoggedIn, (newValue) => {
+  if (newValue) {
+    cartStore.fetchCart()
+  } else {
+    // Vider le panier quand l'utilisateur se déconnecte
+    cartStore.cart = null
+    cartStore.cartTotal = null
+  }
+})
+
 updateAuthState()
 </script>
 
@@ -229,15 +251,25 @@ updateAuthState()
 
           <!-- Icônes droite -->
           <div class="flex align-items-center">
-            <Button
-              text
-              plain
-              class="w-3rem h-3rem p-0 hover:surface-200"
-              @click="$router.push('/cart')"
-              v-tooltip.bottom="{ value: 'Mon panier' }"
-            >
-              <i class="pi pi-shopping-cart text-900 text-xl hover:text-primary"></i>
-            </Button>
+            <div class="relative">
+              <Button
+                text
+                plain
+                class="w-3rem h-3rem p-0 hover:surface-200"
+                @click="$router.push('/cart')"
+                v-tooltip.bottom="{ value: 'Mon panier' }"
+              >
+                <i class="pi pi-shopping-cart text-900 text-xl hover:text-primary"></i>
+              </Button>
+              <!-- Badge du panier -->
+              <div
+                v-if="cartStore.itemCount > 0"
+                class="absolute top-0 right-0 bg-primary text-white text-xs font-bold rounded-full w-1.5rem h-1.5rem flex align-items-center justify-content-center"
+                style="transform: translate(25%, -25%);"
+              >
+                {{ cartStore.itemCount > 99 ? '99+' : cartStore.itemCount }}
+              </div>
+            </div>
 
             <Button
               v-if="!isLoggedIn"

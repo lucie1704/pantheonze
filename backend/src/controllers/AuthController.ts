@@ -1,25 +1,21 @@
 import { Request, Response } from 'express'
-import { AuthService } from '@/services'
+import { AuthService } from '@/services/AuthService'
 
 export class AuthController {
-  private authService: AuthService
-
-  constructor() {
-    this.authService = new AuthService()
-  }
-
-  async login(req: Request, res: Response) {
+  static async login(req: Request, res: Response) {
     try {
       const { email, password } = req.body
 
       if (!email || !password) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           message: 'Email et mot de passe requis'
         })
+        return
       }
 
-      const result = await this.authService.login(email, password)
+      const authService = new AuthService()
+      const result = await authService.login(email, password)
 
       res.status(200).json({
         success: true,
@@ -33,18 +29,20 @@ export class AuthController {
     }
   }
 
-  async verifyToken(req: Request, res: Response) {
+  static async verifyToken(req: Request, res: Response) {
     try {
       const token = req.headers.authorization?.replace('Bearer ', '')
 
       if (!token) {
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           message: 'Token requis'
         })
+        return
       }
 
-      const user = await this.authService.verifyToken(token)
+      const authService = new AuthService()
+      const user = await authService.verifyToken(token)
 
       res.status(200).json({
         success: true,

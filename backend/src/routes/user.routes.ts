@@ -3,13 +3,11 @@ import { UserController } from '@/controllers'
 import { checkAuthentication } from '@/middlewares'
 
 export default function (router: Router) {
-  // Route pour récupérer tous les régimes disponibles (publique)
   router.get(
     '/user/available-diets',
     UserController.getAvailableDiets
   )
 
-  // Routes pour les préférences alimentaires (nécessitent une authentification)
   router.get(
     '/user/dietary-preferences',
     checkAuthentication,

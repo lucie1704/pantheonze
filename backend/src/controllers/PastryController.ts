@@ -27,9 +27,10 @@ export class PastryController {
             });
             
             if (existingPastry) {
-                return res.status(409).json({ 
+                res.status(409).json({ 
                     error: "Un produit avec ce nom existe déjà. Veuillez choisir un nom différent." 
                 });
+                return;
             }
             
             let nutrition = undefined;
@@ -340,9 +341,10 @@ export class PastryController {
                 });
                 
                 if (existingPastry) {
-                    return res.status(409).json({ 
+                    res.status(409).json({ 
                         error: "Un produit avec ce nom existe déjà. Veuillez choisir un nom différent." 
                     });
+                    return;
                 }
                 
                 pastryData.slug = slug;

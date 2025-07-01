@@ -2,13 +2,15 @@ import { Router } from 'express'
 import { AuthController } from '../controllers/AuthController'
 
 export default function authRoutes(router: Router) {
-  const authController = new AuthController()
+  router.post(
+    '/login', 
+    AuthController.login
+  )
 
-  // Route de connexion
-  router.post('/login', authController.login.bind(authController))
-
-  // Route de vérification de token
-  router.get('/verify', authController.verifyToken.bind(authController))
+  router.get(
+    '/verify', 
+    AuthController.verifyToken
+  )
 
   return router
 } 

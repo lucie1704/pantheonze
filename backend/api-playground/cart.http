@@ -1,0 +1,178 @@
+### Variables d'environnement
+@baseUrl = http://localhost:3000
+@token = {{auth.response.body.token}}
+
+### Authentification (nécessaire pour toutes les routes du panier)
+# @name auth
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "pierre.laroche@demo.com",
+  "password": "P@nt3h0nz3_2025!"
+}
+
+### 1. Récupérer le panier de l'utilisateur
+# @name getCart
+GET {{baseUrl}}/cart
+Authorization: Bearer {{token}}
+
+### Extraire l'ID du premier item du panier
+@cartItemId = {{getCart.response.body.items[0].id}}
+
+### 2. Ajouter un produit au panier
+POST {{baseUrl}}/cart/items
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "pastryId": "507f1f77bcf86cd799439011",
+  "quantity": 2
+}
+
+### 3. Ajouter un autre produit au panier
+POST {{baseUrl}}/cart/items
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "pastryId": "507f1f77bcf86cd799439012",
+  "quantity": 1
+}
+
+### 4. Mettre à jour la quantité d'un item
+PUT {{baseUrl}}/cart/items/{{cartItemId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "quantity": 3
+}
+
+### 5. Mettre à jour la quantité à 0 (supprime l'item)
+PUT {{baseUrl}}/cart/items/{{cartItemId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "quantity": 0
+}
+
+### 6. Supprimer un item du panier
+DELETE {{baseUrl}}/cart/items/{{cartItemId}}
+Authorization: Bearer {{token}}
+
+### 7. Obtenir le total du panier
+GET {{baseUrl}}/cart/total
+Authorization: Bearer {{token}}
+
+### 8. Vider le panier
+DELETE {{baseUrl}}/cart
+Authorization: Bearer {{token}}
+
+### 9. Test d'ajout avec un produit inexistant
+POST {{baseUrl}}/cart/items
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "pastryId": "invalid-id",
+  "quantity": 1
+}
+
+### 10. Test d'ajout sans pastryId
+POST {{baseUrl}}/cart/items
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "quantity": 1
+}
+
+### 11. Test de mise à jour avec quantité négative
+PUT {{baseUrl}}/cart/items/{{cartItemId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "quantity": -1
+}
+
+### 12. Test d'accès sans authentification
+GET {{baseUrl}}/cart
+
+### 13. Test avec un token invalide
+GET {{baseUrl}}/cart
+Authorization: Bearer invalid-token
+
+### 14. Test d'ajout du même produit plusieurs fois
+POST {{baseUrl}}/cart/items
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "pastryId": "507f1f77bcf86cd799439011",
+  "quantity": 1
+}
+
+### 15. Test de mise à jour d'un item inexistant
+PUT {{baseUrl}}/cart/items/invalid-item-id
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "quantity": 2
+}
+
+### 16. Test de suppression d'un item inexistant
+DELETE {{baseUrl}}/cart/items/invalid-item-id
+Authorization: Bearer {{token}}
+
+### 17. Test avec un utilisateur différent
+# @name auth2
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "admin123"
+}
+
+GET {{baseUrl}}/cart
+Authorization: Bearer {{auth2.response.body.token}}
+
+### 18. Test de performance - ajouter plusieurs produits rapidement
+POST {{baseUrl}}/cart/items
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "pastryId": "507f1f77bcf86cd799439013",
+  "quantity": 1
+}
+
+POST {{baseUrl}}/cart/items
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "pastryId": "507f1f77bcf86cd799439014",
+  "quantity": 1
+}
+
+POST {{baseUrl}}/cart/items
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "pastryId": "507f1f77bcf86cd799439015",
+  "quantity": 1
+}
+
+### 19. Test de récupération du panier après modifications
+GET {{baseUrl}}/cart
+Authorization: Bearer {{token}}
+
+### 20. Test du total après modifications
+GET {{baseUrl}}/cart/total
+Authorization: Bearer {{token}}

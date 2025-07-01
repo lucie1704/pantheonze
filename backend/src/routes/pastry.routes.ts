@@ -7,7 +7,6 @@ import {
 } from "@/contracts/pastry";
 
 export default function (router: Router) {
-  // Collection endpoints
   router.get(
     "/pastries",
     PastryController.getAllPastries
@@ -24,7 +23,6 @@ export default function (router: Router) {
     PastryController.createPastry
   );
 
-  // Single resource endpoints
   router.get(
     "/pastries/:id",
     PastryController.getPastryById

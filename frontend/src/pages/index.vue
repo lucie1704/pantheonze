@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
 import InputText from 'primevue/inputtext'
@@ -10,7 +10,10 @@ import Carousel from 'primevue/carousel'
 import ProgressSpinner from 'primevue/progressspinner'
 import { ProductCard } from '@/components'
 import { pastryService } from '@/services'
+import { useUserPreferencesStore } from '@/stores/userPreferences'
+import { useCartStore } from '@/stores/cart'
 import type { Pastry } from '@/types/pastry'
+import Message from 'primevue/message'
 
 const router = useRouter()
 const toast = useToast()
@@ -45,13 +48,25 @@ const performSearch = () => {
 }
 
 // Fonction pour gérer l'ajout au panier
-const handleAddToCart = (data: { pastryId: string; quantity: number }) => {
-  const pastry = popularProducts.value.find((p) => p.id === data.pastryId)
-  if (pastry) {
+const handleAddToCart = async (data: { pastryId: string; quantity: number }) => {
+  try {
+    const cartStore = useCartStore()
+    await cartStore.addToCart(data.pastryId, data.quantity)
+    const pastry = popularProducts.value.find((p) => p.id === data.pastryId)
+    if (pastry) {
+      toast.add({
+        severity: 'success',
+        summary: 'Ajouté au panier',
+        detail: `${pastry.name} (${data.quantity}) a été ajouté au panier`,
+        life: 3000,
+      })
+    }
+  } catch (error) {
+    console.error('Error adding to cart:', error)
     toast.add({
-      severity: 'success',
-      summary: 'Ajouté au panier',
-      detail: `${pastry.name} (${data.quantity}) a été ajouté au panier`,
+      severity: 'error',
+      summary: 'Erreur',
+      detail: 'Impossible d\'ajouter au panier',
       life: 3000,
     })
   }

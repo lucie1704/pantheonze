@@ -85,6 +85,7 @@ const handleLogin = async () => {
       })
 
       // Rediriger selon le rôle
+
       if (authService.isAdminOrStorekeeper()) {
         router.push('/admin')
       } else {
