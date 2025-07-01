@@ -831,10 +831,10 @@ async function main() {
         customerName: 'Marie JACQUES',
         customerEmail: 'marie.jacques@demo.com',
         customerPhone: '0111222333',
-        subtotal: 13.80,
-        taxAmount: 2.76,
+        subtotal: 15.90,
+        taxAmount: 3.18,
         discount: 0,
-        total: 16.56,
+        total: 19.08,
         status: 'PICKED_UP' as any,
         paymentMethod: 'Carte bancaire',
         paymentStatus: 'PAID',
@@ -872,16 +872,29 @@ async function main() {
         customerName: 'Marie JACQUES',
         customerEmail: 'marie.jacques@demo.com',
         customerPhone: '0111222333',
-        subtotal: 4.50,
-        taxAmount: 0.90,
+        subtotal: 4.50, // 1 × 4.50 (brownie vegan)
+        taxAmount: 0.90, // 20% TVA sur 4.50
         discount: 0,
-        total: 5.40,
+        total: 5.40, // 4.50 + 0.90
         status: OrderStatus.PENDING,
         paymentMethod: 'Espèces',
         paymentStatus: 'PENDING',
         estimatedReady: new Date(Date.now() + 3 * 60 * 60 * 1000), // +3h
         createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // -2 jours
       }
+    })
+
+    // Créer les items pour la commande 2 de Marie
+    await prisma.orderItem.createMany({
+      data: [
+        {
+          orderId: order2Marie.id,
+          pastryId: brownieVegan.id,
+          name: brownieVegan.name,
+          quantity: 1,
+          price: brownieVegan.price
+        }
+      ]
     })
 
     // Commande 1 pour Pierre Laroche (sans sucre + sans lactose) - en préparation
@@ -891,10 +904,10 @@ async function main() {
         customerName: 'Pierre LAROCHE',
         customerEmail: 'pierre.laroche@demo.com',
         customerPhone: '0444555666',
-        subtotal: 15.60,
-        taxAmount: 3.12,
+        subtotal: 30.10, // (2 × 3.80) + 22.50 = 7.60 + 22.50
+        taxAmount: 6.02, // 20% TVA sur 30.10
         discount: 0,
-        total: 18.72,
+        total: 30.10, // 30.10 + 6.02
         status: OrderStatus.PREPARING,
         paymentMethod: 'Carte bancaire',
         paymentStatus: 'PAID',
@@ -930,10 +943,10 @@ async function main() {
         customerName: 'Pierre LAROCHE',
         customerEmail: 'pierre.laroche@demo.com',
         customerPhone: '0444555666',
-        subtotal: 22.50,
-        taxAmount: 4.50,
+        subtotal: 15.30, // (2 × 1.80) + 2.80 + 8.90 = 3.60 + 2.80 + 8.90
+        taxAmount: 3.06, // 20% TVA sur 15.30
         discount: 2.50,
-        total: 24.50,
+        total: 10.20, // 15.30 + 3.06 - 2.50
         status: 'PICKED_UP' as any,
         paymentMethod: 'Carte bancaire',
         paymentStatus: 'PAID',
