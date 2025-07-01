@@ -9,6 +9,7 @@ export interface AuthUser {
   id: string
   email: string
   name: string
+  phone?: string
   role: 'ADMIN' | 'STOREKEEPER' | 'CLIENT'
   isActive: boolean
 }

@@ -1,237 +1,303 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import RadioButton from 'primevue/radiobutton'
+import { useOrderStore, type Store, type PickupSlot } from '@/stores/order'
+import { useCartStore } from '@/stores/cart'
+import { useToast } from 'primevue/usetoast'
+import OrderStepper from '@/components/OrderStepper.vue'
 
 const router = useRouter()
+const orderStore = useOrderStore()
+const cartStore = useCartStore()
+const toast = useToast()
 
-// État
-const selectedDate = ref<Date | null>(null)
-const selectedTimeSlot = ref<string | null>(null)
-const specialInstructions = ref('')
+const selectedStoreId = ref<string>('')
+const selectedSlotId = ref<string>('')
 
-// Calcul des créneaux disponibles
-const timeSlots = computed(() => {
-  if (!selectedDate.value) return []
-
-  // Simulation de créneaux disponibles
-  const slots = []
-  const day = selectedDate.value.getDay()
-
-  // Horaires selon le jour
-  if (day === 0) {
-    // Dimanche
-    for (let hour = 8; hour <= 12; hour++) {
-      slots.push(`${hour}:00`)
-      if (hour < 12) slots.push(`${hour}:30`)
-    }
-  } else {
-    // Lundi-Samedi
-    for (let hour = 7; hour <= 19; hour++) {
-      slots.push(`${hour}:00`)
-      slots.push(`${hour}:30`)
-    }
+onMounted(() => {
+  // Vérifier que les informations client sont remplies
+  if (!orderStore.orderData.customerName) {
+    router.push('/order/informations')
+    return
   }
 
-  return slots
+  // Pré-sélectionner la boutique et le créneau s'ils existent déjà
+  if (orderStore.orderData.selectedStore) {
+    selectedStoreId.value = orderStore.orderData.selectedStore.id
+  }
+  if (orderStore.orderData.selectedSlot) {
+    selectedSlotId.value = orderStore.orderData.selectedSlot.id
+  }
 })
 
-// Informations du magasin
-const storeInfo = {
-  name: 'PanthéOnze Paris',
-  address: '123 Rue de la Pâtisserie',
-  postalCode: '75005',
-  city: 'Paris',
-  phone: '01 23 45 67 89',
-  coordinates: {
-    lat: 48.8566,
-    lng: 2.3522,
-  },
+const onStoreSelect = (store: Store) => {
+  selectedStoreId.value = store.id.toString()
+  selectedSlotId.value = '' // Reset slot selection when store changes
+  orderStore.setStore(store)
 }
 
-// Configuration du calendrier
-const today = new Date()
-const minDate = new Date()
-minDate.setDate(today.getDate() + 1) // Commande possible à partir de demain
-
-const maxDate = new Date()
-maxDate.setDate(today.getDate() + 14) // Jusqu'à 2 semaines à l'avance
-
-// Jours de fermeture (exemple)
-const invalidDates = [
-  new Date(2024, 2, 25), // 25 mars 2024
-  new Date(2024, 3, 1), // 1er avril 2024
-]
-
-const isDateValid = (date: Date) => {
-  // Vérifie si la date n'est pas dans les jours de fermeture
-  return !invalidDates.some(
-    (invalid) =>
-      invalid.getDate() === date.getDate() &&
-      invalid.getMonth() === date.getMonth() &&
-      invalid.getYear() === date.getYear(),
-  )
+const onSlotSelect = (slot: PickupSlot) => {
+  selectedSlotId.value = slot.id.toString()
+  orderStore.setSlot(slot)
 }
 
-const loading = ref(false)
+const selectedStore = computed(() => {
+  return orderStore.stores.find(store => store.id.toString() === selectedStoreId.value)
+})
 
-const handleSubmit = async () => {
-  loading.value = true
-  try {
-    // Simulation d'une requête API
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+const availableSlots = computed(() => {
+  if (!selectedStore.value) return []
+  return orderStore.availableSlots.filter(slot => slot.available)
+})
 
-    // Sauvegarde des informations de retrait
-    localStorage.setItem(
-      'pickupInfo',
-      JSON.stringify({
-        date: selectedDate.value,
-        timeSlot: selectedTimeSlot.value,
-        specialInstructions: specialInstructions.value,
-      }),
-    )
+const groupedSlots = computed(() => {
+  const groups: { [date: string]: PickupSlot[] } = {}
+  
+  availableSlots.value.forEach(slot => {
+    if (!groups[slot.date]) {
+      groups[slot.date] = []
+    }
+    groups[slot.date].push(slot)
+  })
+  
+  return groups
+})
 
-    // Navigation vers l'étape suivante
-    router.push('/commande/recap')
-  } catch (error) {
-    console.error('Erreur lors de la sauvegarde:', error)
-  } finally {
-    loading.value = false
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  const day = date.getDate()
+  const formattedDay = day === 1 ? '1er' : day.toString()
+  
+  const weekday = date.toLocaleDateString('fr-FR', { weekday: 'long' })
+  const month = date.toLocaleDateString('fr-FR', { month: 'long' })
+  
+  return `${weekday} ${formattedDay} ${month}`
+}
+
+const canProceed = computed(() => {
+  return selectedStoreId.value && selectedSlotId.value
+})
+
+const proceedToPayment = () => {
+  if (!canProceed.value) {
+    toast.add({
+      severity: 'error',
+      summary: 'Sélection incomplète',
+      detail: 'Veuillez sélectionner une boutique et un créneau',
+      life: 3000,
+    })
+    return
   }
+
+  router.push('/order/payment')
+}
+
+const goBackToInfo = () => {
+  router.push('/order/informations')
 }
 </script>
 
 <template>
   <div class="max-w-screen-lg mx-auto p-4">
-    <div class="surface-card p-4 border-round">
-      <h1 class="text-4xl font-bold text-center mb-6">Choisir votre créneau de retrait</h1>
+    <!-- Order Stepper -->
+    <OrderStepper />
+    
+    <!-- Navigation breadcrumb -->
+    <div class="mb-6">
+      <h1 class="text-4xl font-bold mb-2">Récupération en boutique</h1>
+      <p class="text-lg text-600">Choisissez votre boutique et votre créneau de récupération</p>
+    </div>
 
-      <form
-        @submit.prevent="handleSubmit"
-        class="flex flex-column gap-4"
-      >
-        <div class="grid">
-          <!-- Sélection de la date -->
-          <div class="col-12 md:col-6">
-            <Panel
-              header="Date de retrait"
-              class="h-full"
-            >
-              <Calendar
-                v-model="selectedDate"
-                :minDate="minDate"
-                :maxDate="maxDate"
-                :disabledDates="invalidDates"
-                :disabledDays="[0]"
-                dateFormat="dd/mm/yy"
-                showIcon
-                class="w-full"
-                required
-              />
-              <small class="block mt-2 text-500">
-                <i class="pi pi-info-circle mr-1"></i>
-                Commande possible jusqu'à 2 semaines à l'avance
-              </small>
-            </Panel>
-          </div>
-
-          <!-- Sélection du créneau -->
-          <div class="col-12 md:col-6">
-            <Panel
-              header="Créneau horaire"
-              class="h-full"
-            >
-              <div
-                v-if="selectedDate"
-                class="grid"
+    <div class="grid">
+      <!-- Sélection boutique et créneau -->
+      <div class="col-12 lg:col-8">
+        <!-- Sélection de la boutique -->
+        <Card class="mb-4">
+          <template #header>
+            <div class="p-4 pb-0">
+              <h3 class="text-xl font-bold mb-0">Choisissez votre boutique</h3>
+            </div>
+          </template>
+          <template #content>
+            <div class="flex flex-column gap-3">
+              <div 
+                v-for="store in orderStore.stores" 
+                :key="store.id"
+                class="border-1 surface-border border-round p-3 cursor-pointer transition-all duration-200"
+                :class="{ 
+                  'border-primary bg-primary-50': selectedStoreId === store.id.toString(),
+                  'hover:border-primary-300': selectedStoreId !== store.id.toString()
+                }"
+                @click="onStoreSelect(store)"
               >
-                <div
-                  v-for="slot in timeSlots"
-                  :key="slot"
-                  class="col-6"
-                >
-                  <div
-                    class="p-3 border-round cursor-pointer text-center mb-2"
-                    :class="{
-                      'surface-hover': selectedTimeSlot !== slot,
-                      'bg-primary text-white': selectedTimeSlot === slot,
-                    }"
-                    @click="selectedTimeSlot = slot"
+                <div class="flex align-items-start gap-3">
+                  <RadioButton 
+                     :modelValue="selectedStoreId" 
+                     :value="store.id.toString()" 
+                     @update:modelValue="onStoreSelect(store)"
+                   />
+                  <div class="flex-1">
+                    <h4 class="text-lg font-bold mt-0 mb-1">{{ store.name }}</h4>
+                    <div class="flex align-items-center gap-2 mb-2">
+                      <i class="pi pi-map-marker text-500"></i>
+                      <span class="text-600">{{ store.address }}</span>
+                    </div>
+                    <div class="text-sm text-600 mt-3">
+                      <div class="inline-block">
+                        <div class="flex flex-column gap-1">
+                          <div class="flex gap-4">
+                            <span class="font-medium w-8rem">Lundi - Jeudi</span>
+                            <span>{{ store.openingHours.monday }}</span>
+                          </div>
+                          <div class="flex gap-4">
+                            <span class="font-medium w-8rem">Vendredi</span>
+                            <span>{{ store.openingHours.friday }}</span>
+                          </div>
+                          <div class="flex gap-4">
+                            <span class="font-medium w-8rem">Samedi</span>
+                            <span>{{ store.openingHours.saturday }}</span>
+                          </div>
+                          <div class="flex gap-4">
+                            <span class="font-medium w-8rem">Dimanche</span>
+                            <span>{{ store.openingHours.sunday }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </Card>
+
+        <!-- Sélection du créneau -->
+        <Card v-if="selectedStore">
+          <template #header>
+            <div class="p-4 pb-0">
+              <h3 class="text-xl font-bold mb-0">Choisissez votre créneau</h3>
+              <p class="text-600 m-0">{{ selectedStore.name }}</p>
+            </div>
+          </template>
+          <template #content>
+            <div v-if="Object.keys(groupedSlots).length === 0" class="text-center py-4">
+              <i class="pi pi-calendar-times text-4xl text-400 mb-3"></i>
+              <p class="text-600">Aucun créneau disponible pour cette boutique</p>
+            </div>
+            
+            <div v-else class="flex flex-column gap-4">
+              <div 
+                v-for="(slots, date) in groupedSlots" 
+                :key="date"
+                class="border-1 surface-border border-round p-3"
+              >
+                <h5 class="text-lg mt-0 font-bold mb-3 text-primary">{{ formatDate(String(date)) }}</h5>
+                <div class="grid gap-2">
+                  <div 
+                    v-for="slot in slots" 
+                    :key="slot.id"
+                    class="col-6 md:col-4 lg:col-3"
                   >
-                    {{ slot }}
+                    <div 
+                      class="border-1 surface-border border-round p-2 text-center cursor-pointer transition-all duration-200"
+                      :class="{ 
+                        'border-primary bg-primary-50': selectedSlotId === slot.id.toString(),
+                        'hover:border-primary-300': selectedSlotId !== slot.id.toString() && slot.available,
+                        'opacity-50 cursor-not-allowed': !slot.available
+                      }"
+                      @click="slot.available && onSlotSelect(slot)"
+                    >
+                      <div class="flex align-items-center justify-content-center gap-2">
+                        <RadioButton 
+                          v-if="slot.available"
+                          :modelValue="selectedSlotId" 
+                          :value="slot.id.toString()" 
+                          @update:modelValue="onSlotSelect(slot)"
+                        />
+                        <span class="font-medium">{{ slot.startTime }} - {{ slot.endTime }}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div
-                v-else
-                class="text-500 text-center p-4"
-              >
-                Veuillez d'abord sélectionner une date
-              </div>
-            </Panel>
-          </div>
-
-          <!-- Instructions spéciales -->
-          <div class="col-12">
-            <Panel header="Instructions spéciales">
-              <Textarea
-                v-model="specialInstructions"
-                rows="3"
-                placeholder="Exemple : Je souhaite que la commande soit emballée séparément..."
-                class="w-full"
-              />
-            </Panel>
-          </div>
-
-          <!-- Informations du magasin -->
-          <div class="col-12">
-            <Panel header="Point de retrait">
-              <div class="grid">
-                <div class="col-12 md:col-6">
-                  <h3 class="text-xl mb-3">{{ storeInfo.name }}</h3>
-                  <p class="mb-2">{{ storeInfo.address }}</p>
-                  <p class="mb-2">{{ storeInfo.postalCode }} {{ storeInfo.city }}</p>
-                  <p class="mb-3">
-                    <i class="pi pi-phone mr-2"></i>
-                    {{ storeInfo.phone }}
-                  </p>
-
-                  <h4 class="font-bold mb-2">Horaires d'ouverture :</h4>
-                  <ul class="list-none p-0 m-0">
-                    <li class="mb-2">Lundi - Vendredi : 7h30 - 19h30</li>
-                    <li class="mb-2">Samedi : 7h30 - 20h00</li>
-                    <li>Dimanche : 8h00 - 13h00</li>
-                  </ul>
-                </div>
-
-                <div class="col-12 md:col-6">
-                  <!-- Placeholder pour la carte -->
-                  <div class="w-full h-15rem bg-primary-50 border-round flex align-items-center justify-content-center">
-                    <i class="pi pi-map-marker text-4xl text-primary"></i>
-                  </div>
-                </div>
-              </div>
-            </Panel>
-          </div>
-        </div>
+            </div>
+          </template>
+        </Card>
 
         <!-- Boutons de navigation -->
-        <div class="flex justify-content-between">
-          <Button
-            label="Retour"
+        <div class="flex justify-content-between pt-4">
+          <Button 
+            label="Retour aux informations" 
             icon="pi pi-arrow-left"
-            outlined
-            @click="router.push('/commande/informations')"
+            class="p-button-outlined"
+            @click="goBackToInfo"
           />
-          <Button
-            type="submit"
-            label="Continuer"
+          <Button 
+            label="Procéder au paiement" 
             icon="pi pi-arrow-right"
             iconPos="right"
-            :loading="loading"
-            :disabled="!selectedDate || !selectedTimeSlot"
+            @click="proceedToPayment"
+            :disabled="!canProceed"
           />
         </div>
-      </form>
+      </div>
+
+      <!-- Résumé de commande -->
+      <div class="col-12 lg:col-4">
+        <Card>
+          <template #header>
+            <div class="p-4 pb-0">
+              <h3 class="text-xl font-bold mb-0">Résumé de votre commande</h3>
+            </div>
+          </template>
+          <template #content>
+            <div class="flex flex-column gap-3">
+              <!-- Articles -->
+              <div v-for="item in cartStore.items" :key="item.id" class="flex justify-content-between align-items-center">
+                <div class="flex align-items-center gap-2">
+                  <span class="font-medium">{{ item.quantity }}x</span>
+                  <span>{{ item.pastry.name }}</span>
+                </div>
+                <span class="font-bold">{{ (item.price * item.quantity).toFixed(2) }}€</span>
+              </div>
+
+              <!-- Récupération sélectionnée -->
+              <div v-if="selectedStore && selectedSlotId" class="border-top-1 surface-border pt-3">
+                <h4 class="text-sm font-bold text-600 mb-2">RÉCUPÉRATION</h4>
+                <div class="text-sm">
+                  <div class="font-medium">{{ selectedStore.name }}</div>
+                  <div class="text-600 mb-2">{{ selectedStore.address }}</div>
+                  <div v-if="orderStore.orderData.selectedSlot" class="font-medium text-primary">
+                    {{ formatDate(orderStore.orderData.selectedSlot.date) }}
+                    <br>
+                    {{ orderStore.orderData.selectedSlot.startTime }} - {{ orderStore.orderData.selectedSlot.endTime }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="border-top-1 surface-border pt-3">
+                <div class="flex justify-content-between align-items-center">
+                  <span class="text-lg font-bold">Total</span>
+                  <span class="text-lg font-bold text-primary">{{ cartStore.totalPrice.toFixed(2) }}€</span>
+                </div>
+              </div>
+            </div>
+          </template>
+        </Card>
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.transition-all {
+  transition: all 0.2s ease;
+}
+</style>

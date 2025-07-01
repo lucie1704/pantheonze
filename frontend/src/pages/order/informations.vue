@@ -1,254 +1,271 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import { useOrderStore } from '@/stores/order'
+import { useCartStore } from '@/stores/cart'
+import { authService } from '@/services/auth.service'
+import { useToast } from 'primevue/usetoast'
+import OrderStepper from '@/components/OrderStepper.vue'
 
 const router = useRouter()
+const orderStore = useOrderStore()
+const cartStore = useCartStore()
+const toast = useToast()
 
-// Formulaire informations personnelles
-const personalInfo = ref({
-  firstName: '',
-  lastName: '',
+const formData = ref({
+  name: '',
   email: '',
-  phone: '',
-  birthdate: null as Date | null,
-  dietaryPreferences: [] as string[],
+  phone: ''
 })
 
-// Formulaire adresse de facturation
-const billingAddress = ref({
-  street: '',
-  complement: '',
-  postalCode: '',
-  city: '',
-  country: 'FR',
-})
+const isEditing = ref(false)
 
-// Options
-const dietaryOptions = [
-  { label: 'Sans gluten', value: 'gluten-free' },
-  { label: 'Végétarien', value: 'vegetarian' },
-  { label: 'Vegan', value: 'vegan' },
-  { label: 'Sans lactose', value: 'lactose-free' },
-]
-
-const countries = [
-  { label: 'France', value: 'FR' },
-  { label: 'Belgique', value: 'BE' },
-  { label: 'Suisse', value: 'CH' },
-  { label: 'Luxembourg', value: 'LU' },
-]
-
-const loading = ref(false)
-
-const handleSubmit = async () => {
-  loading.value = true
-  try {
-    // Simulation d'une requête API
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // Sauvegarde des informations
-    localStorage.setItem(
-      'customerInfo',
-      JSON.stringify({
-        personal: personalInfo.value,
-        billing: billingAddress.value,
-      }),
-    )
-
-    // Navigation vers l'étape suivante
-    router.push('/commande/retrait')
-  } catch (error) {
-    console.error('Erreur lors de la sauvegarde:', error)
-  } finally {
-    loading.value = false
+onMounted(async () => {
+  // Vérifier que l'utilisateur est connecté
+  if (!authService.isAuthenticated()) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Connexion requise',
+      detail: 'Vous devez être connecté pour passer commande',
+      life: 3000,
+    })
+    router.push('/login')
+    return
   }
+
+  // Vérifier que le panier n'est pas vide
+  if (cartStore.isEmpty) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Panier vide',
+      detail: 'Votre panier est vide',
+      life: 3000,
+    })
+    router.push('/cart')
+    return
+  }
+
+  // Récupérer les informations de l'utilisateur connecté
+  try {
+    const userInfo = authService.getUser()
+    if (userInfo) {
+      formData.value = {
+        name: userInfo.name || '',
+        email: userInfo.email || '',
+        phone: userInfo.phone || ''
+      }
+      
+      // Si toutes les infos sont présentes, aller directement à l'étape suivante
+      if (formData.value.name && formData.value.email) {
+        orderStore.setCustomerInfo({
+          name: formData.value.name,
+          email: formData.value.email,
+          phone: formData.value.phone
+        })
+        router.push('/order/collect')
+        return
+      }
+    }
+  } catch (error) {
+    console.error('Error getting user info:', error)
+  }
+})
+
+const proceedToStoreSelection = () => {
+  if (!formData.value.name || !formData.value.email) {
+    toast.add({
+      severity: 'error',
+      summary: 'Informations manquantes',
+      detail: 'Veuillez remplir tous les champs manquants',
+      life: 3000,
+    })
+    return
+  }
+
+  orderStore.setCustomerInfo({
+    name: formData.value.name,
+    email: formData.value.email,
+    phone: formData.value.phone
+  })
+
+  router.push('/order/collect')
+}
+
+const goBackToCart = () => {
+  router.push('/cart')
+}
+
+const validateEmail = (email: string) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return re.test(email)
+}
+
+const enableEditing = () => {
+  isEditing.value = true
 }
 </script>
 
 <template>
   <div class="max-w-screen-lg mx-auto p-4">
-    <div class="surface-card p-4 border-round">
-      <h1 class="text-4xl font-bold text-center mb-6">Vos Informations</h1>
+    <!-- Order Stepper -->
+    <OrderStepper />
+    
+    <!-- Navigation breadcrumb -->
+    <div class="mb-6">
+      <h1 class="text-4xl font-bold mb-2">Vos informations</h1>
+      <p class="text-lg text-600">Vérifiez vos coordonnées pour la commande</p>
+    </div>
 
-      <form
-        @submit.prevent="handleSubmit"
-        class="flex flex-column gap-4"
-      >
-        <!-- Informations personnelles -->
-        <Panel
-          header="Informations personnelles"
-          class="mb-3"
-        >
-          <div class="grid">
-            <div class="col-12 md:col-6">
-              <div class="flex flex-column gap-2">
-                <label for="firstName">Prénom *</label>
-                <InputText
-                  id="firstName"
-                  v-model="personalInfo.firstName"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="col-12 md:col-6">
-              <div class="flex flex-column gap-2">
-                <label for="lastName">Nom *</label>
-                <InputText
-                  id="lastName"
-                  v-model="personalInfo.lastName"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="col-12 md:col-6">
-              <div class="flex flex-column gap-2">
-                <label for="email">Email *</label>
-                <InputText
-                  id="email"
-                  v-model="personalInfo.email"
-                  type="email"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="col-12 md:col-6">
-              <div class="flex flex-column gap-2">
-                <label for="phone">Téléphone *</label>
-                <InputText
-                  id="phone"
-                  v-model="personalInfo.phone"
-                  type="tel"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="col-12 md:col-6">
-              <div class="flex flex-column gap-2">
-                <label for="birthdate">Date de naissance</label>
-                <Calendar
-                  id="birthdate"
-                  v-model="personalInfo.birthdate"
-                  dateFormat="dd/mm/yy"
-                  :showIcon="true"
-                />
-              </div>
-            </div>
-
-            <div class="col-12">
-              <div class="flex flex-column gap-2">
-                <fieldset class="border-none p-0">
-                  <legend class="mb-2">Préférences alimentaires</legend>
-                  <div class="flex flex-wrap gap-3">
-                    <div
-                      v-for="option in dietaryOptions"
-                      :key="option.value"
-                      class="flex align-items-center"
-                    >
-                      <Checkbox
-                        v-model="personalInfo.dietaryPreferences"
-                        :value="option.value"
-                        :inputId="option.value"
-                      />
-                      <label
-                        :for="option.value"
-                        class="ml-2"
-                        >{{ option.label }}</label
-                      >
+    <div class="grid">
+      <!-- Formulaire -->
+      <div class="col-12 lg:col-8">
+        <Card>
+          <template #content>
+            <div class="flex flex-column gap-4">
+              <!-- Informations pré-remplies -->
+              <div v-if="!isEditing" class="flex flex-column gap-4">
+                <div class="surface-100 p-4 border-round">
+                  <div class="flex justify-content-between align-items-start mb-3">
+                    <h3 class="text-lg font-bold m-0">Vos informations</h3>
+                    <Button 
+                      label="Modifier" 
+                      icon="pi pi-pencil"
+                      class="p-button-text p-button-sm"
+                      @click="enableEditing"
+                    />
+                  </div>
+                  
+                  <div class="flex flex-column gap-2">
+                    <div class="flex align-items-center gap-2">
+                      <i class="pi pi-user text-500"></i>
+                      <span class="font-medium">{{ formData.name || 'Nom non renseigné' }}</span>
+                    </div>
+                    <div class="flex align-items-center gap-2">
+                      <i class="pi pi-envelope text-500"></i>
+                      <span class="font-medium">{{ formData.email || 'Email non renseigné' }}</span>
                     </div>
                   </div>
-                </fieldset>
+                </div>
+
+                <div class="flex justify-content-between pt-4">
+                  <Button 
+                    label="Retour au panier" 
+                    icon="pi pi-arrow-left"
+                    class="p-button-outlined"
+                    @click="goBackToCart"
+                  />
+                  <Button 
+                    label="Choisir la boutique" 
+                    icon="pi pi-arrow-right"
+                    iconPos="right"
+                    @click="proceedToStoreSelection"
+                    :disabled="!formData.name || !formData.email"
+                  />
+                </div>
+              </div>
+
+              <!-- Formulaire d'édition -->
+              <div v-else class="flex flex-column gap-4">
+                <!-- Nom complet -->
+                <div class="field">
+                  <label for="name" class="block text-900 font-medium mb-2">Nom complet *</label>
+                  <InputText 
+                    id="name"
+                    v-model="formData.name" 
+                    class="w-full"
+                    placeholder="Votre nom et prénom"
+                    :class="{ 'p-invalid': formData.name && formData.name.length < 2 }"
+                  />
+                  <small v-if="formData.name && formData.name.length < 2" class="p-error">
+                    Le nom doit contenir au moins 2 caractères
+                  </small>
+                </div>
+
+                <!-- Email -->
+                <div class="field">
+                  <label for="email" class="block text-900 font-medium mb-2">Adresse email *</label>
+                  <InputText 
+                    id="email"
+                    v-model="formData.email" 
+                    class="w-full"
+                    placeholder="votre@email.com"
+                    :class="{ 'p-invalid': formData.email && !validateEmail(formData.email) }"
+                  />
+                  <small v-if="formData.email && !validateEmail(formData.email)" class="p-error">
+                    Veuillez entrer une adresse email valide
+                  </small>
+                </div>
+
+                <!-- Boutons -->
+                <div class="flex justify-content-between pt-4">
+                  <Button 
+                    label="Annuler" 
+                    class="p-button-outlined"
+                    @click="isEditing = false"
+                  />
+                  <Button 
+                    label="Confirmer et continuer" 
+                    icon="pi pi-arrow-right"
+                    iconPos="right"
+                    @click="proceedToStoreSelection"
+                    :disabled="!formData.name || !formData.email || !validateEmail(formData.email)"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </Panel>
+          </template>
+        </Card>
+      </div>
 
-        <!-- Adresse de facturation -->
-        <Panel
-          header="Adresse de facturation"
-          class="mb-3"
-        >
-          <div class="grid">
-            <div class="col-12">
-              <div class="flex flex-column gap-2">
-                <label for="street">Rue *</label>
-                <InputText
-                  id="street"
-                  v-model="billingAddress.street"
-                  required
-                />
+      <!-- Résumé de commande -->
+      <div class="col-12 lg:col-4">
+        <Card>
+          <template #header>
+            <div class="p-4 pb-0">
+              <h3 class="text-xl font-bold mb-0">Résumé de votre commande</h3>
+            </div>
+          </template>
+          <template #content>
+            <div class="flex flex-column gap-3">
+              <!-- Articles -->
+              <div v-for="item in cartStore.items" :key="item.id" class="flex justify-content-between align-items-center">
+                <div class="flex align-items-center gap-2">
+                  <span class="font-medium">{{ item.quantity }}x</span>
+                  <span>{{ item.pastry.name }}</span>
+                </div>
+                <span class="font-bold">{{ (item.price * item.quantity).toFixed(2) }}€</span>
+              </div>
+
+              <div class="border-top-1 surface-border pt-3">
+                <div class="flex justify-content-between align-items-center">
+                  <span class="text-lg font-bold">Total</span>
+                  <span class="text-lg font-bold text-primary">{{ cartStore.totalPrice.toFixed(2) }}€</span>
+                </div>
               </div>
             </div>
-
-            <div class="col-12">
-              <div class="flex flex-column gap-2">
-                <label for="complement">Complément d'adresse</label>
-                <InputText
-                  id="complement"
-                  v-model="billingAddress.complement"
-                />
-              </div>
-            </div>
-
-            <div class="col-12 md:col-4">
-              <div class="flex flex-column gap-2">
-                <label for="postalCode">Code postal *</label>
-                <InputText
-                  id="postalCode"
-                  v-model="billingAddress.postalCode"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="col-12 md:col-8">
-              <div class="flex flex-column gap-2">
-                <label for="city">Ville *</label>
-                <InputText
-                  id="city"
-                  v-model="billingAddress.city"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="col-12">
-              <div class="flex flex-column gap-2">
-                <label for="country">Pays *</label>
-                <Select
-                  id="country"
-                  v-model="billingAddress.country"
-                  :options="countries"
-                  optionLabel="label"
-                  optionValue="value"
-                  class="w-full"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        </Panel>
-
-        <!-- Boutons de navigation -->
-        <div class="flex justify-content-between">
-          <Button
-            label="Retour au panier"
-            icon="pi pi-arrow-left"
-            outlined
-            @click="router.push('/panier')"
-          />
-          <Button
-            type="submit"
-            label="Continuer"
-            icon="pi pi-arrow-right"
-            iconPos="right"
-            :loading="loading"
-          />
-        </div>
-      </form>
+          </template>
+        </Card>
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.field {
+  margin-bottom: 1rem;
+}
+
+.p-invalid {
+  border-color: #f56565;
+}
+
+.p-error {
+  color: #f56565;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+</style>

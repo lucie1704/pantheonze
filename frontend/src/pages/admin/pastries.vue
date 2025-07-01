@@ -301,10 +301,8 @@ const handleSavePastry = async (pastry: Pastry) => {
     await pastryService.updatePastry(pastry)
     await loadPastries()
     
-    // Forcer la mise à jour de la modal en recréant l'objet selectedPastry
     const updatedPastry = pastries.value.find(p => p.id === pastry.id)
     if (updatedPastry) {
-      // Créer une nouvelle référence d'objet pour déclencher la réactivité
       selectedPastry.value = null
       await nextTick()
       selectedPastry.value = { ...updatedPastry }
