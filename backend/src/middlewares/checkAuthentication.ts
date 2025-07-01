@@ -2,31 +2,31 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 export const checkAuthentication = (request: Request, response: Response, next: NextFunction): void => {
-  try {
-    const authHeader = request.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      response.status(401).json({ 
-        success: false, 
-        message: 'Token d\'authentification manquant' 
-      });
-      return;
-    }
+  console.log(`🔐 [AUTH] Checking authentication for: ${request.method} ${request.path}`);
+  
+  const authHeader = request.headers.authorization;
+  
+  if (!authHeader) {
+    console.log(`❌ [AUTH] No Authorization header found`);
+    response.status(401).json({ error: "No authorization header" });
+    return;
+  }
 
-    const token = authHeader.substring(7); // Enlever "Bearer "
-    const secret = process.env.JWT_SECRET || 'your-secret-key';
-    
-    const decoded = jwt.verify(token, secret) as any;
-    
-    // Ajouter les informations utilisateur à la requête
+  const token = authHeader.split(" ")[1];
+  
+  if (!token) {
+    console.log(`❌ [AUTH] No token found in Authorization header`);
+    response.status(401).json({ error: "No token provided" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
     (request as any).user = decoded;
-    
+    console.log(`✅ [AUTH] Authentication successful for user: ${(decoded as any).userId}`);
     next();
   } catch (error) {
-    console.error('Erreur d\'authentification:', error);
-    response.status(401).json({ 
-      success: false, 
-      message: 'Token d\'authentification invalide' 
-    });
+    console.log(`❌ [AUTH] Token verification failed:`, error);
+    response.status(401).json({ error: "Invalid token" });
   }
 };

@@ -2,6 +2,10 @@ model Order {
   id            String       @id @default(auto()) @map("_id") @db.ObjectId
   userId        String       @db.ObjectId
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storeId       String       @db.ObjectId
+  store         Store        @relation(fields: [storeId], references: [id])
+  pickupSlotId  String?      @db.ObjectId
+  pickupSlot    PickupSlot?  @relation(fields: [pickupSlotId], references: [id])
   items         OrderItem[]
   subtotal      Float
   taxAmount     Float        @default(0)
@@ -9,7 +13,6 @@ model Order {
   discount      Float        @default(0)
   total         Float
   status        OrderStatus  @default(PENDING)
-  delivery      DeliveryInfo?
   customerName  String
   customerEmail String
   customerPhone String?
@@ -19,11 +22,12 @@ model Order {
   notes         String?
   estimatedReady DateTime?
   readyAt       DateTime?
-  deliveredAt   DateTime?
+  pickedUpAt    DateTime?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
   @@index([userId])
+  @@index([storeId])
   @@index([status])
   @@index([paymentStatus])
   @@index([createdAt])

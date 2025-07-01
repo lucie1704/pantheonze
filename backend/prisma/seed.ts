@@ -148,6 +148,22 @@ async function main() {
 
   console.log('✅ Utilisateurs créés')
 
+  // Créer un magasin de test
+  const store = await prisma.store.create({
+    data: {
+      name: 'Panthéonze - Boutique Centrale',
+      address: '123 Rue de la Paix',
+      city: 'Paris',
+      postalCode: '75001',
+      phone: '01 23 45 67 89',
+      email: 'contact@patheonze.fr',
+      description: 'Notre boutique principale au cœur de Paris',
+      isActive: true,
+    }
+  })
+
+  console.log('✅ Magasin créé')
+
   // Créer toutes les pâtisseries
   const pastries = await Promise.all([
     // Brioche
@@ -811,6 +827,175 @@ async function main() {
   ])
 
   console.log('✅ Pâtisseries créées')
+
+  console.log('✅ Base de données initialisée avec succès !')
+
+  const croissant = await prisma.pastry.findFirst({ where: { name: 'Croissant au Beurre' } })
+  const painAuChocolat = await prisma.pastry.findFirst({ where: { name: 'Pain au Chocolat' } })
+  const chouquette = await prisma.pastry.findFirst({ where: { name: 'Chouquettes' } })
+  const muffin = await prisma.pastry.findFirst({ where: { name: 'Muffin aux Myrtilles' } })
+  const tarteCitron = await prisma.pastry.findFirst({ where: { name: 'Tarte au Citron Meringuée' } })
+  const brioche = await prisma.pastry.findFirst({ where: { name: 'Brioche Artisanale' } })
+
+  // Commande 1 - Marie Jacques (il y a 2 semaines)
+  const order1 = await prisma.order.create({
+    data: {
+      userId: clientMarieJacques.id,
+      storeId: store.id,
+      subtotal: 15.40,
+      total: 15.40,
+      status: 'DELIVERED',
+      customerName: clientMarieJacques.name,
+      customerEmail: clientMarieJacques.email,
+      customerPhone: clientMarieJacques.phone,
+      paymentMethod: 'CARD',
+      paymentStatus: 'PAID',
+      createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+      updatedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+    }
+  })
+
+  await prisma.orderItem.createMany({
+    data: [
+      {
+        orderId: order1.id,
+        pastryId: croissant!.id,
+        quantity: 2,
+        price: croissant!.price,
+        name: croissant!.name,
+      },
+      {
+        orderId: order1.id,
+        pastryId: painAuChocolat!.id,
+        quantity: 1,
+        price: painAuChocolat!.price,
+        name: painAuChocolat!.name,
+      },
+      {
+        orderId: order1.id,
+        pastryId: chouquette!.id,
+        quantity: 6,
+        price: chouquette!.price,
+        name: chouquette!.name,
+      }
+    ]
+  })
+
+  // Commande 2 - Pierre Laroche (il y a 1 semaine)
+  const order2 = await prisma.order.create({
+    data: {
+      userId: clientPierreLaroche.id,
+      storeId: store.id,
+      subtotal: 28.30,
+      total: 28.30,
+      status: 'DELIVERED',
+      customerName: clientPierreLaroche.name,
+      customerEmail: clientPierreLaroche.email,
+      customerPhone: clientPierreLaroche.phone,
+      paymentMethod: 'CARD',
+      paymentStatus: 'PAID',
+      notes: 'Livraison à l\'entrée principale',
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Il y a 7 jours
+      updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    }
+  })
+
+  await prisma.orderItem.createMany({
+    data: [
+      {
+        orderId: order2.id,
+        pastryId: muffin!.id,
+        quantity: 3,
+        price: muffin!.price,
+        name: muffin!.name,
+      },
+      {
+        orderId: order2.id,
+        pastryId: tarteCitron!.id,
+        quantity: 1,
+        price: tarteCitron!.price,
+        name: tarteCitron!.name,
+      }
+    ]
+  })
+
+  // Commande 3 - Marie Jacques (il y a 3 jours)
+  const order3 = await prisma.order.create({
+    data: {
+      userId: clientMarieJacques.id,
+      storeId: store.id,
+      subtotal: 12.90,
+      total: 12.90,
+      status: 'OUT_FOR_DELIVERY',
+      customerName: clientMarieJacques.name,
+      customerEmail: clientMarieJacques.email,
+      customerPhone: clientMarieJacques.phone,
+      paymentMethod: 'CARD',
+      paymentStatus: 'PAID',
+      notes: 'Code 1234, interphone "Jacques"',
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // Il y a 3 jours
+      updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    }
+  })
+
+  await prisma.orderItem.createMany({
+    data: [
+      {
+        orderId: order3.id,
+        pastryId: brioche!.id,
+        quantity: 1,
+        price: brioche!.price,
+        name: brioche!.name,
+      },
+      {
+        orderId: order3.id,
+        pastryId: chouquette!.id,
+        quantity: 8,
+        price: chouquette!.price,
+        name: chouquette!.name,
+      }
+    ]
+  })
+
+  // Commande 4 - Sophie Olivier (il y a 1 jour)
+  const order4 = await prisma.order.create({
+    data: {
+      userId: clientSophieOlivier.id,
+      storeId: store.id,
+      subtotal: 8.70,
+      total: 8.70,
+      status: 'PREPARING',
+      customerName: clientSophieOlivier.name,
+      customerEmail: clientSophieOlivier.email,
+      customerPhone: clientSophieOlivier.phone,
+      paymentMethod: 'CASH',
+      paymentStatus: 'PAID',
+      notes: 'Livraison entre 14h et 16h',
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // Il y a 1 jour
+      updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    }
+  })
+
+  await prisma.orderItem.createMany({
+    data: [
+      {
+        orderId: order4.id,
+        pastryId: croissant!.id,
+        quantity: 3,
+        price: croissant!.price,
+        name: croissant!.name,
+      },
+      {
+        orderId: order4.id,
+        pastryId: painAuChocolat!.id,
+        quantity: 2,
+        price: painAuChocolat!.price,
+        name: painAuChocolat!.name,
+      }
+    ]
+  })
+
+  console.log('✅ Commandes passées créées')
 
   console.log('✅ Base de données initialisée avec succès !')
 }

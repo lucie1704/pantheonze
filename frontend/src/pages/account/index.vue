@@ -1,10 +1,12 @@
-
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
 import Divider from 'primevue/divider'
+
+const router = useRouter()
 
 const user = ref({
   firstName: 'Jean',
@@ -114,6 +116,19 @@ const changePassword = () => {
             @click="savePersonalInfo"
           />
         </div>
+      </div>
+
+      <Divider />
+
+      <div class="surface-card p-3 sm:p-4 border-round mb-4">
+        <h2 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Historique des commandes</h2>
+        <p class="text-500 mb-3">Consultez l'historique de vos commandes passées</p>
+        <Button
+          label="Voir l'historique"
+          icon="pi pi-shopping-bag"
+          outlined
+          @click="router.push('/account/orders')"
+        />
       </div>
 
       <Divider />
