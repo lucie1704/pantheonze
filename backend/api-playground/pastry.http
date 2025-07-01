@@ -1,190 +1,84 @@
-@BASE_URL = http://localhost:3333/api
+@baseUrl = http://localhost:3000/api
+@token = {{auth.response.body.token}}
 
-### Get all pastries
-GET {{BASE_URL}}/pastries
-Content-Type: application/json
-
-### Get pastries with pagination
-GET {{BASE_URL}}/pastries?page=1&limit=10
-Content-Type: application/json
-
-### Get pastries by category
-GET {{BASE_URL}}/pastries?category=cake
-Content-Type: application/json
-
-### Get single pastry
-GET {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
-Content-Type: application/json
-
-### Get pastry by slug
-GET {{BASE_URL}}/pastries/slug/eclair-au-chocolat
-Content-Type: application/json
-
-### Get popular pastries
-GET {{BASE_URL}}/pastries/popular?limit=5
-Content-Type: application/json
-
-### Create pastry
-POST {{BASE_URL}}/pastries
+### Authentification (nécessaire pour certaines routes)
+# @name auth
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-    "name": "Éclair au chocolat",
-    "description": "Pâte à choux garnie de crème pâtissière au chocolat noir, recouverte d'un glaçage brillant",
-    "price": 4.50,
-    "stockCount": 15,
-    "categoryId": "1",
-    "tags": ["popular", "new"],
-    "ingredients": ["farine", "oeufs", "chocolat noir", "crème pâtissière", "beurre"],
-    "nutrition": {
-        "calories": 280,
-        "protein": 6,
-        "carbs": 32,
-        "fat": 15,
-        "allergens": ["gluten", "oeufs", "lait"]
-    },
-    "dietIds": ["1", "2"]
+  "email": "admin@demo.com",
+  "password": "P@nt3h0nz3_2025!"
 }
 
-### Update pastry - Test complet
-PUT {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
+### 1. Récupérer toutes les pâtisseries
+GET {{baseUrl}}/pastries
+
+### 2. Récupérer les pâtisseries populaires
+GET {{baseUrl}}/pastries/popular
+
+### 3. Recherche avec filtres
+GET {{baseUrl}}/pastries?query=brioche&categories=Viennoiseries&page=1&limit=5
+
+### 4. Filtrage par régimes alimentaires
+GET {{baseUrl}}/pastries?diets=Végétarien,Sans Gluten
+
+### 5. Filtrage par prix
+GET {{baseUrl}}/pastries?minPrice=3&maxPrice=10
+
+### 6. Tri par prix
+GET {{baseUrl}}/pastries?sortBy=price&order=asc
+
+### 7. Pâtisseries disponibles seulement
+GET {{baseUrl}}/pastries?availability=true
+
+### 8. Récupérer une pâtisserie par ID
+GET {{baseUrl}}/pastries/507f1f77bcf86cd799439011
+
+### 9. Récupérer une pâtisserie par slug
+GET {{baseUrl}}/pastries/slug/brioche-artisanale
+
+### 10. Créer une nouvelle pâtisserie (admin seulement)
+POST {{baseUrl}}/pastries
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "name": "Éclair au café modifié",
-    "description": "Pâte à choux garnie de crème pâtissière au café arabica, recouverte d'un glaçage au café",
-    "price": 5.20,
-    "stockCount": 8,
-    "categoryId": "1",
-    "tags": ["popular"],
-    "ingredients": ["farine", "oeufs", "café arabica", "crème pâtissière", "beurre", "sucre"],
-    "nutrition": {
-        "calories": 295,
-        "protein": 7,
-        "carbs": 35,
-        "fat": 16,
-        "allergens": ["gluten", "oeufs", "lait"]
-    },
-    "dietIds": ["1"]
+  "name": "Test Pâtisserie",
+  "description": "Une délicieuse pâtisserie de test",
+  "price": 5.99,
+  "images": ["https://example.com/image.jpg"],
+  "categoryId": "507f1f77bcf86cd799439001",
+  "dietIds": [],
+  "tags": ["Test"],
+  "ingredients": ["Farine", "Sucre"],
+  "nutrition": {
+    "calories": 250,
+    "protein": 5,
+    "carbs": 30,
+    "fat": 10,
+    "allergens": ["gluten"]
+  },
+  "stockCount": 10
 }
 
-### Update pastry - Test minimal (juste le nom)
-PUT {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
+### 11. Mettre à jour une pâtisserie (admin seulement)
+PUT {{baseUrl}}/pastries/507f1f77bcf86cd799439011
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "name": "Éclair au chocolat premium"
+  "name": "Brioche Mise à Jour",
+  "price": 7.50,
+  "stockCount": 5
 }
 
-### Update pastry - Test prix et stock
-PUT {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
-Content-Type: application/json
+### 12. Supprimer une pâtisserie (admin seulement)
+DELETE {{baseUrl}}/pastries/507f1f77bcf86cd799439011
+Authorization: Bearer {{token}}
 
-{
-    "price": 6.50,
-    "stockCount": 3
-}
+### 13. Test avec pagination avancée
+GET {{baseUrl}}/pastries?page=2&limit=3&sortBy=createdAt&order=desc
 
-### Update pastry - Test description
-PUT {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
-Content-Type: application/json
-
-{
-    "description": "Un éclair exceptionnel avec une crème pâtissière onctueuse et un glaçage brillant au chocolat noir de qualité supérieure"
-}
-
-### Delete pastry
-DELETE {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
-Content-Type: application/json
-
-### Test avec un ID inexistant
-PUT {{BASE_URL}}/pastries/00000000-0000-0000-0000-000000000000
-Content-Type: application/json
-
-{
-    "name": "Test inexistant"
-}
-
-### Test suppression avec un ID inexistant
-DELETE {{BASE_URL}}/pastries/00000000-0000-0000-0000-000000000000
-Content-Type: application/json
-
-### Delete pastry - Test
-DELETE {{BASE_URL}}/pastries/27b2123c-9f21-4318-a79c-63975732b95e
-
-### Delete pastry - Test avec ID inexistant
-DELETE {{BASE_URL}}/pastries/000000000000000000000000
-
-### Delete pastry - Test avec ID invalide
-DELETE {{BASE_URL}}/pastries/invalid-id
-
-### Create pastry - Test complet
-POST {{BASE_URL}}/pastries
-Content-Type: application/json
-
-{
-    "name": "Nouveau Éclair au Chocolat",
-    "description": "Un éclair délicieux garni de crème pâtissière au chocolat noir, recouvert d'un glaçage chocolat brillant",
-    "price": 4.50,
-    "stockCount": 15,
-    "categoryId": "65c8f1a2b3c4d5e6f7a8b9c0",
-    "tags": ["Nouveau", "Populaire"],
-    "ingredients": ["Pâte à choux", "Crème pâtissière", "Chocolat noir", "Beurre", "Œufs", "Farine"],
-    "nutrition": {
-        "calories": 280,
-        "protein": 6.5,
-        "carbs": 32.0,
-        "fat": 15.2,
-        "allergens": ["Gluten", "Lactose", "Œufs"]
-    },
-    "dietIds": ["65c8f1a2b3c4d5e6f7a8b9c1"],
-    "images": []
-}
-
-### Create pastry - Test minimal
-POST {{BASE_URL}}/pastries
-Content-Type: application/json
-
-{
-    "name": "Croissant Simple",
-    "description": "Un croissant classique au beurre",
-    "price": 2.80,
-    "categoryId": "65c8f1a2b3c4d5e6f7a8b9c0"
-}
-
-### Create pastry - Test avec données invalides
-POST {{BASE_URL}}/pastries
-Content-Type: application/json
-
-{
-    "name": "",
-    "description": "",
-    "price": -5,
-    "categoryId": ""
-}
-
-### Vérifier si la catégorie existe
-GET {{BASE_URL}}/categories
-
-### Create pastry - Test avec payload utilisateur
-POST {{BASE_URL}}/pastries
-Content-Type: application/json
-
-{
-    "name": "Cannelés",
-    "description": "Le cannelé est une spécialité bordelaise",
-    "price": 4.5,
-    "stockCount": 0,
-    "categoryId": "6862f675763b91b46a10c453",
-    "dietIds": [],
-    "images": [],
-    "ingredients": ["sucre"],
-    "nutrition": {
-        "calories": 0,
-        "protein": 0,
-        "carbs": 0,
-        "fat": 0,
-        "allergens": []
-    },
-    "tags": []
-}
+### 14. Test avec tous les filtres combinés
+GET {{baseUrl}}/pastries?query=tarte&categories=Tartes&diets=Végétarien&minPrice=5&maxPrice=25&availability=true&sortBy=price&order=asc&page=1&limit=10

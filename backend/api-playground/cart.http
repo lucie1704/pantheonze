@@ -1,5 +1,5 @@
 ### Variables d'environnement
-@baseUrl = http://localhost:3000
+@baseUrl = http://localhost:3000/api
 @token = {{auth.response.body.token}}
 
 ### Authentification (nécessaire pour toutes les routes du panier)

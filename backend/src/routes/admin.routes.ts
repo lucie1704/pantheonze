@@ -1,14 +1,14 @@
 import { Router } from 'express'
 import { requireAdminOrStorekeeper } from '@/middlewares'
 
-export default function adminRoutes(router: Router) {
+export default function (router: Router) {
   router.get(
-    '/dashboard', 
+    '/admin/dashboard', 
     requireAdminOrStorekeeper
   )
 
   router.get(
-    '/stats', 
+    '/admin/stats', 
     requireAdminOrStorekeeper
   )
 

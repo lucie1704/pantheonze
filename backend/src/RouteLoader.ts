@@ -17,15 +17,12 @@ export default async function RouteLoader(
   let files: string[] = [];
   try {
     files = await glob(globPattern, { cwd: BASE_DIR });
-    console.log(`📁 [ROUTE LOADER] Found route files:`, files);
   } catch (error) {
     console.error(error);
   }
 
   for (const file of files) {
-    // Exclure le fichier index.ts
     if (file.includes('index.ts')) {
-      console.log(`⏭️ [ROUTE LOADER] Skipping index.ts file: ${file}`);
       continue;
     }
     
@@ -34,12 +31,9 @@ export default async function RouteLoader(
       path.extname(file).toLowerCase() === ".ts"
     ) {
       try {
-        console.log(`🔄 [ROUTE LOADER] Loading route file: ${file}`);
         const routeModule = await import(path.resolve(file));
         router = (routeModule.default || routeModule)(router);
-        console.log(`✅ [ROUTE LOADER] Successfully loaded: ${file}`);
       } catch (e: any) {
-        console.error(`❌ [ROUTE LOADER] Error loading route file: ${file}`, e);
         throw new Error(
           `Error when loading route file: ${file} [ ${e.toString()} ]`,
         );
@@ -47,6 +41,5 @@ export default async function RouteLoader(
     }
   }
 
-  console.log(`🎯 [ROUTE LOADER] Route loading completed`);
   return router;
 }

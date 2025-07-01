@@ -4,30 +4,30 @@ import { checkAuthentication } from '@/middlewares'
 
 export default function (router: Router) {
   router.get(
-    '/user/available-diets',
+    '/users/available-diets',
     UserController.getAvailableDiets
   )
 
   router.get(
-    '/user/dietary-preferences',
+    '/users/dietary-preferences',
     checkAuthentication,
     UserController.getUserDietaryPreferences
   )
 
   router.put(
-    '/user/dietary-preferences',
+    '/users/dietary-preferences',
     checkAuthentication,
     UserController.updateUserDietaryPreferences
   )
 
   router.post(
-    '/user/dietary-preferences',
+    '/users/dietary-preferences',
     checkAuthentication,
     UserController.addDietaryPreference
   )
 
   router.delete(
-    '/user/dietary-preferences/:dietId',
+    '/users/dietary-preferences/:dietId',
     checkAuthentication,
     UserController.removeDietaryPreference
   )

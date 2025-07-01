@@ -2,9 +2,9 @@ import { Router } from "express";
 import { OrderController } from "@/controllers";
 import { checkAuthentication, checkRole } from "@/middlewares";
 
-export default function (router: Router) {
+export default function orderRoutes(router: Router) {  
   router.get(
-    "/", 
+    "/order", 
     checkAuthentication, 
     OrderController.getUserOrders
   );
@@ -18,7 +18,8 @@ export default function (router: Router) {
   router.get(
     "/admin/all", 
     checkAuthentication, 
-    checkRole(['ADMIN', 'STOREKEEPER']), OrderController.getAllOrders
+    checkRole(['ADMIN', 'STOREKEEPER']), 
+    OrderController.getAllOrders
   );
 
   router.put(

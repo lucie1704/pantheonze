@@ -1,0 +1,12 @@
+model PickupInfo {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId     String   @unique @db.ObjectId
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  pickupDate  DateTime
+  pickupTime  String
+  specialInstructions String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([pickupDate])
+} 

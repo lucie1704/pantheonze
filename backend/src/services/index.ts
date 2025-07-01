@@ -1,7 +1,7 @@
-export * from "./PrismaService";
-export * from "./CategoryService";
-export * from "./DietService";
-export * from "./AuthService";
-export * from "./UserService";
-export * from "./CartService";
-export * from "./OrderService";
+export { prismaClient } from './PrismaService'
+export { AuthService } from './AuthService'
+export { CartService } from './CartService'
+export { categoryService } from './CategoryService'
+export { dietService } from './DietService'
+export { OrderService } from './OrderService'
+export { UserService } from './UserService'

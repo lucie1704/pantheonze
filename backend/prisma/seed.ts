@@ -148,22 +148,6 @@ async function main() {
 
   console.log('✅ Utilisateurs créés')
 
-  // Créer un magasin de test
-  const store = await prisma.store.create({
-    data: {
-      name: 'Panthéonze - Boutique Centrale',
-      address: '123 Rue de la Paix',
-      city: 'Paris',
-      postalCode: '75001',
-      phone: '01 23 45 67 89',
-      email: 'contact@patheonze.fr',
-      description: 'Notre boutique principale au cœur de Paris',
-      isActive: true,
-    }
-  })
-
-  console.log('✅ Magasin créé')
-
   // Créer toutes les pâtisseries
   const pastries = await Promise.all([
     // Brioche
@@ -828,174 +812,167 @@ async function main() {
 
   console.log('✅ Pâtisseries créées')
 
-  console.log('✅ Base de données initialisée avec succès !')
+  // Créer des commandes pour les utilisateurs
+  console.log('📦 Création des commandes...')
 
-  const croissant = await prisma.pastry.findFirst({ where: { name: 'Croissant au Beurre' } })
-  const painAuChocolat = await prisma.pastry.findFirst({ where: { name: 'Pain au Chocolat' } })
-  const chouquette = await prisma.pastry.findFirst({ where: { name: 'Chouquettes' } })
-  const muffin = await prisma.pastry.findFirst({ where: { name: 'Muffin aux Myrtilles' } })
-  const tarteCitron = await prisma.pastry.findFirst({ where: { name: 'Tarte au Citron Meringuée' } })
-  const brioche = await prisma.pastry.findFirst({ where: { name: 'Brioche Artisanale' } })
+  // Récupérer des pâtisseries spécifiques pour les commandes
+  const brioche = await prisma.pastry.findFirst({ where: { slug: 'brioche-artisanale' } })
+  const chouquettes = await prisma.pastry.findFirst({ where: { slug: 'chouquettes' } })
+  const croissant = await prisma.pastry.findFirst({ where: { slug: 'croissant-beurre' } })
+  const painAuChocolat = await prisma.pastry.findFirst({ where: { slug: 'pain-chocolat' } })
+  const eclair = await prisma.pastry.findFirst({ where: { slug: 'eclair-chocolat' } })
+  const tarteCitron = await prisma.pastry.findFirst({ where: { slug: 'tarte-citron-meringuee' } })
+  const brownieVegan = await prisma.pastry.findFirst({ where: { slug: 'brownie-vegan-noix' } })
+  const muffinSansSucre = await prisma.pastry.findFirst({ where: { slug: 'muffin-pomme-cannelle-sans-sucre' } })
 
-  // Commande 1 - Marie Jacques (il y a 2 semaines)
-  const order1 = await prisma.order.create({
-    data: {
-      userId: clientMarieJacques.id,
-      storeId: store.id,
-      subtotal: 15.40,
-      total: 15.40,
-      status: 'DELIVERED',
-      customerName: clientMarieJacques.name,
-      customerEmail: clientMarieJacques.email,
-      customerPhone: clientMarieJacques.phone,
-      paymentMethod: 'CARD',
-      paymentStatus: 'PAID',
-      createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-      updatedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-    }
-  })
-
-  await prisma.orderItem.createMany({
-    data: [
-      {
-        orderId: order1.id,
-        pastryId: croissant!.id,
-        quantity: 2,
-        price: croissant!.price,
-        name: croissant!.name,
-      },
-      {
-        orderId: order1.id,
-        pastryId: painAuChocolat!.id,
-        quantity: 1,
-        price: painAuChocolat!.price,
-        name: painAuChocolat!.name,
-      },
-      {
-        orderId: order1.id,
-        pastryId: chouquette!.id,
-        quantity: 6,
-        price: chouquette!.price,
-        name: chouquette!.name,
+  if (brioche && chouquettes && croissant && painAuChocolat && eclair && tarteCitron && brownieVegan && muffinSansSucre) {
+    // Commande 1 pour Marie Jacques (vegan + sans gluten) - commande livrée
+    const order1Marie = await prisma.order.create({
+      data: {
+        userId: clientMarieJacques.id,
+        customerName: 'Marie JACQUES',
+        customerEmail: 'marie.jacques@demo.com',
+        customerPhone: '0111222333',
+        subtotal: 13.80,
+        taxAmount: 2.76,
+        discount: 0,
+        total: 16.56,
+        status: 'DELIVERED',
+        paymentMethod: 'Carte bancaire',
+        paymentStatus: 'PAID',
+        estimatedReady: new Date(Date.now() - 2 * 60 * 60 * 1000), // +2h
+        readyAt: new Date(Date.now() - 1.5 * 60 * 60 * 1000), // +1.5h
+        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // -7 jours
       }
-    ]
-  })
+    })
 
-  // Commande 2 - Pierre Laroche (il y a 1 semaine)
-  const order2 = await prisma.order.create({
-    data: {
-      userId: clientPierreLaroche.id,
-      storeId: store.id,
-      subtotal: 28.30,
-      total: 28.30,
-      status: 'DELIVERED',
-      customerName: clientPierreLaroche.name,
-      customerEmail: clientPierreLaroche.email,
-      customerPhone: clientPierreLaroche.phone,
-      paymentMethod: 'CARD',
-      paymentStatus: 'PAID',
-      notes: 'Livraison à l\'entrée principale',
-      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Il y a 7 jours
-      updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-    }
-  })
+    // Créer les items pour la commande 1 de Marie
+    await prisma.orderItem.createMany({
+      data: [
+        {
+          orderId: order1Marie.id,
+          pastryId: brioche.id,
+          name: brioche.name,
+          quantity: 1,
+          price: brioche.price
+        },
+        {
+          orderId: order1Marie.id,
+          pastryId: brownieVegan.id,
+          name: brownieVegan.name,
+          quantity: 2,
+          price: brownieVegan.price
+        }
+      ]
+    })
 
-  await prisma.orderItem.createMany({
-    data: [
-      {
-        orderId: order2.id,
-        pastryId: muffin!.id,
-        quantity: 3,
-        price: muffin!.price,
-        name: muffin!.name,
-      },
-      {
-        orderId: order2.id,
-        pastryId: tarteCitron!.id,
-        quantity: 1,
-        price: tarteCitron!.price,
-        name: tarteCitron!.name,
+    // Commande 2 pour Marie Jacques - en attente
+    const order2Marie = await prisma.order.create({
+      data: {
+        userId: clientMarieJacques.id,
+        customerName: 'Marie JACQUES',
+        customerEmail: 'marie.jacques@demo.com',
+        customerPhone: '0111222333',
+        subtotal: 4.50,
+        taxAmount: 0.90,
+        discount: 0,
+        total: 5.40,
+        status: 'PENDING',
+        paymentMethod: 'Espèces',
+        paymentStatus: 'PENDING',
+        estimatedReady: new Date(Date.now() + 3 * 60 * 60 * 1000), // +3h
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // -2 jours
       }
-    ]
-  })
+    })
 
-  // Commande 3 - Marie Jacques (il y a 3 jours)
-  const order3 = await prisma.order.create({
-    data: {
-      userId: clientMarieJacques.id,
-      storeId: store.id,
-      subtotal: 12.90,
-      total: 12.90,
-      status: 'OUT_FOR_DELIVERY',
-      customerName: clientMarieJacques.name,
-      customerEmail: clientMarieJacques.email,
-      customerPhone: clientMarieJacques.phone,
-      paymentMethod: 'CARD',
-      paymentStatus: 'PAID',
-      notes: 'Code 1234, interphone "Jacques"',
-      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // Il y a 3 jours
-      updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    }
-  })
-
-  await prisma.orderItem.createMany({
-    data: [
-      {
-        orderId: order3.id,
-        pastryId: brioche!.id,
-        quantity: 1,
-        price: brioche!.price,
-        name: brioche!.name,
-      },
-      {
-        orderId: order3.id,
-        pastryId: chouquette!.id,
-        quantity: 8,
-        price: chouquette!.price,
-        name: chouquette!.name,
+    // Commande 1 pour Pierre Laroche (sans sucre + sans lactose) - en préparation
+    const order1Pierre = await prisma.order.create({
+      data: {
+        userId: clientPierreLaroche.id,
+        customerName: 'Pierre LAROCHE',
+        customerEmail: 'pierre.laroche@demo.com',
+        customerPhone: '0444555666',
+        subtotal: 15.60,
+        taxAmount: 3.12,
+        discount: 0,
+        total: 18.72,
+        status: 'PREPARING',
+        paymentMethod: 'Carte bancaire',
+        paymentStatus: 'PAID',
+        estimatedReady: new Date(Date.now() + 1.5 * 60 * 60 * 1000), // +1.5h
+        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // -1 jour
       }
-    ]
-  })
+    })
 
-  // Commande 4 - Sophie Olivier (il y a 1 jour)
-  const order4 = await prisma.order.create({
-    data: {
-      userId: clientSophieOlivier.id,
-      storeId: store.id,
-      subtotal: 8.70,
-      total: 8.70,
-      status: 'PREPARING',
-      customerName: clientSophieOlivier.name,
-      customerEmail: clientSophieOlivier.email,
-      customerPhone: clientSophieOlivier.phone,
-      paymentMethod: 'CASH',
-      paymentStatus: 'PAID',
-      notes: 'Livraison entre 14h et 16h',
-      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // Il y a 1 jour
-      updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-    }
-  })
+    // Créer les items pour la commande 1 de Pierre
+    await prisma.orderItem.createMany({
+      data: [
+        {
+          orderId: order1Pierre.id,
+          pastryId: muffinSansSucre.id,
+          name: muffinSansSucre.name,
+          quantity: 2,
+          price: muffinSansSucre.price
+        },
+        {
+          orderId: order1Pierre.id,
+          pastryId: tarteCitron.id,
+          name: tarteCitron.name,
+          quantity: 1,
+          price: tarteCitron.price
+        }
+      ]
+    })
 
-  await prisma.orderItem.createMany({
-    data: [
-      {
-        orderId: order4.id,
-        pastryId: croissant!.id,
-        quantity: 3,
-        price: croissant!.price,
-        name: croissant!.name,
-      },
-      {
-        orderId: order4.id,
-        pastryId: painAuChocolat!.id,
-        quantity: 2,
-        price: painAuChocolat!.price,
-        name: painAuChocolat!.name,
+    // Commande 2 pour Pierre Laroche - commande livrée
+    const order2Pierre = await prisma.order.create({
+      data: {
+        userId: clientPierreLaroche.id,
+        customerName: 'Pierre LAROCHE',
+        customerEmail: 'pierre.laroche@demo.com',
+        customerPhone: '0444555666',
+        subtotal: 22.50,
+        taxAmount: 4.50,
+        discount: 2.50,
+        total: 24.50,
+        status: 'DELIVERED',
+        paymentMethod: 'Carte bancaire',
+        paymentStatus: 'PAID',
+        estimatedReady: new Date(Date.now() - 4 * 60 * 60 * 1000), // -4h
+        readyAt: new Date(Date.now() - 3.5 * 60 * 60 * 1000), // -3.5h
+        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // -5 jours
       }
-    ]
-  })
+    })
 
-  console.log('✅ Commandes passées créées')
+    // Créer les items pour la commande 2 de Pierre
+    await prisma.orderItem.createMany({
+      data: [
+        {
+          orderId: order2Pierre.id,
+          pastryId: croissant.id,
+          name: croissant.name,
+          quantity: 2,
+          price: croissant.price
+        },
+        {
+          orderId: order2Pierre.id,
+          pastryId: painAuChocolat.id,
+          name: painAuChocolat.name,
+          quantity: 1,
+          price: painAuChocolat.price
+        },
+        {
+          orderId: order2Pierre.id,
+          pastryId: eclair.id,
+          name: eclair.name,
+          quantity: 1,
+          price: eclair.price
+        }
+      ]
+    })
+
+    console.log('✅ Commandes et OrderItems créés avec succès')
+  }
 
   console.log('✅ Base de données initialisée avec succès !')
 }

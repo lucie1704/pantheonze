@@ -1,7 +1,7 @@
-export * from "./CategoryController";
-export * from "./PastryController";
-export * from "./DietController";
-export * from "./UserController";
-export * from "./CartController";
-export * from "./AuthController";
-export * from "./OrderController";
+export { AuthController } from './AuthController'
+export { CartController } from './CartController'
+export { CategoryController } from './CategoryController'
+export { DietController } from './DietController'
+export { OrderController } from './OrderController'
+export { PastryController } from './PastryController'
+export { UserController } from './UserController'

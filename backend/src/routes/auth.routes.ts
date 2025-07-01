@@ -1,14 +1,14 @@
 import { Router } from 'express'
-import { AuthController } from '../controllers/AuthController'
+import { AuthController } from '@/controllers'
 
-export default function authRoutes(router: Router) {
+export default function (router: Router) {
   router.post(
-    '/login', 
+    '/auth/login', 
     AuthController.login
   )
 
   router.get(
-    '/verify', 
+    '/auth/verify', 
     AuthController.verifyToken
   )
 

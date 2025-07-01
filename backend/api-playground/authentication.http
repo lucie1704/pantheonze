@@ -1,44 +1,95 @@
 @BASE_URL = http://localhost:3333
-@API_URL = {{BASE_URL}}/api
+@API_URL = http://localhost:3000/api
 
 ### ========================================
 ### AUTHENTIFICATION
 ### ========================================
 
-### Login Admin
+### 1. Connexion utilisateur valide
+# @name loginUser
+POST {{API_URL}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "marie.jacques@demo.com",
+  "password": "P@nt3h0nz3_2025!"
+}
+
+### 2. Connexion admin
 # @name loginAdmin
 POST {{API_URL}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@pantheonze.com",
-  "password": "password123"
+  "email": "admin@demo.com",
+  "password": "P@nt3h0nz3_2025!"
 }
 
-### Login Storekeeper
+### 3. Connexion storekeeper
 # @name loginStorekeeper
 POST {{API_URL}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "storekeeper@pantheonze.com",
-  "password": "password123"
+  "email": "andree.faire@demo.com",
+  "password": "P@nt3h0nz3_2025!"
 }
 
-### Login Client
-# @name loginClient
+### 4. Vérification du token utilisateur
+GET {{API_URL}}/auth/verify
+Authorization: Bearer {{loginUser.response.body.token}}
+
+### 5. Test avec des identifiants invalides
 POST {{API_URL}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "client@pantheonze.com",
+  "email": "invalid@email.com",
+  "password": "wrongpassword"
+}
+
+### 6. Test avec un email manquant
+POST {{API_URL}}/auth/login
+Content-Type: application/json
+
+{
   "password": "password123"
 }
 
-### Vérifier Token
-# @name verifyToken
+### 7. Test avec un mot de passe manquant
+POST {{API_URL}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com"
+}
+
+### 8. Test avec un token invalide
 GET {{API_URL}}/auth/verify
-Authorization: Bearer {{loginAdmin.response.body.data.token}}
+Authorization: Bearer invalid-token
+
+### 9. Test sans token
+GET {{API_URL}}/auth/verify
+
+### 10. Test connexion avec un autre utilisateur
+# @name loginPierre
+POST {{API_URL}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "pierre.laroche@demo.com",
+  "password": "P@nt3h0nz3_2025!"
+}
+
+### 11. Test connexion avec Sophie
+# @name loginSophie
+POST {{API_URL}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "sophie.olivier@demo.com",
+  "password": "P@nt3h0nz3_2025!"
+}
 
 ### ========================================
 ### ADMINISTRATION
@@ -57,7 +108,7 @@ Authorization: Bearer {{loginStorekeeper.response.body.data.token}}
 ### Dashboard Admin (avec token client - devrait échouer)
 # @name dashboardClient
 GET {{API_URL}}/admin/dashboard
-Authorization: Bearer {{loginClient.response.body.data.token}}
+Authorization: Bearer {{loginUser.response.body.token}}
 
 ### Statistiques (avec token admin)
 # @name statsAdmin

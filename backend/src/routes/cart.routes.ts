@@ -2,7 +2,7 @@ import { Router } from "express";
 import { CartController } from "@/controllers";
 import { checkAuthentication } from "@/middlewares";
 
-export default function (router: Router) {
+export default function cartRoutes(router: Router) {
   router.get(
     "/", 
     checkAuthentication,
@@ -34,7 +34,7 @@ export default function (router: Router) {
   );
 
   router.get(
-    "/total", 
+    "/cart/total", 
     checkAuthentication,
     CartController.getCartTotal
   );

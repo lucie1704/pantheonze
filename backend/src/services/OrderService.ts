@@ -19,9 +19,7 @@ export class OrderService {
                 }
               }
             }
-          },
-          store: true,
-          pickupSlot: true
+          }
         },
         orderBy: {
           createdAt: 'desc'
@@ -56,9 +54,7 @@ export class OrderService {
                 }
               }
             }
-          },
-          store: true,
-          pickupSlot: true
+          }
         }
       });
 
@@ -88,9 +84,7 @@ export class OrderService {
                 }
               }
             }
-          },
-          store: true,
-          pickupSlot: true
+          }
         },
         orderBy: {
           createdAt: 'desc'
