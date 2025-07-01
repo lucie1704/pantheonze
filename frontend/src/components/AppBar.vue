@@ -30,7 +30,7 @@ const homeBannerConfig = {
   imageAlt: 'Boulangerie artisanale',
   logoUrl: '/Logo-white.svg',
   logoAlt: 'Panthéonze Logo',
-  subtitle: 'Pâtisserie moderne & créative du 11e',
+  subtitle: 'Pâtisserie moderne & créative du 11e arrondissement',
 }
 
 const shouldShowBanner = computed(() => {

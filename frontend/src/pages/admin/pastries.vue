@@ -7,7 +7,7 @@ import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import { useToast } from 'primevue/usetoast'
-import { pastryService } from '@/services'
+import { pastryService, categoryService } from '@/services'
 import type { Pastry } from '@/types'
 import DietIcon from '@/components/DietIcon.vue'
 import { DIET_CONFIG } from '@/constants/diets'
@@ -131,15 +131,16 @@ const updateURL = (params: URLSearchParams) => {
 
 const loadCategories = async () => {
   try {
-    // TODO: Remplacer par le vrai service des catégories
-    categories.value = [
-      { id: 1, name: 'Gâteaux' },
-      { id: 2, name: 'Tartes' },
-      { id: 3, name: 'Pâtisseries' },
-      { id: 4, name: 'Viennoiseries' }
-    ]
+    const categoriesData = await categoryService.getAllCategories()
+    categories.value = categoriesData
   } catch (error) {
     console.error('Erreur lors du chargement des catégories:', error)
+    toast.add({
+      severity: 'error',
+      summary: 'Erreur',
+      detail: 'Impossible de charger les catégories',
+      life: 3000,
+    })
   }
 }
 
@@ -237,31 +238,6 @@ const openActionMenu = (event: Event, pastry: Pastry) => {
   selectedPastryForMenu.value = pastry
   actionMenu.value?.toggle(event)
 }
-
-const getActionItems = computed(() => {
-  if (!selectedPastryForMenu.value) return []
-  
-  return [
-    {
-      label: 'Voir',
-      icon: 'pi pi-eye',
-      command: () => handleView(selectedPastryForMenu.value!),
-      class: 'my-1'
-    },
-    {
-      label: 'Modifier',
-      icon: 'pi pi-pencil',
-      command: () => handleEdit(selectedPastryForMenu.value!),
-      class: 'my-1'
-    },
-    {
-      label: 'Supprimer',
-      icon: 'pi pi-trash',
-      command: () => handleDelete(selectedPastryForMenu.value!),
-      class: 'my-1'
-    }
-  ]
-})
 
 // Ajout d'une méthode pour reset les filtres
 const resetFilters = () => {

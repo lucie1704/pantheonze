@@ -244,6 +244,9 @@ const handleClose = () => {
 const handleVisibleChange = (visible: boolean) => {
   if (visible) {
     resetForm()
+  } else {
+    // Fermer le modal
+    emit('update:visible', false)
   }
 }
 </script>
